@@ -8,6 +8,7 @@
 
 %x	str
 %x	comment
+%x  multi_comment
 
 RESERVED 					"abstract"|continue|"for"|"new"|"switch"|"assert"|"default"|"package"|"synchronized"|"goto"|"private"|"this"|"break"|"implements"|"protected"|"throw"|"byte"|"import"|"throws"|"case"|"enum"|"instanceof"|"transient"|"++"|"--"|"null"|"Integer"|"System"|"catch"|"extends"|"short"|"try"|"char"|"final"|"interface"|"finally"|"long"|"strictfp"|"volatile"|"const"|"float"|"native"|"super"
 decimal						[0-9]
@@ -79,10 +80,12 @@ while					{if(flag) printf("WHILE\n");}
 	.	;
 }
 "//".*					{col+=yyleng; BEGIN(comment);}
-<comment>{
-	<<EOF>>	printf("Line %d, col %d: unterminated comment\n", line, col); BEGIN(0);
+<comment><<EOF>>		{printf("Line %d, col %d: unterminated comment\n", line, col); yyterminate();}
+"/"\*([^*]|[\n\r]|(\*+([^*/]|[\n\r])))*		{col+=yyleng; BEGIN(multi_comment);}
+<multi_comment>{
+	<<EOF>>	printf("Line %d, col %d: unterminated comment\n", line, col); yyterminate();
+	(\*)+"/"	col+=yyleng; BEGIN(0);
 }
-"/"\*([^*]|[\n\r]|(\*+([^*/]|[\n\r])))*(\*)+"/"		{printf("comment\n");}
 .						;
 
 

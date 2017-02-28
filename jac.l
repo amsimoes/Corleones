@@ -1,5 +1,6 @@
 %{
 	#include <stdio.h>
+	#include <stdlib.h>
 	#include <string.h>
 	int flag = 0;
 	int line = 1;
@@ -25,14 +26,14 @@ num 						{natural}[_{decimal}]*{decimal}*
 exponent					[eE][+-]{num}
 escape						(\\t|\\r|\\f|\\n|\\)
 ID							[a-zA-Z_\$]+[a-zA-Z_\$0-9]*
-DECLIT						(0|{natural}{decimal}*|{num})
+DECLIT						(0|([1-9]+(_|[0-9])*[0-9]+)*|[1-9]+)
 REALLIT						{num}"."({num}?{exponent})
 STRLIT						\"((\\t|\\r|\\f|\\n|\\|\\\")|[^"\n\r])*\"
 IGNORE						(" "|\t|\r|\f)
 
 %%
 
-\n|\r|\r\n 						{col=1; line++;}
+(\n|\r|\r\n) 			{col=1; line++;}
 {RESERVED}				{col+=yyleng; if(flag) printf("RESERVED(%s)\n", yytext);}
 "boolean"				{col+=yyleng; if(flag) printf("BOOL\n");}
 "true"|"false"			{col+=yyleng; if(flag) printf("BOOLLIT(%s)\n", yytext);}

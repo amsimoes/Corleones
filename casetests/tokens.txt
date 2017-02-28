@@ -1,0 +1,42 @@
+BOOL = “boolean”
+BOOLLIT = “true” | “false”
+CLASS = “class”
+DO = “do”
+DOTLENGTH = “.length”
+DOUBLE = “double”
+ELSE = “else”
+IF = “if”
+INT = “int”
+PARSEINT = “Integer.parseInt”
+PRINT = “System.out.println”
+PUBLIC = “public”
+RETURN = “return”
+STATIC = “static”
+STRING = “String”
+VOID = “void”
+WHILE = “while”
+OCURV = “(”
+CCURV = “)”
+OBRACE = “{”
+CBRACE = “}”
+OSQUARE = “[”
+CSQUARE = “]”
+AND = “&&”
+OR = “||”
+LT = “<”
+GT = “>”
+EQ = “==”
+NEQ = “!=”
+LEQ = “<=”
+GEQ = “>=”
+PLUS = “+”
+MINUS = “−”
+STAR = “*”
+DIV = “/”
+MOD = “%”
+NOT = “!”
+ASSIGN = “=”
+SEMI = “;”
+COMMA = “,”
+RESERVED = keywords do Java 8 não utilizadas em Ja, bem como os operadores “++” e “−−”, o
+literal “null” e os identificadores “Integer” e “System”.

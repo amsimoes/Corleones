@@ -32,7 +32,7 @@ Digit 						(0|[1-9])
 ExponentPart				[eE][+-]?{Digits}
 FloatTypeSuffix				[fFdD]
 REALLIT						({Digits}"."({Digits}|{ExponentPart}|{FloatTypeSuffix})*|"."{Digits}({ExponentPart}|{FloatTypeSuffix})*|{Digits}{ExponentPart}({FloatTypeSuffix})*|{Digits}({ExponentPart})*{FloatTypeSuffix})
-DECLIT						(0|([1-9]+(_|[0-9])*[0-9]+)*|[1-9]+)
+DECLIT						(0|([1-9](_|[0-9])*[0-9]+)*|[1-9][0-9]*)
 ID							[a-zA-Z_\$]+[a-zA-Z_\$0-9]*
 
 
@@ -92,7 +92,7 @@ while					{col+=yyleng; if(flag) printf("WHILE\n");}
 \"					{str_begin=col; col+=yyleng; strcat(string, yytext); BEGIN(str);}
 <str>{
 	((\\t|\\r|\\f|\\n|\\\\|\\\"))*	col+=yyleng; strcat(string,yytext);	
-	"\\"							str_error = 1; printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng; 
+	"\\"([^trfn\n])?					str_error = 1; printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng; 
 	\"								strcat(string, yytext); col+=yyleng; if(flag && str_error==0 && str_not==0) printf("STRLIT(%s)\n", string); BEGIN(0); string[0] = '\0';
 	\n|\r|\r\n						str_not = 1; col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); BEGIN(0); string[0] = '\0'; line++;  
 	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); yyterminate();
@@ -108,7 +108,7 @@ while					{col+=yyleng; if(flag) printf("WHILE\n");}
 <comment>[^*\n]*		col += yyleng;
 <comment>"*"+[^*/\n]*	col += yyleng;
 <comment>(\n|\r|\r\n) 	col=1; line++;
-<comment>"*"+"/"		BEGIN(0);
+<comment>"*"+"/"		col += yyleng; BEGIN(0);
 <comment><<EOF>>		printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); yyterminate();
 
 

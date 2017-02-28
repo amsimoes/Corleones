@@ -25,15 +25,21 @@ letter						[a-zA-Z]
 num 						{natural}[_{decimal}]*{decimal}*	
 exponent					[eE][+-]{num}
 escape						(\\t|\\r|\\f|\\n|\\)
-ID							[a-zA-Z_\$]+[a-zA-Z_\$0-9]*
-DECLIT						(0|([1-9]+(_|[0-9])*[0-9]+)*|[1-9]+)
-REALLIT						{num}"."({num}?{exponent})
 STRLIT						\"((\\t|\\r|\\f|\\n|\\|\\\")|[^"\n\r])*\"
 IGNORE						(" "|\t|\r|\f)
+Digits						({Digit}|{Digit}(_|{Digit})*{Digit})
+Digit 						(0|[1-9])
+ExponentPart				[eE][+-]?{Digits}
+FloatTypeSuffix				[fFdD]
+REALLIT						({Digits}"."({Digits}|{ExponentPart}|{FloatTypeSuffix})*|"."{Digits}({ExponentPart}|{FloatTypeSuffix})*|{Digits}{ExponentPart}({FloatTypeSuffix})*|{Digits}({ExponentPart})*{FloatTypeSuffix})
+DECLIT						(0|([1-9]+(_|[0-9])*[0-9]+)*|[1-9]+)
+ID							[a-zA-Z_\$]+[a-zA-Z_\$0-9]*
+
 
 %%
 
 (\n|\r|\r\n) 			{col=1; line++;}
+{REALLIT}				{col+=yyleng; if(flag) printf("REALLIT(%s)\n", yytext);}
 {RESERVED}				{col+=yyleng; if(flag) printf("RESERVED(%s)\n", yytext);}
 "boolean"				{col+=yyleng; if(flag) printf("BOOL\n");}
 "true"|"false"			{col+=yyleng; if(flag) printf("BOOLLIT(%s)\n", yytext);}
@@ -79,7 +85,6 @@ while					{col+=yyleng; if(flag) printf("WHILE\n");}
 
 {IGNORE}				{col+=yyleng;}
 {ID}					{col+=yyleng; if(flag) printf("ID(%s)\n", yytext);}
-{REALLIT}				{col+=yyleng; if(flag) printf("REALLIT\n");}
 {DECLIT}				{col+=yyleng; if(flag) printf("DECLIT(%s)\n", yytext);}
 
 

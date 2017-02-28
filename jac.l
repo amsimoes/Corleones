@@ -71,15 +71,14 @@ while					{if(flag) printf("WHILE\n");}
 {ID}					{if(flag) printf("ID(%s)\n", yytext);}
 {REALLIT}				{if(flag) printf("REALLIT\n");}
 {DECLIT}				{if(flag) printf("DECLIT(%s)\n", yytext);}
-{STRLIT}				{if(flag) printf("STRLIT\n");}
-\"						BEGIN(str);
+\"((\\t|\\r|\\f|\\n|\\|\\\")|[^"\n\r])*		{col+=yyleng; BEGIN(str);}
 <str>{
-	((\\t|\\r|\\f|\\n|\\|\\\")|[^"\n\r])*\"	line++; printf("STRLIT\n"); BEGIN(0);
-	\n	line++; printf("Line %d, col %d: unterminated string literal\n", line, col); BEGIN(0);
-	\r  line++; printf("Line %d, col %d: unterminated string literal\n", line, col); BEGIN(0);
+	\"	if(flag) printf("STRLIT\n"); line++; BEGIN(0);
+	\n	printf("Line %d, col %d: unterminated string literal\n", line, col); line++; BEGIN(0);
+	\r  printf("Line %d, col %d: unterminated string literal\n", line, col); line++; BEGIN(0);
 	.	;
 }
-"//".*					BEGIN(comment);
+"//".*					{col+=yyleng; BEGIN(comment);}
 <comment>{
 	<<EOF>>	printf("Line %d, col %d: unterminated comment\n", line, col); BEGIN(0);
 }

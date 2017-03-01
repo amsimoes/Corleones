@@ -29,16 +29,17 @@ STRLIT						\"((\\t|\\r|\\f|\\n|\\|\\\")|[^"\n\r])*\"
 IGNORE						(" "|\t|\r|\f)
 Digits						({Digit}|{Digit}(_|{Digit})*{Digit})
 Digit 						(0|[1-9])
-ExponentPart				[eE][+-]?{Digits}
+ExponentPart				[eE]{SignedInteger}
+SignedInteger				[+-]?{Digits}
 FloatTypeSuffix				[fFdD]
-REALLIT						({Digits}"."({Digits}|{ExponentPart}|{FloatTypeSuffix})*|"."{Digits}({ExponentPart}|{FloatTypeSuffix})*|{Digits}{ExponentPart}({FloatTypeSuffix})*|{Digits}({ExponentPart})*{FloatTypeSuffix})
+REALLIT						({Digits}+"."{Digits}*{ExponentPart}?{FloatTypeSuffix}?|"."{Digits}+{ExponentPart}?{FloatTypeSuffix}?|{Digits}+{ExponentPart}({FloatTypeSuffix})?|{Digits}+({ExponentPart})?{FloatTypeSuffix})
 DECLIT						(0|([1-9](_|[0-9])*[0-9]+)*|[1-9][0-9]*)
 ID							[a-zA-Z_\$]+[a-zA-Z_\$0-9]*
 
 
 %%
 
-(\n|\r|\r\n) 			{col=1; line++;}
+(\n|\r|\r\n) 			{col=1; line++; str_error=0;}
 {REALLIT}				{col+=yyleng; if(flag) printf("REALLIT(%s)\n", yytext);}
 {RESERVED}				{col+=yyleng; if(flag) printf("RESERVED(%s)\n", yytext);}
 "boolean"				{col+=yyleng; if(flag) printf("BOOL\n");}
@@ -92,8 +93,8 @@ while					{col+=yyleng; if(flag) printf("WHILE\n");}
 \"					{str_begin=col; col+=yyleng; strcat(string, yytext); BEGIN(str);}
 <str>{
 	((\\t|\\r|\\f|\\n|\\\\|\\\"))*	col+=yyleng; strcat(string,yytext);	
-	"\\"([^trfn\n])?					str_error = 1; printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng; 
-	\"								strcat(string, yytext); col+=yyleng; if(flag && str_error==0 && str_not==0) printf("STRLIT(%s)\n", string); BEGIN(0); string[0] = '\0';
+	"\\"([^trfn\n])?				str_error = 1; printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng; 
+	\"								strcat(string, yytext); col+=yyleng; if(flag && str_not==0 && str_error==0) printf("STRLIT(%s)\n", string); BEGIN(0); string[0] = '\0';
 	\n|\r|\r\n						str_not = 1; col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); BEGIN(0); string[0] = '\0'; line++;  
 	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); yyterminate();
 	[^"]							col+=yyleng; strcat(string,yytext);

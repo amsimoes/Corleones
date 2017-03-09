@@ -2,8 +2,8 @@ numero				[0-9]+
 %%
 [0-9]+                      {printf(" integer ");}
 "-"[0-9]+					{printf(" Inteiro Negativo ");}
-[0-9]+["."|","][0-9]+		{printf(" float ");}
-"-"[0-9]+["."|","][0-9]+	{printf(" Real Negativo ");}
+[0-9]+[.,][0-9]+		{printf(" float ");}
+"-"[0-9]+[.,][0-9]+	{printf(" Real Negativo ");}
 abc							{printf(" token1 ");}
 a"b"+c						{printf(" token2 ");}
 "a"*"bc"+					{printf(" token3 ");}

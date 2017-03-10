@@ -1,0 +1,3 @@
+flex mycalc.l
+yacc -d mycalc.y
+clang-3.8 -Wall -Wno-unused-function *.c -o calc

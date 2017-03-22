@@ -1,0 +1,3 @@
+# FIRST: sudo chmod +x compile1
+flex jac.l
+clang-3.8 -Wall -Wno-unused-function lex.yy.c -o jac

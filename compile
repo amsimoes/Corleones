@@ -1,3 +1,4 @@
 # FIRST: sudo chmod +x compile
 flex jac.l
-clang-3.8 -Wall -Wno-unused-function lex.yy.c -o jac
+yacc -d jac.y
+clang-3.8 -Wall -Wno-unused-function *.c -o jac

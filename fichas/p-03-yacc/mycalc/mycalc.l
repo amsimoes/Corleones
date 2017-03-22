@@ -15,7 +15,6 @@
                                     /* operador), enviar para   */
                                     /* o YACC */
 
-/* Falta encerrar com end em vez de \n */
 %%
 
 int yywrap() {

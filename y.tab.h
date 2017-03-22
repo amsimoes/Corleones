@@ -45,17 +45,114 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    NUMBER = 258,
-    UMINUS = 259
+    BOOL = 258,
+    BOOLLIT = 259,
+    CLASS = 260,
+    DO = 261,
+    DOTLENGTH = 262,
+    DOUBLE = 263,
+    ELSE = 264,
+    IF = 265,
+    INT = 266,
+    PARSEINT = 267,
+    PRINT = 268,
+    PUBLIC = 269,
+    RETURN = 270,
+    STATIC = 271,
+    STRING = 272,
+    VOID = 273,
+    WHILE = 274,
+    OCURV = 275,
+    CCURV = 276,
+    OBRACE = 277,
+    CBRACE = 278,
+    OSQUARE = 279,
+    CSQUARE = 280,
+    AND = 281,
+    OR = 282,
+    LT = 283,
+    GT = 284,
+    EQ = 285,
+    NEQ = 286,
+    LEQ = 287,
+    GEQ = 288,
+    PLUS = 289,
+    MINUS = 290,
+    STAR = 291,
+    DIV = 292,
+    MOD = 293,
+    NOT = 294,
+    ASSIGN = 295,
+    SEMI = 296,
+    COMMA = 297,
+    RESERVED = 298,
+    STRLIT = 299,
+    ID = 300,
+    DECLIT = 301,
+    REALLIT = 302
   };
 #endif
 /* Tokens.  */
-#define NUMBER 258
-#define UMINUS 259
+#define BOOL 258
+#define BOOLLIT 259
+#define CLASS 260
+#define DO 261
+#define DOTLENGTH 262
+#define DOUBLE 263
+#define ELSE 264
+#define IF 265
+#define INT 266
+#define PARSEINT 267
+#define PRINT 268
+#define PUBLIC 269
+#define RETURN 270
+#define STATIC 271
+#define STRING 272
+#define VOID 273
+#define WHILE 274
+#define OCURV 275
+#define CCURV 276
+#define OBRACE 277
+#define CBRACE 278
+#define OSQUARE 279
+#define CSQUARE 280
+#define AND 281
+#define OR 282
+#define LT 283
+#define GT 284
+#define EQ 285
+#define NEQ 286
+#define LEQ 287
+#define GEQ 288
+#define PLUS 289
+#define MINUS 290
+#define STAR 291
+#define DIV 292
+#define MOD 293
+#define NOT 294
+#define ASSIGN 295
+#define SEMI 296
+#define COMMA 297
+#define RESERVED 298
+#define STRLIT 299
+#define ID 300
+#define DECLIT 301
+#define REALLIT 302
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 9 "jac.y" /* yacc.c:1909  */
+
+	char *string;
+	struct node *node;
+
+#line 153 "y.tab.h" /* yacc.c:1909  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

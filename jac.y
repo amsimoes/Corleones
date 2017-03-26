@@ -60,7 +60,7 @@ Type: BOOL
 	| INT 
 	| DOUBLE
 
-Statement: OBRACE Statement CBRACE 
+Statement: OBRACE StatementEmpty CBRACE
 		| IF OCURV Expr CCURV Statement ElseStm 
 		| WHILE OCURV Expr CCURV Statement
 		| DO Statement WHILE OCURV Expr CCURV SEMI 
@@ -69,11 +69,21 @@ Statement: OBRACE Statement CBRACE
 		| StatementAux SEMI
 		| RETURN ExprOptional SEMI
 
+StatementEmpty: StatementL Statement
+		| %empty
+
 ExprOptional: Expr 
 		| %empty
 
 ElseStm: ELSE Statement
 		| %empty
+
+StatementAux: StatementL
+		| %empty
+
+StatementL: Assignment
+	| MethodInvocation
+	| ParseArgs
 
 Assignment: ID ASSIGN Expr
 
@@ -82,7 +92,46 @@ MethodInvocation: ID OCURV MethodInvAux CCURV
 MethodInvAux: Expr CommaExpr
 		| %empty
 
-CommaExpr: 
+CommaExpr: CommaExpr COMMA Expr 
+		| %empty
+
+ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV
+
+Expr: StatementL 
+	| Expr ExprLogic Expr
+	| Expr ExprCompare Expr
+	| Expr ExprOperators Expr
+	| ExprSign Expr
+	| ID ExprDotLen
+	| OCURV Expr CCURV
+	| ExprLit
+
+ExprLogic: AND
+		| OR
+
+ExprCompare: EQ 
+		| GEQ
+		| GT
+		| LEQ
+		| LT
+		| NEQ
+
+ExprOperators: PLUS
+			| MINUS
+			| STAR
+			| DIV
+			| MOD
+
+ExprDotLen: DOTLENGTH
+		| %empty
+
+ExprLit: BOOLLIT
+	| DECLIT
+	| REALLIT
+
+ExprSign: PLUS
+		| MINUS
+		| NOT
 
 %%
 

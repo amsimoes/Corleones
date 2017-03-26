@@ -113,8 +113,10 @@ int main(int argc, char** argv)
 			print_flag = 1;
 			ast = 0;
 		}
+		yylex();
+	} else {
+		yyparse();
 	}
-	yylex();
 	return 0;
 }
 

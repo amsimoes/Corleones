@@ -115,41 +115,29 @@ ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV
 		| PARSEINT OCURV error CCURV		
 
 Expr: StatementL 
-	| Expr ExprLogic Expr
-	| Expr ExprCompare Expr
-	| Expr ExprOperators Expr
-	| ExprSign Expr
-	| ID ExprDotLen
+	| Expr AND Expr
+	| Expr OR Expr
+	| Expr EQ Expr
+	| Expr GEQ Expr
+	| Expr GT Expr 
+	| Expr LEQ Expr 
+	| Expr LT Expr
+	| Expr NEQ Expr
+	| Expr PLUS Expr
+	| Expr MINUS Expr
+	| Expr STAR Expr
+	| Expr DIV Expr
+	| Expr MOD Expr
+	| PLUS Expr
+	| MINUS %prec MINUS Expr
+	| NOT Expr 
+	| ID 
+	| ID DOTLENGTH 
 	| OCURV Expr CCURV
-	| ExprLit
-	| OCURV error CCURV			
-
-ExprLogic: AND
-		| OR
-
-ExprCompare: EQ 
-		| GEQ
-		| GT
-		| LEQ
-		| LT
-		| NEQ
-
-ExprOperators: PLUS
-			| MINUS
-			| STAR
-			| DIV
-			| MOD
-
-ExprDotLen: DOTLENGTH
-		| %empty
-
-ExprLit: BOOLLIT
+	| BOOLLIT
 	| DECLIT
 	| REALLIT
-
-ExprSign: PLUS
-		| MINUS %prec MINUS
-		| NOT
+	| OCURV error CCURV			
 
 %%
 

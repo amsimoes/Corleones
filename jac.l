@@ -17,6 +17,7 @@
 	char string[1024];
 %}
 
+%option yylineno
 %x	str
 %x	comment
 
@@ -73,7 +74,7 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) return WHILE;}
 "/"						{col+=yyleng; if(print_flag) printf("DIV\n"); if(ast) return DIV;}
 "%"						{col+=yyleng; if(print_flag) printf("MOD\n"); if(ast) return MOD;}
 "!"						{col+=yyleng; if(print_flag) printf("NOT\n"); if(ast) return NOT;}
-"="						{col+=yyleng; if(print_flag) printf("ASSIGN\n"); if(ast) return ASSIGN;}
+"="						{col+=yyleng; if(print_flag) printf("\n"); if(ast) return ASSIGN;}
 ";" 					{col+=yyleng; if(print_flag) printf("SEMI\n"); if(ast) return SEMI;}
 ","						{col+=yyleng; if(print_flag) printf("COMMA\n"); if(ast) return COMMA;}
 
@@ -113,10 +114,8 @@ int main(int argc, char** argv)
 			print_flag = 1;
 			ast = 0;
 		}
-		yylex();
-	} else {
-		yyparse();
 	}
+	yyparse();
 	return 0;
 }
 

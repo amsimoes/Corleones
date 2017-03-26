@@ -89,7 +89,8 @@ extern int yydebug;
     STRLIT = 299,
     ID = 300,
     DECLIT = 301,
-    REALLIT = 302
+    REALLIT = 302,
+    NO_ELSE = 303
   };
 #endif
 /* Tokens.  */
@@ -138,18 +139,19 @@ extern int yydebug;
 #define ID 300
 #define DECLIT 301
 #define REALLIT 302
+#define NO_ELSE 303
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 9 "jac.y" /* yacc.c:1909  */
+#line 18 "jac.y" /* yacc.c:1909  */
 
-	char *string;
+	char *str;
 	struct node *node;
 
-#line 153 "y.tab.h" /* yacc.c:1909  */
+#line 155 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

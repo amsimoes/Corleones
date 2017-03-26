@@ -1,19 +1,35 @@
 %{
-#include <stdio.h>
-int yylex(void);
-void yyerror(const char *s);
+	#include <stdio.h>
+	#include <stdlib.h>
 
-int error_flag = 0;
+	int yylex(void);
+	void yyerror(const char *s);
+
+	extern char* yytext;
+	extern int line, col, yyleng;
+
+	int error_flag = 0;
 %}
 
-%token <string> BOOL BOOLLIT CLASS DO DOTLENGTH DOUBLE ELSE IF INT PARSEINT PRINT PUBLIC RETURN STATIC STRING VOID WHILE OCURV CCURV OBRACE CBRACE OSQUARE CSQUARE AND OR LT GT EQ NEQ LEQ GEQ PLUS MINUS STAR DIV MOD NOT ASSIGN SEMI COMMA RESERVED STRLIT ID DECLIT REALLIT
+%token <str> BOOL BOOLLIT CLASS DO DOTLENGTH DOUBLE ELSE IF INT PARSEINT PRINT PUBLIC RETURN STATIC 
+%token <str> STRING VOID WHILE OCURV CCURV OBRACE CBRACE OSQUARE CSQUARE AND OR LT GT EQ NEQ LEQ GEQ 
+%token <str> PLUS MINUS STAR DIV MOD NOT ASSIGN SEMI COMMA RESERVED STRLIT ID DECLIT REALLIT
 
 %union {
-	char *string;
+	char *str;
 	struct node *node;
 }
 
-%type <node> Program
+%nonassoc NO_ELSE
+%nonassoc ELSE
+
+%right ASSIGN
+%left OR
+%left AND
+%left GT LT GEQ LEQ NEQ EQ
+%left PLUS MINUS
+%left STAR DIV MOD
+%right NOT
 
 %%
 
@@ -29,6 +45,7 @@ ProgramL: FieldDecl
 ClassDecl: CLASS ID 
 
 FieldDecl: PUBLIC STATIC Type ID CommaId SEMI 
+		| error SEMI		
 
 CommaId: CommaId COMMA ID 
 		| %empty
@@ -61,21 +78,20 @@ Type: BOOL
 	| DOUBLE
 
 Statement: OBRACE StatementEmpty CBRACE
-		| IF OCURV Expr CCURV Statement ElseStm 
+		| IF OCURV Expr CCURV Statement %prec NO_ELSE
+		| IF OCURV Expr CCURV Statement ELSE Statement
 		| WHILE OCURV Expr CCURV Statement
 		| DO Statement WHILE OCURV Expr CCURV SEMI 
 		| PRINT OCURV Expr CCURV SEMI 
 		| PRINT OCURV STRLIT CCURV SEMI
 		| StatementAux SEMI
 		| RETURN ExprOptional SEMI
+		| error SEMI		
 
 StatementEmpty: StatementL Statement
 		| %empty
 
 ExprOptional: Expr 
-		| %empty
-
-ElseStm: ELSE Statement
 		| %empty
 
 StatementAux: StatementL
@@ -96,6 +112,7 @@ CommaExpr: CommaExpr COMMA Expr
 		| %empty
 
 ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV
+		| PARSEINT OCURV error CCURV		
 
 Expr: StatementL 
 	| Expr ExprLogic Expr
@@ -105,6 +122,7 @@ Expr: StatementL
 	| ID ExprDotLen
 	| OCURV Expr CCURV
 	| ExprLit
+	| OCURV error CCURV			
 
 ExprLogic: AND
 		| OR
@@ -130,12 +148,12 @@ ExprLit: BOOLLIT
 	| REALLIT
 
 ExprSign: PLUS
-		| MINUS
+		| MINUS %prec MINUS
 		| NOT
 
 %%
 
-void yyerror() {
+void yyerror(const char* s) {
 	error_flag = 1;
-	printf("Syntax Error.\n");
+	printf("Line %d, col %d: %s: %s\n", line, col - (int) yyleng, s, yytext);
 }

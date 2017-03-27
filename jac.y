@@ -46,25 +46,25 @@ ProgramL: FieldDecl
 		| MethodDecl
 		| SEMI
 
-ClassDecl: CLASS ID 
+ClassDecl: CLASS IDAux 
 
-FieldDecl: PUBLIC STATIC Type ID CommaId SEMI 
-		| error SEMI		{$$ = NULL;}
+FieldDecl: PUBLIC STATIC Type IDAux CommaId SEMI 
+		| error SEMI		
 
-CommaId: CommaId COMMA ID 
+CommaId: CommaId COMMA IDAux 
 		| %empty
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody
 
-MethodHeader: Type ID OCURV FormalParams CCURV
-		| Type ID OCURV CCURV 
-		| VOID ID OCURV FormalParams CCURV 
-		| VOID ID OCURV CCURV
+MethodHeader: Type IDAux OCURV FormalParams CCURV
+		| Type IDAux OCURV CCURV 
+		| VOID IDAux OCURV FormalParams CCURV 
+		| VOID IDAux OCURV CCURV
 
-FormalParams: Type ID FormalParamsAux
-		| STRING OSQUARE CSQUARE ID 
+FormalParams: Type IDAux FormalParamsAux
+		| STRING OSQUARE CSQUARE IDAux 
 
-FormalParamsAux: COMMA Type ID FormalParamsAux 
+FormalParamsAux: COMMA Type IDAux FormalParamsAux 
 		| %empty
 
 MethodBody: OBRACE MethodBodyAux CBRACE
@@ -75,7 +75,7 @@ MethodBodyAux: MethodBodyAux MethodBodyL
 MethodBodyL: VarDecl
 			| Statement
 
-VarDecl: Type ID CommaId SEMI
+VarDecl: Type IDAux CommaId SEMI
 
 Type: BOOL 
 	| INT 
@@ -92,7 +92,7 @@ Statement: OBRACE StatementEmpty CBRACE
 		| RETURN ExprOptional SEMI
 		| error SEMI		
 
-StatementEmpty: StatementL Statement
+StatementEmpty: StatementEmpty Statement
 		| %empty
 
 ExprOptional: Expr 
@@ -105,9 +105,9 @@ StatementL: Assignment
 	| MethodInvocation
 	| ParseArgs
 
-Assignment: ID ASSIGN Expr
+Assignment: IDAux ASSIGN Expr
 
-MethodInvocation: ID OCURV MethodInvAux CCURV
+MethodInvocation: IDAux OCURV MethodInvAux CCURV
 
 MethodInvAux: Expr CommaExpr
 		| %empty
@@ -115,7 +115,7 @@ MethodInvAux: Expr CommaExpr
 CommaExpr: CommaExpr COMMA Expr 
 		| %empty
 
-ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV
+ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE CCURV
 		| PARSEINT OCURV error CCURV		
 
 Expr: StatementL 
@@ -135,13 +135,15 @@ Expr: StatementL
 	| PLUS Expr
 	| MINUS %prec MINUS Expr
 	| NOT Expr 
-	| ID 
-	| ID DOTLENGTH 
+	| IDAux 
+	| IDAux DOTLENGTH 
 	| OCURV Expr CCURV
 	| BOOLLIT
 	| DECLIT
 	| REALLIT
-	| OCURV error CCURV			
+	| OCURV error CCURV		
+
+IDAux: ID	
 
 %%
 

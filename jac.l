@@ -1,10 +1,11 @@
 %{
 	#include <stdio.h>
-	#include <stdlib.h>
 	#include <string.h>
 	#include "y.tab.h"
 
+
 	int print_flag = 0;
+	int eof_flag = 0;
 	int ast = 0;
 
 	int line = 1;
@@ -18,7 +19,7 @@
 %}
 
 %option yylineno
-%x	str
+%x	str_state
 %x	comment
 
 RESERVED 					"abstract"|continue|"for"|"new"|"switch"|"assert"|"default"|"package"|"synchronized"|"goto"|"private"|"this"|"break"|"implements"|"protected"|"throw"|"byte"|"import"|"throws"|"case"|"enum"|"instanceof"|"transient"|"++"|"--"|"null"|"Integer"|"System"|"catch"|"extends"|"short"|"try"|"char"|"final"|"interface"|"finally"|"long"|"strictfp"|"volatile"|"const"|"float"|"native"|"super"
@@ -35,61 +36,61 @@ ID							[a-zA-Z_\$]+[a-zA-Z_\$0-9]*
 %%
 
 (\n|\r|\r\n) 			{col=1; line++;}
-{REALLIT}				{col+=yyleng; if(print_flag) printf("REALLIT(%s)\n", yytext); if(ast) return REALLIT;}
-{DECLIT}				{col+=yyleng; if(print_flag) printf("DECLIT(%s)\n", yytext); if(ast) return DECLIT;}
+{REALLIT}				{col+=yyleng; if(print_flag) printf("REALLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return REALLIT;}}
+{DECLIT}				{col+=yyleng; if(print_flag) printf("DECLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return DECLIT;}}
 
-{RESERVED}				{col+=yyleng; if(print_flag) printf("RESERVED(%s)\n", yytext); if(ast) return RESERVED;}
-"boolean"				{col+=yyleng; if(print_flag) printf("BOOL\n"); if(ast) return BOOL;}
-"true"|"false"			{col+=yyleng; if(print_flag) printf("BOOLLIT(%s)\n", yytext); if(ast) return BOOLLIT;}
-class					{col+=yyleng; if(print_flag) printf("CLASS\n"); if(ast) return CLASS;}
-do						{col+=yyleng; if(print_flag) printf("DO\n"); if(ast) return DO;}
-\.length				{col+=yyleng; if(print_flag) printf("DOTLENGTH\n"); if(ast) return DOTLENGTH;}
-double					{col+=yyleng; if(print_flag) printf("DOUBLE\n"); if(ast) return DOUBLE;}
-else					{col+=yyleng; if(print_flag) printf("ELSE\n"); if(ast) return ELSE;}
-if						{col+=yyleng; if(print_flag) printf("IF\n"); if(ast) return IF;}
-int						{col+=yyleng; if(print_flag) printf("INT\n"); if(ast) return INT;} 
-Integer"."parseInt		{col+=yyleng; if(print_flag) printf("PARSEINT\n"); if(ast) return PARSEINT;}
-System"."out"."println	{col+=yyleng; if(print_flag) printf("PRINT\n"); if(ast) return PRINT;}
-public					{col+=yyleng; if(print_flag) printf("PUBLIC\n"); if(ast) return PUBLIC;}
-return					{col+=yyleng; if(print_flag) printf("RETURN\n"); if(ast) return RETURN;}
-static					{col+=yyleng; if(print_flag) printf("STATIC\n"); if(ast) return STATIC;}
-String   				{col+=yyleng; if(print_flag) printf("STRING\n"); if(ast) return STRING;}
-void					{col+=yyleng; if(print_flag) printf("VOID\n"); if(ast) return VOID;}
-while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) return WHILE;}
-"("						{col+=yyleng; if(print_flag) printf("OCURV\n"); if(ast) return OCURV;}
-")"						{col+=yyleng; if(print_flag) printf("CCURV\n"); if(ast) return CCURV;}
-"{"						{col+=yyleng; if(print_flag) printf("OBRACE\n"); if(ast) return OBRACE;}
-"}"						{col+=yyleng; if(print_flag) printf("CBRACE\n"); if(ast) return CBRACE;}
-"["						{col+=yyleng; if(print_flag) printf("OSQUARE\n"); if(ast) return OSQUARE;}
-"]"						{col+=yyleng; if(print_flag) printf("CSQUARE\n"); if(ast) return CSQUARE;}
-"&&"					{col+=yyleng; if(print_flag) printf("AND\n"); if(ast) return AND;}
-"||"					{col+=yyleng; if(print_flag) printf("OR\n"); if(ast) return OR;}
-"<"						{col+=yyleng; if(print_flag) printf("LT\n"); if(ast) return LT;}
-">"						{col+=yyleng; if(print_flag) printf("GT\n"); if(ast) return GT;}
-"=="					{col+=yyleng; if(print_flag) printf("EQ\n"); if(ast) return EQ;}
-"!="					{col+=yyleng; if(print_flag) printf("NEQ\n"); if(ast) return NEQ;}
-"<="					{col+=yyleng; if(print_flag) printf("LEQ\n"); if(ast) return LEQ;}
-">="					{col+=yyleng; if(print_flag) printf("GEQ\n"); if(ast) return GEQ;}
-"+"						{col+=yyleng; if(print_flag) printf("PLUS\n"); if(ast) return PLUS;}
-"-"						{col+=yyleng; if(print_flag) printf("MINUS\n"); if(ast) return MINUS;}
-"*"						{col+=yyleng; if(print_flag) printf("STAR\n"); if(ast) return STAR;}
-"/"						{col+=yyleng; if(print_flag) printf("DIV\n"); if(ast) return DIV;}
-"%"						{col+=yyleng; if(print_flag) printf("MOD\n"); if(ast) return MOD;}
-"!"						{col+=yyleng; if(print_flag) printf("NOT\n"); if(ast) return NOT;}
-"="						{col+=yyleng; if(print_flag) printf("\n"); if(ast) return ASSIGN;}
-";" 					{col+=yyleng; if(print_flag) printf("SEMI\n"); if(ast) return SEMI;}
-","						{col+=yyleng; if(print_flag) printf("COMMA\n"); if(ast) return COMMA;}
+{RESERVED}				{col+=yyleng; if(print_flag) printf("RESERVED(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return RESERVED;}}
+"boolean"				{col+=yyleng; if(print_flag) printf("BOOL\n"); if(ast) {yylval.str = (char*) strdup(yytext); return BOOL;}}
+"true"|"false"			{col+=yyleng; if(print_flag) printf("BOOLLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return BOOLLIT;}}
+class					{col+=yyleng; if(print_flag) printf("CLASS\n"); if(ast) {yylval.str = (char*) strdup(yytext); return CLASS;}}
+do						{col+=yyleng; if(print_flag) printf("DO\n"); if(ast) {yylval.str = (char*) strdup(yytext); return DO;}}
+\.length				{col+=yyleng; if(print_flag) printf("DOTLENGTH\n"); if(ast) {yylval.str = (char*) strdup(yytext); return DOTLENGTH;}}
+double					{col+=yyleng; if(print_flag) printf("DOUBLE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return DOUBLE;}}
+else					{col+=yyleng; if(print_flag) printf("ELSE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return ELSE;}}
+if						{col+=yyleng; if(print_flag) printf("IF\n"); if(ast) {yylval.str = (char*) strdup(yytext); return IF;}}
+int						{col+=yyleng; if(print_flag) printf("INT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return INT;}}
+Integer"."parseInt		{col+=yyleng; if(print_flag) printf("PARSEINT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return PARSEINT;}}
+System"."out"."println	{col+=yyleng; if(print_flag) printf("PRINT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return PRINT;}}
+public					{col+=yyleng; if(print_flag) printf("PUBLIC\n"); if(ast) {yylval.str = (char*) strdup(yytext); return PUBLIC;}}
+return					{col+=yyleng; if(print_flag) printf("RETURN\n"); if(ast) {yylval.str = (char*) strdup(yytext); return RETURN;}}
+static					{col+=yyleng; if(print_flag) printf("STATIC\n"); if(ast) {yylval.str = (char*) strdup(yytext); return STATIC;}}
+String   				{col+=yyleng; if(print_flag) printf("STRING\n"); if(ast) {yylval.str = (char*) strdup(yytext); return STRING;}}
+void					{col+=yyleng; if(print_flag) printf("VOID\n"); if(ast) {yylval.str = (char*) strdup(yytext); return VOID;}}
+while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return WHILE;}}
+"("						{col+=yyleng; if(print_flag) printf("OCURV\n"); if(ast) {yylval.str = (char*) strdup(yytext); return OCURV;}}
+")"						{col+=yyleng; if(print_flag) printf("CCURV\n"); if(ast) {yylval.str = (char*) strdup(yytext); return CCURV;}}
+"{"						{col+=yyleng; if(print_flag) printf("OBRACE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return OBRACE;}}
+"}"						{col+=yyleng; if(print_flag) printf("CBRACE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return CBRACE;}}
+"["						{col+=yyleng; if(print_flag) printf("OSQUARE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return OSQUARE;}}
+"]"						{col+=yyleng; if(print_flag) printf("CSQUARE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return CSQUARE;}}
+"&&"					{col+=yyleng; if(print_flag) printf("AND\n"); if(ast) {yylval.str = (char*) strdup(yytext); return AND;}}
+"||"					{col+=yyleng; if(print_flag) printf("OR\n"); if(ast) {yylval.str = (char*) strdup(yytext); return OR;}}
+"<"						{col+=yyleng; if(print_flag) printf("LT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return LT;}}
+">"						{col+=yyleng; if(print_flag) printf("GT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return GT;}}
+"=="					{col+=yyleng; if(print_flag) printf("EQ\n"); if(ast) {yylval.str = (char*) strdup(yytext); return EQ;}}
+"!="					{col+=yyleng; if(print_flag) printf("NEQ\n"); if(ast) {yylval.str = (char*) strdup(yytext); return NEQ;}}
+"<="					{col+=yyleng; if(print_flag) printf("LEQ\n"); if(ast) {yylval.str = (char*) strdup(yytext); return LEQ;}}
+">="					{col+=yyleng; if(print_flag) printf("GEQ\n"); if(ast) {yylval.str = (char*) strdup(yytext); return GEQ;}}
+"+"						{col+=yyleng; if(print_flag) printf("PLUS\n"); if(ast) {yylval.str = (char*) strdup(yytext); return PLUS;}}
+"-"						{col+=yyleng; if(print_flag) printf("MINUS\n"); if(ast) {yylval.str = (char*) strdup(yytext); return MINUS;}}
+"*"						{col+=yyleng; if(print_flag) printf("STAR\n"); if(ast) {yylval.str = (char*) strdup(yytext); return STAR;}}
+"/"						{col+=yyleng; if(print_flag) printf("DIV\n"); if(ast) {yylval.str = (char*) strdup(yytext); return DIV;}}
+"%"						{col+=yyleng; if(print_flag) printf("MOD\n"); if(ast) {yylval.str = (char*) strdup(yytext); return MOD;}}
+"!"						{col+=yyleng; if(print_flag) printf("NOT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return NOT;}}
+"="						{col+=yyleng; if(print_flag) printf("\n"); if(ast) {yylval.str = (char*) strdup(yytext); return ASSIGN;}}
+";" 					{col+=yyleng; if(print_flag) printf("SEMI\n"); if(ast) {yylval.str = (char*) strdup(yytext); return SEMI;}}
+","						{col+=yyleng; if(print_flag) printf("COMMA\n"); if(ast) {yylval.str = (char*) strdup(yytext); return COMMA;}}
 
 {IGNORE}				{col+=yyleng;}
-{ID}					{col+=yyleng; if(print_flag) printf("ID(%s)\n", yytext); if(ast) return ID;}
+{ID}					{col+=yyleng; if(print_flag) printf("ID(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return ID;}}
 
-\"						{str_begin=col; col+=yyleng; strcat(string, yytext); BEGIN(str);}
-<str>{
+\"						{str_begin=col; col+=yyleng; strcat(string, yytext); BEGIN(str_state);}
+<str_state>{
 	((\\t|\\r|\\f|\\n|\\\\|\\\"))*	col+=yyleng; strcat(string,yytext);	
 	"\\"([^trfn\"\n\r\\])?			str_error = 1; printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng; 
 	\"								strcat(string, yytext); col+=yyleng; if(str_error==0){ if(print_flag) printf("STRLIT(%s)\n", string); if(ast) return STRLIT;} str_error=0; string[0] = '\0'; BEGIN(0); 
 	(\n|\r|\r\n)					col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); str_error=0; string[0] = '\0'; line++; BEGIN(0);  
-	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); yyterminate();
+	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); eof_flag = 1; col = 2; return 0;
 	[^"]							col+=yyleng; strcat(string,yytext);
 }
 
@@ -97,13 +98,13 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) return WHILE;}
 
 "/*"					{comment_begin=col; line_begin=line; col+=yyleng; BEGIN(comment);}
 <comment>(\n|\r|\r\n) 	{col=1; line++;}
-<comment><<EOF>>		{printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); yyterminate();}
+<comment><<EOF>>		{col=2; printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); eof_flag = 1; return 0;}
 <comment>"*"+"/"		{col += yyleng; BEGIN(0);}
 <comment>(\f|\t)		{col++;}
 <comment>.				{col += yyleng;}
 
 
-<<EOF>>					{col+=yyleng; return 0;}
+<<EOF>>					{col = 2; eof_flag = 1; return 0;}
 .						{printf("Line %d, col %d: illegal character (%c)\n", line, col, yytext[0]); col+=yyleng;}
 
 %%
@@ -114,9 +115,14 @@ int main(int argc, char** argv)
 		if(strcmp(argv[1],"-l") == 0 || strcmp(argv[1],"-1") == 0) {
 			print_flag = 1;
 			ast = 0;
+		} else if(strcmp(argv[1],"-2") == 0) {
+			ast = 1;
+			while(eof_flag == 0)
+				yyparse();	
 		}
-	}
-	yyparse();
+	} 
+	if (ast == 0)
+		yylex();
 	return 0;
 }
 

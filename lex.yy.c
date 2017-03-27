@@ -912,11 +912,12 @@ char *yytext;
 #line 1 "jac.l"
 #line 2 "jac.l"
 	#include <stdio.h>
-	#include <stdlib.h>
 	#include <string.h>
 	#include "y.tab.h"
 
+
 	int print_flag = 0;
+	int eof_flag = 0;
 	int ast = 0;
 
 	int line = 1;
@@ -927,12 +928,12 @@ char *yytext;
 	int str_error = 0;
 	int line_begin = 0;
 	char string[1024];
-#line 930 "lex.yy.c"
+#line 931 "lex.yy.c"
 
-#line 932 "lex.yy.c"
+#line 933 "lex.yy.c"
 
 #define INITIAL 0
-#define str 1
+#define str_state 1
 #define comment 2
 
 #ifndef YY_NO_UNISTD_H
@@ -1148,10 +1149,10 @@ YY_DECL
 		}
 
 	{
-#line 35 "jac.l"
+#line 36 "jac.l"
 
 
-#line 1154 "lex.yy.c"
+#line 1155 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1221,322 +1222,322 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 37 "jac.l"
+#line 38 "jac.l"
 {col=1; line++;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 38 "jac.l"
-{col+=yyleng; if(print_flag) printf("REALLIT(%s)\n", yytext); if(ast) return REALLIT;}
+#line 39 "jac.l"
+{col+=yyleng; if(print_flag) printf("REALLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return REALLIT;}}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 39 "jac.l"
-{col+=yyleng; if(print_flag) printf("DECLIT(%s)\n", yytext); if(ast) return DECLIT;}
+#line 40 "jac.l"
+{col+=yyleng; if(print_flag) printf("DECLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return DECLIT;}}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 41 "jac.l"
-{col+=yyleng; if(print_flag) printf("RESERVED(%s)\n", yytext); if(ast) return RESERVED;}
+#line 42 "jac.l"
+{col+=yyleng; if(print_flag) printf("RESERVED(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return RESERVED;}}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 42 "jac.l"
-{col+=yyleng; if(print_flag) printf("BOOL\n"); if(ast) return BOOL;}
+#line 43 "jac.l"
+{col+=yyleng; if(print_flag) printf("BOOL\n"); if(ast) {yylval.str = (char*) strdup(yytext); return BOOL;}}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 43 "jac.l"
-{col+=yyleng; if(print_flag) printf("BOOLLIT(%s)\n", yytext); if(ast) return BOOLLIT;}
+#line 44 "jac.l"
+{col+=yyleng; if(print_flag) printf("BOOLLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return BOOLLIT;}}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 44 "jac.l"
-{col+=yyleng; if(print_flag) printf("CLASS\n"); if(ast) return CLASS;}
+#line 45 "jac.l"
+{col+=yyleng; if(print_flag) printf("CLASS\n"); if(ast) {yylval.str = (char*) strdup(yytext); return CLASS;}}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 45 "jac.l"
-{col+=yyleng; if(print_flag) printf("DO\n"); if(ast) return DO;}
+#line 46 "jac.l"
+{col+=yyleng; if(print_flag) printf("DO\n"); if(ast) {yylval.str = (char*) strdup(yytext); return DO;}}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 46 "jac.l"
-{col+=yyleng; if(print_flag) printf("DOTLENGTH\n"); if(ast) return DOTLENGTH;}
+#line 47 "jac.l"
+{col+=yyleng; if(print_flag) printf("DOTLENGTH\n"); if(ast) {yylval.str = (char*) strdup(yytext); return DOTLENGTH;}}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 47 "jac.l"
-{col+=yyleng; if(print_flag) printf("DOUBLE\n"); if(ast) return DOUBLE;}
+#line 48 "jac.l"
+{col+=yyleng; if(print_flag) printf("DOUBLE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return DOUBLE;}}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 48 "jac.l"
-{col+=yyleng; if(print_flag) printf("ELSE\n"); if(ast) return ELSE;}
+#line 49 "jac.l"
+{col+=yyleng; if(print_flag) printf("ELSE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return ELSE;}}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 49 "jac.l"
-{col+=yyleng; if(print_flag) printf("IF\n"); if(ast) return IF;}
+#line 50 "jac.l"
+{col+=yyleng; if(print_flag) printf("IF\n"); if(ast) {yylval.str = (char*) strdup(yytext); return IF;}}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 50 "jac.l"
-{col+=yyleng; if(print_flag) printf("INT\n"); if(ast) return INT;} 
+#line 51 "jac.l"
+{col+=yyleng; if(print_flag) printf("INT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return INT;}}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 51 "jac.l"
-{col+=yyleng; if(print_flag) printf("PARSEINT\n"); if(ast) return PARSEINT;}
+#line 52 "jac.l"
+{col+=yyleng; if(print_flag) printf("PARSEINT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return PARSEINT;}}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 52 "jac.l"
-{col+=yyleng; if(print_flag) printf("PRINT\n"); if(ast) return PRINT;}
+#line 53 "jac.l"
+{col+=yyleng; if(print_flag) printf("PRINT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return PRINT;}}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 53 "jac.l"
-{col+=yyleng; if(print_flag) printf("PUBLIC\n"); if(ast) return PUBLIC;}
+#line 54 "jac.l"
+{col+=yyleng; if(print_flag) printf("PUBLIC\n"); if(ast) {yylval.str = (char*) strdup(yytext); return PUBLIC;}}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 54 "jac.l"
-{col+=yyleng; if(print_flag) printf("RETURN\n"); if(ast) return RETURN;}
+#line 55 "jac.l"
+{col+=yyleng; if(print_flag) printf("RETURN\n"); if(ast) {yylval.str = (char*) strdup(yytext); return RETURN;}}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 55 "jac.l"
-{col+=yyleng; if(print_flag) printf("STATIC\n"); if(ast) return STATIC;}
+#line 56 "jac.l"
+{col+=yyleng; if(print_flag) printf("STATIC\n"); if(ast) {yylval.str = (char*) strdup(yytext); return STATIC;}}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 56 "jac.l"
-{col+=yyleng; if(print_flag) printf("STRING\n"); if(ast) return STRING;}
+#line 57 "jac.l"
+{col+=yyleng; if(print_flag) printf("STRING\n"); if(ast) {yylval.str = (char*) strdup(yytext); return STRING;}}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 57 "jac.l"
-{col+=yyleng; if(print_flag) printf("VOID\n"); if(ast) return VOID;}
+#line 58 "jac.l"
+{col+=yyleng; if(print_flag) printf("VOID\n"); if(ast) {yylval.str = (char*) strdup(yytext); return VOID;}}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 58 "jac.l"
-{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) return WHILE;}
+#line 59 "jac.l"
+{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return WHILE;}}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 59 "jac.l"
-{col+=yyleng; if(print_flag) printf("OCURV\n"); if(ast) return OCURV;}
+#line 60 "jac.l"
+{col+=yyleng; if(print_flag) printf("OCURV\n"); if(ast) {yylval.str = (char*) strdup(yytext); return OCURV;}}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 60 "jac.l"
-{col+=yyleng; if(print_flag) printf("CCURV\n"); if(ast) return CCURV;}
+#line 61 "jac.l"
+{col+=yyleng; if(print_flag) printf("CCURV\n"); if(ast) {yylval.str = (char*) strdup(yytext); return CCURV;}}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 61 "jac.l"
-{col+=yyleng; if(print_flag) printf("OBRACE\n"); if(ast) return OBRACE;}
+#line 62 "jac.l"
+{col+=yyleng; if(print_flag) printf("OBRACE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return OBRACE;}}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 62 "jac.l"
-{col+=yyleng; if(print_flag) printf("CBRACE\n"); if(ast) return CBRACE;}
+#line 63 "jac.l"
+{col+=yyleng; if(print_flag) printf("CBRACE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return CBRACE;}}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 63 "jac.l"
-{col+=yyleng; if(print_flag) printf("OSQUARE\n"); if(ast) return OSQUARE;}
+#line 64 "jac.l"
+{col+=yyleng; if(print_flag) printf("OSQUARE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return OSQUARE;}}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 64 "jac.l"
-{col+=yyleng; if(print_flag) printf("CSQUARE\n"); if(ast) return CSQUARE;}
+#line 65 "jac.l"
+{col+=yyleng; if(print_flag) printf("CSQUARE\n"); if(ast) {yylval.str = (char*) strdup(yytext); return CSQUARE;}}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 65 "jac.l"
-{col+=yyleng; if(print_flag) printf("AND\n"); if(ast) return AND;}
+#line 66 "jac.l"
+{col+=yyleng; if(print_flag) printf("AND\n"); if(ast) {yylval.str = (char*) strdup(yytext); return AND;}}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 66 "jac.l"
-{col+=yyleng; if(print_flag) printf("OR\n"); if(ast) return OR;}
+#line 67 "jac.l"
+{col+=yyleng; if(print_flag) printf("OR\n"); if(ast) {yylval.str = (char*) strdup(yytext); return OR;}}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 67 "jac.l"
-{col+=yyleng; if(print_flag) printf("LT\n"); if(ast) return LT;}
+#line 68 "jac.l"
+{col+=yyleng; if(print_flag) printf("LT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return LT;}}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 68 "jac.l"
-{col+=yyleng; if(print_flag) printf("GT\n"); if(ast) return GT;}
+#line 69 "jac.l"
+{col+=yyleng; if(print_flag) printf("GT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return GT;}}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 69 "jac.l"
-{col+=yyleng; if(print_flag) printf("EQ\n"); if(ast) return EQ;}
+#line 70 "jac.l"
+{col+=yyleng; if(print_flag) printf("EQ\n"); if(ast) {yylval.str = (char*) strdup(yytext); return EQ;}}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 70 "jac.l"
-{col+=yyleng; if(print_flag) printf("NEQ\n"); if(ast) return NEQ;}
+#line 71 "jac.l"
+{col+=yyleng; if(print_flag) printf("NEQ\n"); if(ast) {yylval.str = (char*) strdup(yytext); return NEQ;}}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 71 "jac.l"
-{col+=yyleng; if(print_flag) printf("LEQ\n"); if(ast) return LEQ;}
+#line 72 "jac.l"
+{col+=yyleng; if(print_flag) printf("LEQ\n"); if(ast) {yylval.str = (char*) strdup(yytext); return LEQ;}}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 72 "jac.l"
-{col+=yyleng; if(print_flag) printf("GEQ\n"); if(ast) return GEQ;}
+#line 73 "jac.l"
+{col+=yyleng; if(print_flag) printf("GEQ\n"); if(ast) {yylval.str = (char*) strdup(yytext); return GEQ;}}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 73 "jac.l"
-{col+=yyleng; if(print_flag) printf("PLUS\n"); if(ast) return PLUS;}
+#line 74 "jac.l"
+{col+=yyleng; if(print_flag) printf("PLUS\n"); if(ast) {yylval.str = (char*) strdup(yytext); return PLUS;}}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 74 "jac.l"
-{col+=yyleng; if(print_flag) printf("MINUS\n"); if(ast) return MINUS;}
+#line 75 "jac.l"
+{col+=yyleng; if(print_flag) printf("MINUS\n"); if(ast) {yylval.str = (char*) strdup(yytext); return MINUS;}}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 75 "jac.l"
-{col+=yyleng; if(print_flag) printf("STAR\n"); if(ast) return STAR;}
+#line 76 "jac.l"
+{col+=yyleng; if(print_flag) printf("STAR\n"); if(ast) {yylval.str = (char*) strdup(yytext); return STAR;}}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 76 "jac.l"
-{col+=yyleng; if(print_flag) printf("DIV\n"); if(ast) return DIV;}
+#line 77 "jac.l"
+{col+=yyleng; if(print_flag) printf("DIV\n"); if(ast) {yylval.str = (char*) strdup(yytext); return DIV;}}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 77 "jac.l"
-{col+=yyleng; if(print_flag) printf("MOD\n"); if(ast) return MOD;}
+#line 78 "jac.l"
+{col+=yyleng; if(print_flag) printf("MOD\n"); if(ast) {yylval.str = (char*) strdup(yytext); return MOD;}}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 78 "jac.l"
-{col+=yyleng; if(print_flag) printf("NOT\n"); if(ast) return NOT;}
+#line 79 "jac.l"
+{col+=yyleng; if(print_flag) printf("NOT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return NOT;}}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 79 "jac.l"
-{col+=yyleng; if(print_flag) printf("\n"); if(ast) return ASSIGN;}
+#line 80 "jac.l"
+{col+=yyleng; if(print_flag) printf("\n"); if(ast) {yylval.str = (char*) strdup(yytext); return ASSIGN;}}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 80 "jac.l"
-{col+=yyleng; if(print_flag) printf("SEMI\n"); if(ast) return SEMI;}
+#line 81 "jac.l"
+{col+=yyleng; if(print_flag) printf("SEMI\n"); if(ast) {yylval.str = (char*) strdup(yytext); return SEMI;}}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 81 "jac.l"
-{col+=yyleng; if(print_flag) printf("COMMA\n"); if(ast) return COMMA;}
+#line 82 "jac.l"
+{col+=yyleng; if(print_flag) printf("COMMA\n"); if(ast) {yylval.str = (char*) strdup(yytext); return COMMA;}}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 83 "jac.l"
+#line 84 "jac.l"
 {col+=yyleng;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 84 "jac.l"
-{col+=yyleng; if(print_flag) printf("ID(%s)\n", yytext); if(ast) return ID;}
+#line 85 "jac.l"
+{col+=yyleng; if(print_flag) printf("ID(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return ID;}}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 86 "jac.l"
-{str_begin=col; col+=yyleng; strcat(string, yytext); BEGIN(str);}
+#line 87 "jac.l"
+{str_begin=col; col+=yyleng; strcat(string, yytext); BEGIN(str_state);}
 	YY_BREAK
 
 case 48:
 YY_RULE_SETUP
-#line 88 "jac.l"
+#line 89 "jac.l"
 col+=yyleng; strcat(string,yytext);	
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 89 "jac.l"
+#line 90 "jac.l"
 str_error = 1; printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng; 
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 90 "jac.l"
+#line 91 "jac.l"
 strcat(string, yytext); col+=yyleng; if(str_error==0){ if(print_flag) printf("STRLIT(%s)\n", string); if(ast) return STRLIT;} str_error=0; string[0] = '\0'; BEGIN(0); 
 	YY_BREAK
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 91 "jac.l"
+#line 92 "jac.l"
 col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); str_error=0; string[0] = '\0'; line++; BEGIN(0);  
 	YY_BREAK
-case YY_STATE_EOF(str):
-#line 92 "jac.l"
-printf("Line %d, col %d: unterminated string literal\n", line, str_begin); yyterminate();
+case YY_STATE_EOF(str_state):
+#line 93 "jac.l"
+printf("Line %d, col %d: unterminated string literal\n", line, str_begin); eof_flag = 1; col = 2; return 0;
 	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
-#line 93 "jac.l"
+#line 94 "jac.l"
 col+=yyleng; strcat(string,yytext);
 	YY_BREAK
 
 case 53:
 YY_RULE_SETUP
-#line 96 "jac.l"
+#line 97 "jac.l"
 {col+=yyleng;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 98 "jac.l"
+#line 99 "jac.l"
 {comment_begin=col; line_begin=line; col+=yyleng; BEGIN(comment);}
 	YY_BREAK
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 99 "jac.l"
+#line 100 "jac.l"
 {col=1; line++;}
 	YY_BREAK
 case YY_STATE_EOF(comment):
-#line 100 "jac.l"
-{printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); yyterminate();}
+#line 101 "jac.l"
+{col=2; printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); eof_flag = 1; return 0;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 101 "jac.l"
+#line 102 "jac.l"
 {col += yyleng; BEGIN(0);}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 102 "jac.l"
+#line 103 "jac.l"
 {col++;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 103 "jac.l"
+#line 104 "jac.l"
 {col += yyleng;}
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 106 "jac.l"
-{col+=yyleng; return 0;}
+#line 107 "jac.l"
+{col = 2; eof_flag = 1; return 0;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 107 "jac.l"
+#line 108 "jac.l"
 {printf("Line %d, col %d: illegal character (%c)\n", line, col, yytext[0]); col+=yyleng;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 109 "jac.l"
+#line 110 "jac.l"
 ECHO;
 	YY_BREAK
-#line 1539 "lex.yy.c"
+#line 1540 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2547,7 +2548,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 109 "jac.l"
+#line 110 "jac.l"
 
 
 int main(int argc, char** argv) 
@@ -2556,9 +2557,14 @@ int main(int argc, char** argv)
 		if(strcmp(argv[1],"-l") == 0 || strcmp(argv[1],"-1") == 0) {
 			print_flag = 1;
 			ast = 0;
+		} else if(strcmp(argv[1],"-2") == 0) {
+			ast = 1;
+			while(eof_flag == 0)
+				yyparse();	
 		}
-	}
-	yyparse();
+	} 
+	if (ast == 0)
+		yylex();
 	return 0;
 }
 

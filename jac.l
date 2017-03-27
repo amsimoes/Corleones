@@ -13,7 +13,7 @@
 
 	int comment_begin = 0;
 	int str_begin = 0;
-	int str_error = 0;
+	
 	int line_begin = 0;
 	char string[1024];
 %}
@@ -32,6 +32,9 @@ REALLIT						({Digits}+"."{Digits}*{ExponentPart}?|"."{Digits}+{ExponentPart}?|{
 DECLIT						(0|([1-9](_|[0-9])*[0-9]+)*|[1-9][0-9]*)
 ID							[a-zA-Z_\$]+[a-zA-Z_\$0-9]*
 
+EscapeSequence				(\\t|\\r|\\f|\\n|\\\\|\\\")
+StringCharacter				([^\n\r\"\\]|{EscapeSequence})
+STRLIT						\"({StringCharacter})*\"
 
 %%
 
@@ -85,15 +88,16 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = 
 {ID}					{col+=yyleng; if(print_flag) printf("ID(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return ID;}}
 {DECLIT}				{col+=yyleng; if(print_flag) printf("DECLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return DECLIT;}}
 
-\"						{str_begin=col; col+=yyleng; strcat(string, yytext); BEGIN(str_state);}
+"\""						{str_begin=col; col+=yyleng; BEGIN(str_state);}
 <str_state>{
-	((\\t|\\r|\\f|\\n|\\\\|\\\"))*	col+=yyleng; strcat(string,yytext);	
-	"\\"([^trfn\"\n\r\\])?			str_error = 1; printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng; 
-	\"								strcat(string, yytext); col+=yyleng; if(str_error==0){ if(print_flag) printf("STRLIT(%s)\n", string); if(ast) return STRLIT;} str_error=0; string[0] = '\0'; BEGIN(0); 
-	(\n|\r|\r\n)					col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); str_error=0; string[0] = '\0'; line++; BEGIN(0);  
+	([^\n\r\"\\]|{EscapeSequence})	col+=yyleng;
+	"\\"([^trfn\"\n\r\\])?			printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng;  
+	(\n|\r|\r\n)					col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); string[0] = '\0'; line++; BEGIN(0);  
 	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); eof_flag = 1; col = 2; return 0; yyterminate();
-	[^"]							col+=yyleng; strcat(string,yytext);
+	\"								col+=yyleng; BEGIN(0);
 }
+
+{STRLIT}				{col+=yyleng; if(print_flag) printf("STRLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return STRLIT;}}
 
 "//"[^\n\r]*			{col+=yyleng;}
 

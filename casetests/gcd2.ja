@@ -1,0 +1,29 @@
+class gcd {
+  public static int a, b, c;
+  public static double a, b;
+  public static boolean pinho;
+  public static void main(String[] args) {
+    a = Integer.parseInt(args[0]);
+    b = Integer.parseInt(args[1]);
+    if (a == 0)
+      System.out.println(b);
+    else {
+      while (b > 0)
+        if (a > b){
+          a = a-b;
+          b = b-a;
+        }else{
+          c = a-b;
+          d = a-b;
+        }
+      System.out.println(a);
+    } 
+  }
+  public static boolean d, e;
+  public static int lul(int a, double b){
+    if (a == b){
+      return a + b;
+    }
+  }
+  public static boolean teste(){}
+}

@@ -1,0 +1,19 @@
+class gcd {
+  public static void main(String[] args) {
+    a = b;
+    while (a==b){
+      do{
+        a = a + b;
+      }while ( b >= a );
+
+      if (knapsack() == a){
+        return a;
+        a = b;
+      }else{
+        lul = 1;
+        lul = 2;
+      }
+
+    }
+  }
+}

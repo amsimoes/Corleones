@@ -1,0 +1,8 @@
+class gcd {
+  //asdddddddddddddd
+  /**
+  sakjlaslijafs
+  safjlasfj
+  **/
+  public static boolean main, main, main
+}

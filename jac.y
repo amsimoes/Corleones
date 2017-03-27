@@ -31,6 +31,10 @@
 %left STAR DIV MOD
 %right NOT
 
+%type <node> Program ProgramAux ProgramL ClassDecl FieldDecl CommaId MethodDecl MethodHeader FormalParams FormalParamsAux MethodBody
+MethodBodyAux MethodBodyL VarDecl Type Statement StatementEmpty ExprOptional StatementAux StatementL Assignment MethodInvocation MethodInvAux
+CommaExpr ParseArgs Expr 
+
 %%
 
 Program: ClassDecl OBRACE ProgramAux CBRACE

@@ -19,6 +19,13 @@
 %x  s_comment
 
 RESERVED 					"abstract"|continue|"for"|"new"|"switch"|"assert"|"default"|"package"|"synchronized"|"goto"|"private"|"this"|"break"|"implements"|"protected"|"throw"|"byte"|"import"|"throws"|"case"|"enum"|"instanceof"|"transient"|"++"|"--"|"null"|"Integer"|"System"|"catch"|"extends"|"short"|"try"|"char"|"final"|"interface"|"finally"|"long"|"strictfp"|"volatile"|"const"|"float"|"native"|"super"
+decimal						[0-9]
+natural						[1-9]
+letter						[a-zA-Z]
+num 						{natural}[_{decimal}]*{decimal}*	
+exponent					[eE][+-]{num}
+escape						(\\t|\\r|\\f|\\n|\\)
+STRLIT						\"((\\t|\\r|\\f|\\n|\\|\\\")|[^"\n\r])*\"
 IGNORE						(" "|\t|\r|\f)
 Digits						({Digit}|{Digit}(_|{Digit})*{Digit})
 Digit 						(0|[1-9])
@@ -113,9 +120,9 @@ while					{col+=yyleng; if(flag) printf("WHILE\n");}
 int main(int argc, char** argv) 
 {
 	if(argc == 2) {
-		if(strcmp(argv[1],"-l") == 0 || strcmp(argv[1],"-1") == 0) {
+		if(strcmp(argv[1],"-l") == 0) {
 			flag = 1;
-		}
+		} 
 	}
 	yylex();
 	return 0;

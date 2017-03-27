@@ -37,7 +37,7 @@ ID							[a-zA-Z_\$]+[a-zA-Z_\$0-9]*
 
 (\n|\r|\r\n) 			{col=1; line++;}
 {REALLIT}				{col+=yyleng; if(print_flag) printf("REALLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return REALLIT;}}
-{DECLIT}				{col+=yyleng; if(print_flag) printf("DECLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return DECLIT;}}
+
 
 {RESERVED}				{col+=yyleng; if(print_flag) printf("RESERVED(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return RESERVED;}}
 "boolean"				{col+=yyleng; if(print_flag) printf("BOOL\n"); if(ast) {yylval.str = (char*) strdup(yytext); return BOOL;}}
@@ -83,6 +83,7 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = 
 
 {IGNORE}				{col+=yyleng;}
 {ID}					{col+=yyleng; if(print_flag) printf("ID(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return ID;}}
+{DECLIT}				{col+=yyleng; if(print_flag) printf("DECLIT(%s)\n", yytext); if(ast) {yylval.str = (char*) strdup(yytext); return DECLIT;}}
 
 \"						{str_begin=col; col+=yyleng; strcat(string, yytext); BEGIN(str_state);}
 <str_state>{
@@ -90,7 +91,7 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = 
 	"\\"([^trfn\"\n\r\\])?			str_error = 1; printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng; 
 	\"								strcat(string, yytext); col+=yyleng; if(str_error==0){ if(print_flag) printf("STRLIT(%s)\n", string); if(ast) return STRLIT;} str_error=0; string[0] = '\0'; BEGIN(0); 
 	(\n|\r|\r\n)					col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); str_error=0; string[0] = '\0'; line++; BEGIN(0);  
-	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); eof_flag = 1; col = 2; return 0;
+	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); eof_flag = 1; col = 2; return 0; yyterminate();
 	[^"]							col+=yyleng; strcat(string,yytext);
 }
 
@@ -98,13 +99,13 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = 
 
 "/*"					{comment_begin=col; line_begin=line; col+=yyleng; BEGIN(comment);}
 <comment>(\n|\r|\r\n) 	{col=1; line++;}
-<comment><<EOF>>		{col=2; printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); eof_flag = 1; return 0;}
+<comment><<EOF>>		{printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); col=2; eof_flag = 1; return 0; yyterminate();}
 <comment>"*"+"/"		{col += yyleng; BEGIN(0);}
 <comment>(\f|\t)		{col++;}
 <comment>.				{col += yyleng;}
 
 
-<<EOF>>					{col = 2; eof_flag = 1; return 0;}
+<<EOF>>					{col=2; eof_flag = 1; return 0;}
 .						{printf("Line %d, col %d: illegal character (%c)\n", line, col, yytext[0]); col+=yyleng;}
 
 %%
@@ -112,17 +113,17 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = 
 int main(int argc, char** argv) 
 {
 	if(argc == 2) {
-		if(strcmp(argv[1],"-l") == 0 || strcmp(argv[1],"-1") == 0) {
+		if(strcmp(argv[1],"-l") == 0) {
 			print_flag = 1;
-			ast = 0;
-		} else if(strcmp(argv[1],"-2") == 0) {
-			ast = 1;
-			while(eof_flag == 0)
-				yyparse();	
+		} else if(strcmp(argv[1], "-1") == 0) {
+			print_flag = 0;
 		}
-	} 
-	if (ast == 0)
 		yylex();
+	} else if(argc == 1) {
+		ast = 1;
+		while(eof_flag == 0)
+			yyparse();
+	}
 	return 0;
 }
 

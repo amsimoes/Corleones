@@ -45,7 +45,7 @@ ProgramL: FieldDecl
 ClassDecl: CLASS ID 
 
 FieldDecl: PUBLIC STATIC Type ID CommaId SEMI 
-		| error SEMI		
+		| error SEMI		{$$ = NULL;}
 
 CommaId: CommaId COMMA ID 
 		| %empty

@@ -36,6 +36,8 @@ ID							[a-zA-Z_\$]+[a-zA-Z_\$0-9]*
 
 (\n|\r|\r\n) 			{col=1; line++;}
 {REALLIT}				{col+=yyleng; if(print_flag) printf("REALLIT(%s)\n", yytext); if(ast) return REALLIT;}
+{DECLIT}				{col+=yyleng; if(print_flag) printf("DECLIT(%s)\n", yytext); if(ast) return DECLIT;}
+
 {RESERVED}				{col+=yyleng; if(print_flag) printf("RESERVED(%s)\n", yytext); if(ast) return RESERVED;}
 "boolean"				{col+=yyleng; if(print_flag) printf("BOOL\n"); if(ast) return BOOL;}
 "true"|"false"			{col+=yyleng; if(print_flag) printf("BOOLLIT(%s)\n", yytext); if(ast) return BOOLLIT;}
@@ -80,7 +82,6 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) return WHILE;}
 
 {IGNORE}				{col+=yyleng;}
 {ID}					{col+=yyleng; if(print_flag) printf("ID(%s)\n", yytext); if(ast) return ID;}
-{DECLIT}				{col+=yyleng; if(print_flag) printf("DECLIT(%s)\n", yytext); if(ast) return DECLIT;}
 
 \"						{str_begin=col; col+=yyleng; strcat(string, yytext); BEGIN(str);}
 <str>{

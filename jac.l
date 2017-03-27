@@ -93,7 +93,7 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = 
 	([^\n\r\"\\]|{EscapeSequence})	col+=yyleng;
 	"\\"([^trfn\"\n\r\\])?			printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng;  
 	(\n|\r|\r\n)					col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); string[0] = '\0'; line++; BEGIN(0);  
-	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); eof_flag = 1; col = 2; return 0; yyterminate();
+	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); eof_flag = 1; col += 1; return 0; yyterminate();
 	\"								col+=yyleng; BEGIN(0);
 }
 
@@ -103,13 +103,13 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = 
 
 "/*"					{comment_begin=col; line_begin=line; col+=yyleng; BEGIN(comment);}
 <comment>(\n|\r|\r\n) 	{col=1; line++;}
-<comment><<EOF>>		{printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); col=2; eof_flag = 1; return 0; yyterminate();}
+<comment><<EOF>>		{printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); col+=1; eof_flag = 1; return 0; yyterminate();}
 <comment>"*"+"/"		{col += yyleng; BEGIN(0);}
 <comment>(\f|\t)		{col++;}
 <comment>.				{col += yyleng;}
 
 
-<<EOF>>					{col=2; eof_flag = 1; return 0;}
+<<EOF>>					{col+=1; eof_flag = 1; return 0;}
 .						{printf("Line %d, col %d: illegal character (%c)\n", line, col, yytext[0]); col+=yyleng;}
 
 %%

@@ -1475,7 +1475,7 @@ col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin)
 	YY_BREAK
 case YY_STATE_EOF(str_state):
 #line 96 "jac.l"
-printf("Line %d, col %d: unterminated string literal\n", line, str_begin); eof_flag = 1; col = 2; return 0; yyterminate();
+printf("Line %d, col %d: unterminated string literal\n", line, str_begin); eof_flag = 1; col += 1; return 0; yyterminate();
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
@@ -1506,7 +1506,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case YY_STATE_EOF(comment):
 #line 106 "jac.l"
-{printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); col=2; eof_flag = 1; return 0; yyterminate();}
+{printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); col+=1; eof_flag = 1; return 0; yyterminate();}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
@@ -1525,7 +1525,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 #line 112 "jac.l"
-{col=2; eof_flag = 1; return 0;}
+{col+=1; eof_flag = 1; return 0;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP

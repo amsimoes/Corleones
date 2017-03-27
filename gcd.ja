@@ -1,7 +1,7 @@
 class gcd {
   public static int lul;
 
-  public static boolean true(int k) {
+  public static boolean lel(int k) {
     int x;
   }
 

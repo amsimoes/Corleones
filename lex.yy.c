@@ -926,7 +926,7 @@ char *yytext;
 
 	int comment_begin = 0;
 	int str_begin = 0;
-	int str_error = 0;
+	
 	int line_begin = 0;
 	char string[1024];
 #line 932 "lex.yy.c"
@@ -1424,7 +1424,7 @@ YY_RULE_SETUP
 case 41:
 YY_RULE_SETUP
 #line 83 "jac.l"
-{col+=yyleng; if(print_flag) printf("\n"); if(ast) {yylval.str = (char*) strdup(yytext); return ASSIGN;}}
+{col+=yyleng; if(print_flag) printf("ASSIGN\n"); if(ast) {yylval.str = (char*) strdup(yytext); return ASSIGN;}}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
@@ -1465,13 +1465,13 @@ col+=yyleng;
 case 49:
 YY_RULE_SETUP
 #line 94 "jac.l"
-str_error = 1; printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng;  
+printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng;  
 	YY_BREAK
 case 50:
 /* rule 50 can match eol */
 YY_RULE_SETUP
 #line 95 "jac.l"
-col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); str_error=0; string[0] = '\0'; line++; BEGIN(0);  
+col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); string[0] = '\0'; line++; BEGIN(0);  
 	YY_BREAK
 case YY_STATE_EOF(str_state):
 #line 96 "jac.l"

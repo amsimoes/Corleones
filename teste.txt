@@ -1,0 +1,6 @@
+class lul {
+    boolean k;
+    double lel = 4;
+    int haha = 2;
+}
+asd

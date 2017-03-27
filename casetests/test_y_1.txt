@@ -4,5 +4,13 @@ class gcd {
   sakjlaslijafs
   safjlasfj
   **/
-  public static boolean main, main, main
+  //public static boolean main, main, main;
+  int a = 2;
 }
+
+class asda {
+	//haha
+	int a = 3;
+}
+
+/* asdasfff<<EOF>>

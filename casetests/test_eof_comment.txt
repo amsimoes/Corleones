@@ -7,4 +7,4 @@
   /*asd*/ #
 ola /*
    /* asd
-lasd 
+lasd <<EOF>>

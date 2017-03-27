@@ -80,7 +80,7 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = 
 "/"						{col+=yyleng; if(print_flag) printf("DIV\n"); if(ast) {yylval.str = (char*) strdup(yytext); return DIV;}}
 "%"						{col+=yyleng; if(print_flag) printf("MOD\n"); if(ast) {yylval.str = (char*) strdup(yytext); return MOD;}}
 "!"						{col+=yyleng; if(print_flag) printf("NOT\n"); if(ast) {yylval.str = (char*) strdup(yytext); return NOT;}}
-"="						{col+=yyleng; if(print_flag) printf("\n"); if(ast) {yylval.str = (char*) strdup(yytext); return ASSIGN;}}
+"="						{col+=yyleng; if(print_flag) printf("ASSIGN\n"); if(ast) {yylval.str = (char*) strdup(yytext); return ASSIGN;}}
 ";" 					{col+=yyleng; if(print_flag) printf("SEMI\n"); if(ast) {yylval.str = (char*) strdup(yytext); return SEMI;}}
 ","						{col+=yyleng; if(print_flag) printf("COMMA\n"); if(ast) {yylval.str = (char*) strdup(yytext); return COMMA;}}
 

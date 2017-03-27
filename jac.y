@@ -31,7 +31,7 @@
 %left STAR DIV MOD
 %right NOT
 
-/*%type <node> Program ProgramAux ProgramL ClassDecl FieldDecl CommaId MethodDecl MethodHeader FormalParams FormalParamsAux MethodBody
+/* %type <node> Program ProgramAux ProgramL ClassDecl FieldDecl CommaId MethodDecl MethodHeader FormalParams FormalParamsAux MethodBody
 MethodBodyAux MethodBodyL VarDecl Type Statement StatementEmpty ExprOptional StatementAux StatementL Assignment MethodInvocation MethodInvAux
 CommaExpr ParseArgs Expr */
 
@@ -56,10 +56,11 @@ CommaId: CommaId COMMA IDAux
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody
 
-MethodHeader: Type IDAux OCURV FormalParams CCURV
-		| Type IDAux OCURV CCURV 
-		| VOID IDAux OCURV FormalParams CCURV 
-		| VOID IDAux OCURV CCURV
+MethodHeader: Type IDAux OCURV MethodParams CCURV 
+		| VOID IDAux OCURV MethodParams CCURV 
+
+MethodParams: FormalParams
+		| %empty
 
 FormalParams: Type IDAux FormalParamsAux
 		| STRING OSQUARE CSQUARE IDAux 
@@ -75,7 +76,7 @@ MethodBodyAux: MethodBodyAux MethodBodyL
 MethodBodyL: VarDecl
 			| Statement
 
-VarDecl: Type IDAux CommaId SEMI
+VarDecl: Type IDAux CommaId SEMI	
 
 Type: BOOL 
 	| INT 
@@ -108,6 +109,7 @@ StatementL: Assignment
 Assignment: IDAux ASSIGN Expr
 
 MethodInvocation: IDAux OCURV MethodInvAux CCURV
+			| IDAux OCURV error CCURV
 
 MethodInvAux: Expr CommaExpr
 		| %empty

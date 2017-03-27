@@ -1,7 +1,18 @@
 class gcd {
   public static int lul;
+  public static boolean b;
+  public static double d;
 
-  public static boolean lel(int k) {
+  public static double kaka(int k, String[] args) {
+    // haha
+    boolean kek;
+  }
+
+  public static int lul(double x1, int x2, boolean t) {
+    int y;
+  }
+
+  public static boolean lel(int k, double l) {
     int x;
   }
 
@@ -25,6 +36,7 @@ class gcd {
         else
           b = b-a;
       System.out.println(a);
-    } 
+    } /*
+  } asdasd */
   }
 }

@@ -49,7 +49,7 @@ ProgramL: FieldDecl
 ClassDecl: CLASS IDAux 
 
 FieldDecl: PUBLIC STATIC Type IDAux CommaId SEMI 
-		| error SEMI		
+		| error SEMI			
 
 CommaId: CommaId COMMA IDAux 
 		| %empty
@@ -62,21 +62,21 @@ MethodHeader: Type IDAux OCURV MethodParams CCURV
 MethodParams: FormalParams
 		| %empty
 
-FormalParams: Type IDAux FormalParamsAux
+FormalParams: Type IDAux CommaTypeId
 		| STRING OSQUARE CSQUARE IDAux 
 
-FormalParamsAux: COMMA Type IDAux FormalParamsAux 
+CommaTypeId: CommaTypeId COMMA Type IDAux  
 		| %empty
 
 MethodBody: OBRACE MethodBodyAux CBRACE
 
-MethodBodyAux: MethodBodyAux MethodBodyL
+MethodBodyAux: MethodBodyL MethodBodyAux 
 			| %empty
 
 MethodBodyL: VarDecl
 			| Statement
 
-VarDecl: Type IDAux CommaId SEMI	
+VarDecl: Type IDAux CommaId SEMI
 
 Type: BOOL 
 	| INT 
@@ -88,23 +88,17 @@ Statement: OBRACE StatementEmpty CBRACE
 		| WHILE OCURV Expr CCURV Statement
 		| DO Statement WHILE OCURV Expr CCURV SEMI 
 		| PRINT OCURV Expr CCURV SEMI 
-		| PRINT OCURV STRLIT CCURV SEMI
-		| StatementAux SEMI
-		| RETURN ExprOptional SEMI
+		| PRINT OCURV StrAux CCURV SEMI
+		| Assignment SEMI
+		| MethodInvocation SEMI
+		| ParseArgs SEMI
+		| SEMI
+		| RETURN Expr SEMI
+		| RETURN SEMI
 		| error SEMI		
 
-StatementEmpty: StatementEmpty Statement
+StatementEmpty: Statement StatementEmpty 
 		| %empty
-
-ExprOptional: Expr 
-		| %empty
-
-StatementAux: StatementL
-		| %empty
-
-StatementL: Assignment
-	| MethodInvocation
-	| ParseArgs
 
 Assignment: IDAux ASSIGN Expr
 
@@ -114,13 +108,15 @@ MethodInvocation: IDAux OCURV MethodInvAux CCURV
 MethodInvAux: Expr CommaExpr
 		| %empty
 
-CommaExpr: CommaExpr COMMA Expr 
+CommaExpr: COMMA Expr CommaExpr
 		| %empty
 
 ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE CCURV
 		| PARSEINT OCURV error CCURV		
 
-Expr: StatementL 
+Expr: Assignment
+	| MethodInvocation
+	| ParseArgs 
 	| Expr AND Expr
 	| Expr OR Expr
 	| Expr EQ Expr
@@ -134,9 +130,9 @@ Expr: StatementL
 	| Expr STAR Expr
 	| Expr DIV Expr
 	| Expr MOD Expr
-	| PLUS Expr
-	| MINUS %prec MINUS Expr
-	| NOT Expr 
+	| PLUS Expr 
+	| MINUS Expr 			%prec NOT
+	| NOT Expr 				%prec NOT
 	| IDAux 
 	| IDAux DOTLENGTH 
 	| OCURV Expr CCURV
@@ -146,6 +142,8 @@ Expr: StatementL
 	| OCURV error CCURV		
 
 IDAux: ID	
+
+StrAux: STRLIT
 
 %%
 

@@ -3,7 +3,6 @@
 	#include <string.h>
 	#include "y.tab.h"
 
-
 	int print_flag = 0;
 	int eof_flag = 0;
 	int ast = 0;
@@ -92,8 +91,8 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = 
 <str_state>{
 	([^\n\r\"\\]|{EscapeSequence})	col+=yyleng;
 	"\\"([^trfn\"\n\r\\])?			printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col, yytext); col+=yyleng;  
-	(\n|\r|\r\n)					col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); string[0] = '\0'; line++; BEGIN(0);  
-	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); eof_flag = 1; col += 1; return 0; yyterminate();
+	(\n|\r|\r\n)					col=1; printf("Line %d, col %d: unterminated string literal\n", line, str_begin); line++; BEGIN(0);  
+	<<EOF>>							printf("Line %d, col %d: unterminated string literal\n", line, str_begin); col += 1; return 0; yyterminate();
 	\"								col+=yyleng; BEGIN(0);
 }
 
@@ -103,13 +102,13 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(ast) {yylval.str = 
 
 "/*"					{comment_begin=col; line_begin=line; col+=yyleng; BEGIN(comment);}
 <comment>(\n|\r|\r\n) 	{col=1; line++;}
-<comment><<EOF>>		{printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); col+=1; eof_flag = 1; return 0; yyterminate();}
+<comment><<EOF>>		{printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); col+=1; return 0; yyterminate();}
 <comment>"*"+"/"		{col += yyleng; BEGIN(0);}
 <comment>(\f|\t)		{col++;}
 <comment>.				{col += yyleng;}
 
 
-<<EOF>>					{col+=1; eof_flag = 1; return 0;}
+<<EOF>>					{col+=1; return 0;}
 .						{printf("Line %d, col %d: illegal character (%c)\n", line, col, yytext[0]); col+=yyleng;}
 
 %%
@@ -125,8 +124,7 @@ int main(int argc, char** argv)
 		yylex();
 	} else if(argc == 1) {
 		ast = 1;
-		while(eof_flag == 0)
-			yyparse();
+		yyparse();
 	}
 	return 0;
 }

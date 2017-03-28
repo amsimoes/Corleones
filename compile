@@ -2,3 +2,4 @@
 flex jac.l
 yacc -d jac.y
 clang-3.8 -Wall -Wno-unused-function *.c -o jac
+zip -q jac.zip jac.l jac.y y.tab.h

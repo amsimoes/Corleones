@@ -31,9 +31,9 @@
 %left STAR DIV MOD
 %right NOT
 
-/* %type <node> Program ProgramAux ProgramL ClassDecl FieldDecl CommaId MethodDecl MethodHeader FormalParams FormalParamsAux MethodBody
-MethodBodyAux MethodBodyL VarDecl Type Statement StatementEmpty ExprOptional StatementAux StatementL Assignment MethodInvocation MethodInvAux
-CommaExpr ParseArgs Expr */
+/*%type <node> Program ProgramAux ProgramL ClassDecl FieldDecl CommaId MethodDecl MethodHeader MethodParams 
+FormalParams CommaTypeId MethodBody MethodBodyAux MethodBodyL VarDecl Type Statement ExprPrint StatementEmpty 
+Assignment MethodInvocation MethodInvAux CommaExpr ParseArgs Expr IDAux StrAux*/
 
 %%
 
@@ -115,24 +115,26 @@ ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE CCURV
 		| PARSEINT OCURV error CCURV		
 
 Expr: Assignment
-	| MethodInvocation
+	| ExprL
+
+ExprL: MethodInvocation
 	| ParseArgs 
-	| Expr AND Expr
-	| Expr OR Expr
-	| Expr EQ Expr
-	| Expr GEQ Expr
-	| Expr GT Expr 
-	| Expr LEQ Expr 
-	| Expr LT Expr
-	| Expr NEQ Expr
-	| Expr PLUS Expr
-	| Expr MINUS Expr
-	| Expr STAR Expr
-	| Expr DIV Expr
-	| Expr MOD Expr
-	| PLUS Expr 
-	| MINUS Expr 			%prec NOT
-	| NOT Expr 				%prec NOT
+	| ExprL AND ExprL
+	| ExprL OR ExprL
+	| ExprL EQ ExprL
+	| ExprL GEQ ExprL
+	| ExprL GT ExprL 
+	| ExprL LEQ ExprL 
+	| ExprL LT ExprL
+	| ExprL NEQ ExprL
+	| ExprL PLUS ExprL
+	| ExprL MINUS ExprL
+	| ExprL STAR ExprL
+	| ExprL DIV ExprL
+	| ExprL MOD ExprL
+	| PLUS ExprL 			%prec NOT
+	| MINUS ExprL 			%prec NOT
+	| NOT ExprL 			%prec NOT
 	| IDAux 
 	| IDAux DOTLENGTH 
 	| OCURV Expr CCURV

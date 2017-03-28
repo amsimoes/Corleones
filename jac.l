@@ -1,10 +1,11 @@
 %{
 	#include <stdio.h>
 	#include <string.h>
+	
 	#include "y.tab.h"
+	#include "ast.h"
 
 	int print_flag = 0;
-	int eof_flag = 0;
 	int syntax_flag = 0;
 
 	int line = 1;
@@ -14,10 +15,8 @@
 	int str_begin = 0;
 	
 	int line_begin = 0;
-	char string[1024];
 %}
 
-%option yylineno
 %x	str_state
 %x	comment
 
@@ -123,8 +122,8 @@ int main(int argc, char** argv)
 			print_flag = 0;
 			syntax_flag = 1;
 			yyparse();
-			/*if(error_flag == 0)
-				print_tree();*/
+			if(!error_flag)
+				print_tree();
 		}
 	} else if(argc == 1) {
 		syntax_flag = 1;

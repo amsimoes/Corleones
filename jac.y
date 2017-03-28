@@ -2,6 +2,8 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 
+	#include "ast.h"
+
 	int yylex(void);
 	void yyerror(const char *s);
 

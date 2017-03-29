@@ -27,14 +27,15 @@
 %right ASSIGN
 %left OR
 %left AND
-%left GT LT GEQ LEQ NEQ EQ
+%left EQ NEQ
+%left GT LT GEQ LEQ
 %left PLUS MINUS
 %left STAR DIV MOD
 %right NOT
 
-%type <node> Program ProgramAux ProgramL ClassDecl FieldDecl MethodDecl MethodHeader MethodParams VarDeclAux FieldDeclAux
-%type <node> ParamDecl StringArray CommaTypeId MethodBody MethodBodyL VarDecl Type Statement StatementEmpty IdVarDecl IdFieldDecl
-%type <node> Assignment MethodInvocation MethodInvAux CommaExpr ParseArgs Expr ExprL IDAux StrAux RealAux VoidAux BoolAux DecAux
+%type <node> Program ProgramAux ProgramL ClassDecl FieldDecl MethodDecl MethodHeader MethodParams VarDeclAux FieldDeclAux IdVarDecl
+%type <node> ParamDecl ParamDeclAux StringArray MethodBody MethodBodyL VarDecl Type Statement StatementEmpty IdFieldDecl FormalParams
+%type <node> Assignment MethodInvocation MethodInvAux CommaExpr ParseArgs Expr ExprL IDAux StrAux RealAux VoidAux BoolAux DecAux 
 
 %%
 
@@ -49,7 +50,7 @@ ProgramL: FieldDecl								{$$ = ast_insert_node("FieldDeclAux", 0, 1, $1);}
 
 ClassDecl: CLASS IDAux 							{$$ = ast_insert_node("ClassDecl", 0, 1, $2);}
 
-FieldDecl: PUBLIC STATIC Type FieldDeclAux SEMI 	{ast_insert_decl($3, $4);}
+FieldDecl: PUBLIC STATIC Type FieldDeclAux SEMI 	{ast_insert_decl($3, $4); $$ = $4;}
 		| error SEMI								{$$ = NULL;}
 
 FieldDeclAux: FieldDeclAux COMMA IdFieldDecl		{$$ = ast_insert_node("FieldDecl", 0, 2, $1, $3);}
@@ -61,15 +62,17 @@ MethodHeader: Type IDAux OCURV MethodParams CCURV	{$$ = ast_insert_node("MethodH
 		| VoidAux IDAux OCURV MethodParams CCURV 	{$$ = ast_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
 
 MethodParams: ParamDecl							{$$ = ast_insert_node("MethodParams", 1, 1, $1);}
-		| %empty 								{$$ = ast_insert_terminal("Empty", 0, NULL);}
+		| %empty 								{$$ = ast_insert_node("MethodParams", 1, 0);}
 
-ParamDecl: Type IDAux CommaTypeId				{$$ = ast_insert_node("ParamDecl", 1, 3, $1, $2, $3);}
+ParamDecl: ParamDeclAux 						{$$ = $1;}
 		| StringArray IDAux 					{$$ = ast_insert_node("ParamDecl", 1, 2, $1, $2);}
 
-StringArray: STRING OSQUARE CSQUARE				{$$ = ast_insert_node("StringArray", 1, 0);}
+ParamDeclAux: ParamDeclAux COMMA FormalParams   {$$ = ast_insert_node("ParamDeclAux", 0, 2, $1, $3);}
+		| FormalParams 							{$$ = ast_insert_node("FormalParams", 0, 1, $1);}
 
-CommaTypeId: CommaTypeId COMMA Type IDAux  		{$$ = ast_insert_node("CommaTypeId", 0, 3, $1, $3, $4);}
-		| %empty 								{$$ = ast_insert_terminal("Empty", 0, NULL);}
+FormalParams: Type IDAux 						{$$ = ast_insert_node("ParamDecl", 1, 2, $1, $2);}
+
+StringArray: STRING OSQUARE CSQUARE				{$$ = ast_insert_node("StringArray", 1, 0);}
 
 MethodBody: OBRACE MethodBodyL CBRACE			{$$ = ast_insert_node("MethodBody", 1, 1, $2);}
 
@@ -109,7 +112,7 @@ Assignment: IDAux ASSIGN Expr 					{$$ = ast_insert_node("Assign", 1, 2, $1, $3)
 MethodInvocation: IDAux OCURV MethodInvAux CCURV	{$$ = ast_insert_node("Call", 1, 2, $1, $3);}
 			| IDAux OCURV error CCURV 				{$$ = NULL;}
 
-MethodInvAux: Expr CommaExpr 					{$$ = ast_insert_node("MethodInvAux", 0, 2, $1, $2);}
+MethodInvAux: Expr CommaExpr 					{$$ = ast_insert_node("Call", 0, 2, $1, $2);}
 		| %empty 								{$$ = ast_insert_terminal("Empty", 0, NULL);}
 
 CommaExpr: COMMA Expr CommaExpr					{$$ = ast_insert_node("CommaExpr", 0, 2, $2, $3);}
@@ -120,7 +123,6 @@ ParseArgs: PARSEINT OCURV IDAux OSQUARE Expr CSQUARE CCURV	{$$ = ast_insert_node
 
 Expr: Assignment 								{$$ = ast_insert_node("Assignment", 0, 1, $1);}
 	| ExprL										{$$ = ast_insert_node("ExprL", 0, 1, $1);}
-
 
 ExprL: MethodInvocation 						{$$ = ast_insert_node("MethodInvocationList", 0, 1, $1);}
 	| ParseArgs 								{$$ = ast_insert_node("ParseArgsAux", 0, 1, $1);}

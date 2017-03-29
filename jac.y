@@ -32,8 +32,8 @@
 %left STAR DIV MOD
 %right NOT
 
-%type <node> Program ProgramAux ProgramL ClassDecl FieldDecl CommaId MethodDecl MethodHeader MethodParams 
-%type <node> ParamDecl StringArray CommaTypeId MethodBody MethodBodyAux MethodBodyL VarDecl Type Statement StatementEmpty 
+%type <node> Program ProgramAux ProgramL ClassDecl FieldDecl CommaId MethodDecl MethodHeader MethodParams VarDeclAux
+%type <node> ParamDecl StringArray CommaTypeId MethodBody MethodBodyL VarDecl Type Statement StatementEmpty IDAuxVar
 %type <node> Assignment MethodInvocation MethodInvAux CommaExpr ParseArgs Expr ExprL IDAux StrAux RealAux VoidAux BoolAux DecAux
 
 %%
@@ -52,13 +52,13 @@ ClassDecl: CLASS IDAux 							{$$ = ast_insert_node("ClassDecl", 0, 1, $2);}
 FieldDecl: PUBLIC STATIC Type IDAux CommaId SEMI 	{$$ = ast_insert_node("FieldDecl", 1, 2, $3, $4);}
 		| error SEMI							{$$ = NULL;}
 
-CommaId: CommaId COMMA IDAux					{$$ = ast_insert_node("CommaId", 0, 2, $1, $3);}					 					
+CommaId: CommaId COMMA IDAux					{$$ = ast_insert_node("FieldDecl", 1, 2, $1, $3);}					 					
 		| %empty 								{$$ = ast_insert_terminal("Empty", 0, NULL);}
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody 	{$$ = ast_insert_node("MethodDecl", 0, 2, $3, $4);} 	
 
 MethodHeader: Type IDAux OCURV MethodParams CCURV	{$$ = ast_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
-		| VoidAux IDAux OCURV MethodParams CCURV 		{$$ = ast_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
+		| VoidAux IDAux OCURV MethodParams CCURV 	{$$ = ast_insert_node("MethodHeader", 1, 3, $1, $2, $4);}
 
 MethodParams: ParamDecl							{$$ = ast_insert_node("MethodParams", 1, 1, $1);}
 		| %empty 								{$$ = ast_insert_terminal("Empty", 0, NULL);}
@@ -71,15 +71,16 @@ StringArray: STRING OSQUARE CSQUARE				{$$ = ast_insert_node("StringArray", 1, 0
 CommaTypeId: CommaTypeId COMMA Type IDAux  		{$$ = ast_insert_node("CommaTypeId", 0, 3, $1, $3, $4);}
 		| %empty 								{$$ = ast_insert_terminal("Empty", 0, NULL);}
 
-MethodBody: OBRACE MethodBodyAux CBRACE			{$$ = ast_insert_node("MethodBody", 1, 1, $2);}
+MethodBody: OBRACE MethodBodyL CBRACE			{$$ = ast_insert_node("MethodBody", 1, 1, $2);}
 
-MethodBodyAux: MethodBodyL MethodBodyAux 		{$$ = ast_insert_node("MethodBodyAux", 0, 2, $1, $2);}
-			| %empty 							{$$ = ast_insert_terminal("Empty", 0, NULL);}
+MethodBodyL: MethodBodyL VarDecl 				{$$ = ast_insert_node("MethodBodyL", 0, 2, $1, $2);}
+		| MethodBodyL Statement 				{$$ = ast_insert_node("MethodBodyL", 0, 2, $1, $2);}
+		| %empty 								{$$ = NULL;}
 
-MethodBodyL: VarDecl							{$$ = ast_insert_node("MethodBodyL", 0, 1, $1);}
-			| Statement 						{$$ = ast_insert_node("MethodBodyL", 0, 1, $1);}
+VarDecl: Type VarDeclAux SEMI					{ast_insert_vardecl($1, $2); $$ = $2;}
 
-VarDecl: Type IDAux CommaId SEMI				{$$ = ast_insert_node("VarDecl", 1, 2, $1, $2);}
+VarDeclAux: VarDeclAux COMMA IDAuxVar 		 	{$$ = ast_insert_node("VarDecl", 0, 2, $1, $3);}
+		| IDAuxVar								{$$ = $1;}
 
 Type: BOOL 										{$$ = ast_insert_terminal("Bool", 1, NULL);}
 	| INT 										{$$ = ast_insert_terminal("Int", 1, NULL);}
@@ -148,6 +149,8 @@ ExprL: MethodInvocation 						{$$ = ast_insert_node("MethodInvocationList", 0, 1
 	| OCURV error CCURV		 					{$$ = NULL;}
 
 IDAux: ID				{$$ = ast_insert_terminal("Id", 1, $1);}
+
+IDAuxVar: IDAux 		{$$ = ast_insert_node("VarDecl", 1, 1, $1);}
 
 BoolAux: BOOLLIT		{$$ = ast_insert_terminal("BoolLit", 1, $1);}
 

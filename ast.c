@@ -30,8 +30,9 @@ node_t* ast_insert_node(char* type, int used, int n_children, ...) {
 			continue;
 		} else if (!cur->used) {
 			nodes_to_use += cur->n_children;
-			for (i = 0; i < cur->n_children; i++)
+			for (i = 0; i < cur->n_children; i++) {
 				*tmp++ = cur->children[i];
+			}
 		} else {
 			*tmp++ = cur;
 			nodes_to_use++;
@@ -52,11 +53,45 @@ node_t* ast_insert_terminal(char* type, int used, void* value) {
 	return n;
 }
 
+node_t* save_nodes[2048];
+
+void _ast_insert_vardecl(node_t* type, node_t* vardecl) {
+	node_t **tmp = save_nodes;
+
+	int i;
+	for (i = 0; i < vardecl->n_children; i++) {
+		*tmp++ = vardecl->children[i];
+	}
+
+	vardecl->n_children++;
+	vardecl->children = (node_t**) malloc (vardecl->n_children * sizeof(node_t*));
+	vardecl->children[0] = type;
+
+	tmp = save_nodes;
+	for (i = 1; i < vardecl->n_children; i++) {
+		vardecl->children[i] = *tmp++;
+	}
+}
+
+void ast_insert_vardecl(node_t* type, node_t* vardecl) {
+	/*printf("Type: %s\n", type->type);
+	printf("Node: %s\n", vardecl->type); 
+	print_node_children(vardecl);*/
+	if(!strcmp(vardecl->children[0]->type, "VarDecl")) {
+		int i;
+		for (i = 0; i < vardecl->n_children; i++) {
+			_ast_insert_vardecl(type, vardecl->children[i]);
+		}
+	} else {
+		_ast_insert_vardecl(type, vardecl);
+	}
+}
+
 void print_node_children(node_t* n) {
 	printf("Printing node %s children...\n", n->type);
 	int i = 0;
 	for (i = 0; i < n->n_children; i++) {
-		printf("Child #1: %s\n", n->children[i]->type);
+		printf("Child #%d: %s\n", i, n->children[i]->type);
 	}
 }
 

@@ -89,11 +89,11 @@ Type: BOOL 										{$$ = ast_insert_terminal("Bool", 1, NULL);}
 	| INT 										{$$ = ast_insert_terminal("Int", 1, NULL);}
 	| DOUBLE									{$$ = ast_insert_terminal("Double", 1, NULL);}
 
-Statement: OBRACE StatementEmpty CBRACE						{$$ = ast_insert_node("StmEmptyAux", 0, 1, $2);}
-		| IF OCURV Expr CCURV Statement %prec NO_ELSE		{$$ = ast_insert_node("If", 1, 3, $3, $5, ast_insert_terminal("Block", 1, 0));}
-		| IF OCURV Expr CCURV Statement ELSE Statement 		{$$ = ast_insert_node("If", 1, 3, $3, $5, $7);}
-		| WHILE OCURV Expr CCURV Statement 					{$$ = ast_insert_node("While", 1, 2, $3, $5);}
-		| DO Statement WHILE OCURV Expr CCURV SEMI          {$$ = ast_insert_node("DoWhile", 1, 2, $2, $5);}
+Statement: OBRACE StatementEmpty CBRACE						{if($2->n_children <= 1) $$ = ast_insert_node("Block", 0, 1, $2); else $$ = ast_insert_node("Block", 1, 1, $2);}
+		| IF OCURV Expr CCURV Statement %prec NO_ELSE		{if(ast_check_block($5)) $5 = ast_insert_terminal("Block", 1, NULL); $$ = ast_insert_node("If", 1, 3, $3, $5, ast_insert_terminal("Block", 1, 0));}
+		| IF OCURV Expr CCURV Statement ELSE Statement 		{if(ast_check_block($5)) $5 = ast_insert_terminal("Block", 1, NULL); if(ast_check_block($7)) $7 = ast_insert_terminal("Block", 1, NULL); $$ = ast_insert_node("If", 1, 3, $3, $5, $7);}
+		| WHILE OCURV Expr CCURV Statement 					{if(ast_check_block($5)) $5 = ast_insert_terminal("Block", 1, NULL); $$ = ast_insert_node("While", 1, 2, $3, $5);}
+		| DO Statement WHILE OCURV Expr CCURV SEMI          {if(ast_check_block($2)) $2 = ast_insert_terminal("Block", 1, NULL); $$ = ast_insert_node("DoWhile", 1, 2, $2, $5);}
 		| PRINT OCURV Expr CCURV SEMI 						{$$ = ast_insert_node("Print", 1, 1, $3);}
 		| PRINT OCURV StrAux CCURV SEMI						{$$ = ast_insert_node("Print", 1, 1, $3);}
 		| Assignment SEMI									{$$ = ast_insert_node("Assignment", 0, 1, $1);}

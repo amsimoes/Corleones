@@ -87,6 +87,14 @@ void ast_insert_decl(node_t* type, node_t* decl) {
 	}
 }
 
+int ast_check_block(node_t* n) {
+	if(!strcmp(n->type, "Empty") || (n->n_children == 0 && strcmp(n->type, "Return"))) {
+		return 1;
+	}
+
+	return 0;
+}
+
 void print_node_children(node_t* n) {
 	printf("Printing node %s children...\n", n->type);
 	int i = 0;

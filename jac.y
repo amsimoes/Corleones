@@ -32,8 +32,8 @@
 %left STAR DIV MOD
 %right NOT
 
-%type <node> Program ProgramAux ProgramL ClassDecl FieldDecl CommaId MethodDecl MethodHeader MethodParams VarDeclAux
-%type <node> ParamDecl StringArray CommaTypeId MethodBody MethodBodyL VarDecl Type Statement StatementEmpty IDAuxVar
+%type <node> Program ProgramAux ProgramL ClassDecl FieldDecl MethodDecl MethodHeader MethodParams VarDeclAux FieldDeclAux
+%type <node> ParamDecl StringArray CommaTypeId MethodBody MethodBodyL VarDecl Type Statement StatementEmpty IdVarDecl IdFieldDecl
 %type <node> Assignment MethodInvocation MethodInvAux CommaExpr ParseArgs Expr ExprL IDAux StrAux RealAux VoidAux BoolAux DecAux
 
 %%
@@ -49,11 +49,11 @@ ProgramL: FieldDecl								{$$ = ast_insert_node("FieldDeclAux", 0, 1, $1);}
 
 ClassDecl: CLASS IDAux 							{$$ = ast_insert_node("ClassDecl", 0, 1, $2);}
 
-FieldDecl: PUBLIC STATIC Type IDAux CommaId SEMI 	{$$ = ast_insert_node("FieldDecl", 1, 2, $3, $4);}
-		| error SEMI							{$$ = NULL;}
+FieldDecl: PUBLIC STATIC Type FieldDeclAux SEMI 	{ast_insert_decl($3, $4);}
+		| error SEMI								{$$ = NULL;}
 
-CommaId: CommaId COMMA IDAux					{$$ = ast_insert_node("FieldDecl", 1, 2, $1, $3);}					 					
-		| %empty 								{$$ = ast_insert_terminal("Empty", 0, NULL);}
+FieldDeclAux: FieldDeclAux COMMA IdFieldDecl		{$$ = ast_insert_node("FieldDecl", 0, 2, $1, $3);}
+		| IdFieldDecl 								{$$ = $1;}
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody 	{$$ = ast_insert_node("MethodDecl", 0, 2, $3, $4);} 	
 
@@ -77,17 +77,17 @@ MethodBodyL: MethodBodyL VarDecl 				{$$ = ast_insert_node("MethodBodyL", 0, 2, 
 		| MethodBodyL Statement 				{$$ = ast_insert_node("MethodBodyL", 0, 2, $1, $2);}
 		| %empty 								{$$ = NULL;}
 
-VarDecl: Type VarDeclAux SEMI					{ast_insert_vardecl($1, $2); $$ = $2;}
+VarDecl: Type VarDeclAux SEMI					{ast_insert_decl($1, $2); $$ = $2;}
 
-VarDeclAux: VarDeclAux COMMA IDAuxVar 		 	{$$ = ast_insert_node("VarDecl", 0, 2, $1, $3);}
-		| IDAuxVar								{$$ = $1;}
+VarDeclAux: VarDeclAux COMMA IdVarDecl 		 	{$$ = ast_insert_node("VarDecl", 0, 2, $1, $3);}
+		| IdVarDecl								{$$ = $1;}
 
 Type: BOOL 										{$$ = ast_insert_terminal("Bool", 1, NULL);}
 	| INT 										{$$ = ast_insert_terminal("Int", 1, NULL);}
 	| DOUBLE									{$$ = ast_insert_terminal("Double", 1, NULL);}
 
 Statement: OBRACE StatementEmpty CBRACE						{$$ = ast_insert_node("StmEmptyAux", 0, 1, $2);}
-		| IF OCURV Expr CCURV Statement %prec NO_ELSE		{$$ = ast_insert_node("If", 1, 3, $3, $5, NULL);}
+		| IF OCURV Expr CCURV Statement %prec NO_ELSE		{$$ = ast_insert_node("If", 1, 3, $3, $5, ast_insert_terminal("Block", 1, 0));}
 		| IF OCURV Expr CCURV Statement ELSE Statement 		{$$ = ast_insert_node("If", 1, 3, $3, $5, $7);}
 		| WHILE OCURV Expr CCURV Statement 					{$$ = ast_insert_node("While", 1, 2, $3, $5);}
 		| DO Statement WHILE OCURV Expr CCURV SEMI          {$$ = ast_insert_node("DoWhile", 1, 2, $2, $5);}
@@ -150,7 +150,9 @@ ExprL: MethodInvocation 						{$$ = ast_insert_node("MethodInvocationList", 0, 1
 
 IDAux: ID				{$$ = ast_insert_terminal("Id", 1, $1);}
 
-IDAuxVar: IDAux 		{$$ = ast_insert_node("VarDecl", 1, 1, $1);}
+IdVarDecl: IDAux 		{$$ = ast_insert_node("VarDecl", 1, 1, $1);}
+
+IdFieldDecl: IDAux 		{$$ = ast_insert_node("FieldDecl", 1, 1, $1);}	
 
 BoolAux: BOOLLIT		{$$ = ast_insert_terminal("BoolLit", 1, $1);}
 

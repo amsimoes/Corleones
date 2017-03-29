@@ -5,6 +5,8 @@
 	#include "y.tab.h"
 	#include "ast.h"
 
+	node_t* ast_root;
+
 	int print_flag = 0;
 	int syntax_flag = 0;
 
@@ -123,7 +125,7 @@ int main(int argc, char** argv)
 			syntax_flag = 1;
 			yyparse();
 			if(!error_flag)
-				print_tree();
+				print_ast_tree(ast_root, 0);
 		}
 	} else if(argc == 1) {
 		syntax_flag = 1;

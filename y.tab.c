@@ -1501,7 +1501,7 @@ yyreduce:
 
   case 8:
 #line 50 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("ClassDecl", 0, 0);}
+    {(yyval.node) = ast_insert_node("ClassDecl", 0, 1, (yyvsp[0].node));}
 #line 1506 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1531,7 +1531,7 @@ yyreduce:
 
   case 13:
 #line 58 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("MethodDecl", 1, 2, (yyvsp[-1].node), (yyvsp[0].node));}
+    {(yyval.node) = ast_insert_node("MethodDecl", 0, 2, (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1536 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1573,7 +1573,7 @@ yyreduce:
 
   case 20:
 #line 69 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("StringArray", 0, 0);}
+    {(yyval.node) = ast_insert_node("StringArray", 1, 0);}
 #line 1578 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1591,7 +1591,7 @@ yyreduce:
 
   case 23:
 #line 74 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("MethodBody", 0, 1, (yyvsp[-1].node));}
+    {(yyval.node) = ast_insert_node("MethodBody", 1, 1, (yyvsp[-1].node));}
 #line 1596 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1627,19 +1627,19 @@ yyreduce:
 
   case 29:
 #line 84 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_terminal("Bool", 0, NULL);}
+    {(yyval.node) = ast_insert_terminal("Bool", 1, NULL);}
 #line 1632 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
 #line 85 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_terminal("Int", 0, NULL);}
+    {(yyval.node) = ast_insert_terminal("Int", 1, NULL);}
 #line 1638 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
 #line 86 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_terminal("Double", 0, NULL);}
+    {(yyval.node) = ast_insert_terminal("Double", 1, NULL);}
 #line 1644 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1741,7 +1741,7 @@ yyreduce:
 
   case 48:
 #line 106 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("Assign", 1, 2, (yyvsp[-2].node), (yyvsp[-1].str));}
+    {(yyval.node) = ast_insert_node("Assign", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
 #line 1746 "y.tab.c" /* yacc.c:1646  */
     break;
 

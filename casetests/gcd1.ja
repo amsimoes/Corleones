@@ -1,5 +1,5 @@
-class lel {
-	public static void lel(double1 k1) {
-		int a;
+class gcd {
+	public static void main(String[] args) {
+		int a, b, c;
 	}
-}        
+}

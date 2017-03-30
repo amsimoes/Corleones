@@ -77,7 +77,7 @@ void ast_insert_decl(node_t* type, node_t* decl) {
 	/*printf("Type: %s\n", type->type);
 	printf("Node: %s\n", vardecl->type); 
 	print_node_children(vardecl);*/
-	if(!strcmp(decl->children[0]->type, "VarDecl") || !strcmp(decl->children[0]->type, "FieldDecl") || !strcmp(decl->children[0]->type, "ParamDecl")) {
+	if(!strcmp(decl->children[0]->type, "VarDecl") || !strcmp(decl->children[0]->type, "FieldDecl")) {
 		int i;
 		for (i = 0; i < decl->n_children; i++) {
 			_ast_insert_decl(type, decl->children[i]);

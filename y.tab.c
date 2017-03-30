@@ -1620,7 +1620,7 @@ yyreduce:
 
   case 27:
 #line 81 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = NULL;}
+    {(yyval.node) = ast_insert_terminal("Empty", 0, NULL);}
 #line 1625 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1662,31 +1662,31 @@ yyreduce:
 
   case 34:
 #line 92 "jac.y" /* yacc.c:1646  */
-    {if((yyvsp[-1].node)->n_children <= 1) (yyval.node) = ast_insert_node("Block", 0, 1, (yyvsp[-1].node)); else (yyval.node) = ast_insert_node("Block", 1, 1, (yyvsp[-1].node));}
+    {if((yyvsp[-1].node)->n_children <= 1) {(yyval.node) = ast_insert_node("Block", 0, 1, (yyvsp[-1].node));} else {(yyval.node) = ast_insert_node("Block", 1, 1, (yyvsp[-1].node));}}
 #line 1667 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
 #line 93 "jac.y" /* yacc.c:1646  */
-    {if(ast_check_block((yyvsp[0].node))) (yyvsp[0].node) = ast_insert_terminal("Block", 1, NULL); (yyval.node) = ast_insert_node("If", 1, 3, (yyvsp[-2].node), (yyvsp[0].node), ast_insert_terminal("Block", 1, 0));}
+    {if((yyvsp[0].node)!=NULL){if(ast_check_block((yyvsp[0].node))) (yyvsp[0].node) = ast_insert_terminal("Block", 1, NULL);} (yyval.node) = ast_insert_node("If", 1, 3, (yyvsp[-2].node), (yyvsp[0].node), ast_insert_terminal("Block", 1, NULL));}
 #line 1673 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
 #line 94 "jac.y" /* yacc.c:1646  */
-    {if(ast_check_block((yyvsp[-2].node))) (yyvsp[-2].node) = ast_insert_terminal("Block", 1, NULL); if(ast_check_block((yyvsp[0].node))) (yyvsp[0].node) = ast_insert_terminal("Block", 1, NULL); (yyval.node) = ast_insert_node("If", 1, 3, (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node));}
+    {if((yyvsp[-2].node)!=NULL){if(ast_check_block((yyvsp[-2].node))) (yyvsp[-2].node) = ast_insert_terminal("Block", 1, NULL);} if((yyvsp[0].node)!=NULL){if(ast_check_block((yyvsp[0].node))) (yyvsp[0].node) = ast_insert_terminal("Block", 1, NULL);} (yyval.node) = ast_insert_node("If", 1, 3, (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node));}
 #line 1679 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
 #line 95 "jac.y" /* yacc.c:1646  */
-    {if(ast_check_block((yyvsp[0].node))) (yyvsp[0].node) = ast_insert_terminal("Block", 1, NULL); (yyval.node) = ast_insert_node("While", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
+    {if((yyvsp[0].node)!=NULL){if(ast_check_block((yyvsp[0].node))) (yyvsp[0].node) = ast_insert_terminal("Block", 1, NULL);} (yyval.node) = ast_insert_node("While", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
 #line 1685 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
 #line 96 "jac.y" /* yacc.c:1646  */
-    {if(ast_check_block((yyvsp[-5].node))) (yyvsp[-5].node) = ast_insert_terminal("Block", 1, NULL); (yyval.node) = ast_insert_node("DoWhile", 1, 2, (yyvsp[-5].node), (yyvsp[-2].node));}
+    {if((yyvsp[-5].node)!=NULL){if(ast_check_block((yyvsp[-5].node))) (yyvsp[-5].node) = ast_insert_terminal("Block", 1, NULL);} (yyval.node) = ast_insert_node("DoWhile", 1, 2, (yyvsp[-5].node), (yyvsp[-2].node));}
 #line 1691 "y.tab.c" /* yacc.c:1646  */
     break;
 

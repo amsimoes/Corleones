@@ -2506,10 +2506,10 @@ void yyfree (void * ptr )
 int main(int argc, char** argv) 
 {
 	if(argc == 2) {
-		if(strcmp(argv[1],"-l") == 0) {
+		if(!strcmp(argv[1],"-l")) {
 			print_flag = 1;
 			yylex();
-		} else if(strcmp(argv[1], "-t") == 0) {
+		} else if(!strcmp(argv[1], "-t") || !strcmp(argv[1], "-2")) {
 			print_flag = 0;
 			syntax_flag = 1;
 			yyparse();

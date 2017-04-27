@@ -3,6 +3,7 @@
 #include "symbol_t.h"
 
 sym_t** table;
+int table_index = 0;
 
 sym_t** new_table(int size) {
 	return (sym_t**) malloc (sizeof(sym_t) * size);
@@ -12,6 +13,7 @@ sym_t* new_sym_table(char* name) {
 	sym_t* sym_table = (sym_t*) malloc (sizeof(sym_t));
 	sym_table->name = strdup(name);
 	sym_table->defined = 0;
+	table_index++;
 	return sym_table;
 }
 
@@ -63,4 +65,23 @@ void print_table() {
 		i++;
 	}
 }
+
+int build_table(node_t* n) {
+	int i, sym_line, sym_col;
+	char* symbol_type;
+	if (!strcmp(n->type, "Class")) {
+		char* class_name[256] = "Class ";
+		if (n->n_children > 0)
+			class_name = strcat(class_name, n->children[0]->value);
+		table[table_index] = new_sym_table(class_name);
+	}
+}
+
+
+
+
+
+
+
+
 

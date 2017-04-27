@@ -3,6 +3,7 @@
 	#include <stdlib.h>
 
 	#include "ast.h"
+	#include "symbol_t.h"
 
 	int yylex(void);
 	void yyerror(const char *s);
@@ -18,6 +19,7 @@
 
 %union {
 	char *str;
+	int line, col;
 	struct node *node;
 }
 

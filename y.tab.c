@@ -68,6 +68,7 @@
 	#include <stdlib.h>
 
 	#include "ast.h"
+	#include "symbol_t.h"
 
 	int yylex(void);
 	void yyerror(const char *s);
@@ -76,7 +77,7 @@
 	extern char* yytext;
 	extern int line, col, yyleng;
 
-#line 80 "y.tab.c" /* yacc.c:339  */
+#line 81 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -212,12 +213,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 19 "jac.y" /* yacc.c:355  */
+#line 20 "jac.y" /* yacc.c:355  */
 
 	char *str;
+	int line, col;
 	struct node *node;
 
-#line 221 "y.tab.c" /* yacc.c:355  */
+#line 223 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -234,7 +236,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 238 "y.tab.c" /* yacc.c:358  */
+#line 240 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -536,16 +538,16 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    42,    42,    44,    45,    47,    48,    49,    51,    53,
-      54,    56,    57,    59,    61,    62,    64,    65,    67,    68,
-      70,    71,    73,    75,    77,    79,    80,    81,    83,    85,
-      86,    88,    89,    90,    92,    93,    94,    95,    96,    97,
-      98,    99,   100,   101,   102,   103,   104,   105,   107,   108,
-     110,   112,   113,   115,   116,   118,   119,   121,   122,   124,
-     125,   127,   128,   129,   130,   131,   132,   133,   134,   135,
-     136,   137,   138,   139,   140,   141,   142,   143,   144,   145,
-     146,   147,   148,   149,   150,   151,   153,   155,   157,   159,
-     161,   163,   165,   167
+       0,    44,    44,    46,    47,    49,    50,    51,    53,    55,
+      56,    58,    59,    61,    63,    64,    66,    67,    69,    70,
+      72,    73,    75,    77,    79,    81,    82,    83,    85,    87,
+      88,    90,    91,    92,    94,    95,    96,    97,    98,    99,
+     100,   101,   102,   103,   104,   105,   106,   107,   109,   110,
+     112,   114,   115,   117,   118,   120,   121,   123,   124,   126,
+     127,   129,   130,   131,   132,   133,   134,   135,   136,   137,
+     138,   139,   140,   141,   142,   143,   144,   145,   146,   147,
+     148,   149,   150,   151,   152,   153,   155,   157,   159,   161,
+     163,   165,   167,   169
 };
 #endif
 
@@ -1469,559 +1471,559 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 42 "jac.y" /* yacc.c:1646  */
+#line 44 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_root = ast_insert_node("Program", 1, 2, (yyvsp[-3].node), (yyvsp[-1].node));}
-#line 1475 "y.tab.c" /* yacc.c:1646  */
+#line 1477 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 44 "jac.y" /* yacc.c:1646  */
+#line 46 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("ProgramAux", 0, 2, (yyvsp[-1].node), (yyvsp[0].node));}
-#line 1481 "y.tab.c" /* yacc.c:1646  */
+#line 1483 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 45 "jac.y" /* yacc.c:1646  */
+#line 47 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Empty", 0, NULL);}
-#line 1487 "y.tab.c" /* yacc.c:1646  */
+#line 1489 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 47 "jac.y" /* yacc.c:1646  */
+#line 49 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("FieldDeclAux", 0, 1, (yyvsp[0].node));}
-#line 1493 "y.tab.c" /* yacc.c:1646  */
+#line 1495 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 48 "jac.y" /* yacc.c:1646  */
+#line 50 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodDecl", 1, 1, (yyvsp[0].node));}
-#line 1499 "y.tab.c" /* yacc.c:1646  */
+#line 1501 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 49 "jac.y" /* yacc.c:1646  */
+#line 51 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Empty", 0, NULL);}
-#line 1505 "y.tab.c" /* yacc.c:1646  */
+#line 1507 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 51 "jac.y" /* yacc.c:1646  */
+#line 53 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("ClassDecl", 0, 1, (yyvsp[0].node));}
-#line 1511 "y.tab.c" /* yacc.c:1646  */
+#line 1513 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 53 "jac.y" /* yacc.c:1646  */
+#line 55 "jac.y" /* yacc.c:1646  */
     {ast_insert_decl((yyvsp[-2].node), (yyvsp[-1].node)); (yyval.node) = (yyvsp[-1].node);}
-#line 1517 "y.tab.c" /* yacc.c:1646  */
+#line 1519 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 54 "jac.y" /* yacc.c:1646  */
+#line 56 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = NULL;}
-#line 1523 "y.tab.c" /* yacc.c:1646  */
+#line 1525 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 56 "jac.y" /* yacc.c:1646  */
+#line 58 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("FieldDecl", 0, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1529 "y.tab.c" /* yacc.c:1646  */
+#line 1531 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 57 "jac.y" /* yacc.c:1646  */
+#line 59 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = (yyvsp[0].node);}
-#line 1535 "y.tab.c" /* yacc.c:1646  */
+#line 1537 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 59 "jac.y" /* yacc.c:1646  */
+#line 61 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodDecl", 0, 2, (yyvsp[-1].node), (yyvsp[0].node));}
-#line 1541 "y.tab.c" /* yacc.c:1646  */
+#line 1543 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 61 "jac.y" /* yacc.c:1646  */
+#line 63 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodHeader", 1, 3, (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-1].node));}
-#line 1547 "y.tab.c" /* yacc.c:1646  */
+#line 1549 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 62 "jac.y" /* yacc.c:1646  */
+#line 64 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodHeader", 1, 3, (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-1].node));}
-#line 1553 "y.tab.c" /* yacc.c:1646  */
+#line 1555 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 64 "jac.y" /* yacc.c:1646  */
+#line 66 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodParams", 1, 1, (yyvsp[0].node));}
-#line 1559 "y.tab.c" /* yacc.c:1646  */
+#line 1561 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 65 "jac.y" /* yacc.c:1646  */
+#line 67 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodParams", 1, 0);}
-#line 1565 "y.tab.c" /* yacc.c:1646  */
+#line 1567 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 67 "jac.y" /* yacc.c:1646  */
+#line 69 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = (yyvsp[0].node);}
-#line 1571 "y.tab.c" /* yacc.c:1646  */
+#line 1573 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 68 "jac.y" /* yacc.c:1646  */
+#line 70 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("ParamDecl", 1, 2, (yyvsp[-1].node), (yyvsp[0].node));}
-#line 1577 "y.tab.c" /* yacc.c:1646  */
+#line 1579 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 70 "jac.y" /* yacc.c:1646  */
+#line 72 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("ParamDeclAux", 0, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1583 "y.tab.c" /* yacc.c:1646  */
+#line 1585 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 71 "jac.y" /* yacc.c:1646  */
+#line 73 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("FormalParams", 0, 1, (yyvsp[0].node));}
-#line 1589 "y.tab.c" /* yacc.c:1646  */
+#line 1591 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 73 "jac.y" /* yacc.c:1646  */
+#line 75 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("ParamDecl", 1, 2, (yyvsp[-1].node), (yyvsp[0].node));}
-#line 1595 "y.tab.c" /* yacc.c:1646  */
+#line 1597 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 75 "jac.y" /* yacc.c:1646  */
+#line 77 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("StringArray", 1, 0);}
-#line 1601 "y.tab.c" /* yacc.c:1646  */
+#line 1603 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 77 "jac.y" /* yacc.c:1646  */
+#line 79 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodBody", 1, 1, (yyvsp[-1].node));}
-#line 1607 "y.tab.c" /* yacc.c:1646  */
+#line 1609 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 79 "jac.y" /* yacc.c:1646  */
+#line 81 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodBodyL", 0, 2, (yyvsp[-1].node), (yyvsp[0].node));}
-#line 1613 "y.tab.c" /* yacc.c:1646  */
+#line 1615 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 80 "jac.y" /* yacc.c:1646  */
+#line 82 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodBodyL", 0, 2, (yyvsp[-1].node), (yyvsp[0].node));}
-#line 1619 "y.tab.c" /* yacc.c:1646  */
+#line 1621 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 81 "jac.y" /* yacc.c:1646  */
+#line 83 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Empty", 0, NULL);}
-#line 1625 "y.tab.c" /* yacc.c:1646  */
+#line 1627 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 83 "jac.y" /* yacc.c:1646  */
+#line 85 "jac.y" /* yacc.c:1646  */
     {ast_insert_decl((yyvsp[-2].node), (yyvsp[-1].node)); (yyval.node) = (yyvsp[-1].node);}
-#line 1631 "y.tab.c" /* yacc.c:1646  */
+#line 1633 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 85 "jac.y" /* yacc.c:1646  */
+#line 87 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("VarDecl", 0, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1637 "y.tab.c" /* yacc.c:1646  */
+#line 1639 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 86 "jac.y" /* yacc.c:1646  */
+#line 88 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = (yyvsp[0].node);}
-#line 1643 "y.tab.c" /* yacc.c:1646  */
+#line 1645 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 88 "jac.y" /* yacc.c:1646  */
+#line 90 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Bool", 1, NULL);}
-#line 1649 "y.tab.c" /* yacc.c:1646  */
+#line 1651 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 89 "jac.y" /* yacc.c:1646  */
+#line 91 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Int", 1, NULL);}
-#line 1655 "y.tab.c" /* yacc.c:1646  */
+#line 1657 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 90 "jac.y" /* yacc.c:1646  */
+#line 92 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Double", 1, NULL);}
-#line 1661 "y.tab.c" /* yacc.c:1646  */
+#line 1663 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 92 "jac.y" /* yacc.c:1646  */
+#line 94 "jac.y" /* yacc.c:1646  */
     {if((yyvsp[-1].node)->n_children <= 1) {(yyval.node) = ast_insert_node("Block", 0, 1, (yyvsp[-1].node));} else {(yyval.node) = ast_insert_node("Block", 1, 1, (yyvsp[-1].node));}}
-#line 1667 "y.tab.c" /* yacc.c:1646  */
+#line 1669 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 93 "jac.y" /* yacc.c:1646  */
+#line 95 "jac.y" /* yacc.c:1646  */
     {if((yyvsp[0].node)!=NULL){if(ast_check_block((yyvsp[0].node))) (yyvsp[0].node) = ast_insert_terminal("Block", 1, NULL);} (yyval.node) = ast_insert_node("If", 1, 3, (yyvsp[-2].node), (yyvsp[0].node), ast_insert_terminal("Block", 1, NULL));}
-#line 1673 "y.tab.c" /* yacc.c:1646  */
+#line 1675 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 94 "jac.y" /* yacc.c:1646  */
+#line 96 "jac.y" /* yacc.c:1646  */
     {if((yyvsp[-2].node)!=NULL){if(ast_check_block((yyvsp[-2].node))) (yyvsp[-2].node) = ast_insert_terminal("Block", 1, NULL);} if((yyvsp[0].node)!=NULL){if(ast_check_block((yyvsp[0].node))) (yyvsp[0].node) = ast_insert_terminal("Block", 1, NULL);} (yyval.node) = ast_insert_node("If", 1, 3, (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1679 "y.tab.c" /* yacc.c:1646  */
+#line 1681 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 95 "jac.y" /* yacc.c:1646  */
+#line 97 "jac.y" /* yacc.c:1646  */
     {if((yyvsp[0].node)!=NULL){if(ast_check_block((yyvsp[0].node))) (yyvsp[0].node) = ast_insert_terminal("Block", 1, NULL);} (yyval.node) = ast_insert_node("While", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1685 "y.tab.c" /* yacc.c:1646  */
+#line 1687 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 96 "jac.y" /* yacc.c:1646  */
+#line 98 "jac.y" /* yacc.c:1646  */
     {if((yyvsp[-5].node)!=NULL){if(ast_check_block((yyvsp[-5].node))) (yyvsp[-5].node) = ast_insert_terminal("Block", 1, NULL);} (yyval.node) = ast_insert_node("DoWhile", 1, 2, (yyvsp[-5].node), (yyvsp[-2].node));}
-#line 1691 "y.tab.c" /* yacc.c:1646  */
+#line 1693 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 97 "jac.y" /* yacc.c:1646  */
+#line 99 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Print", 1, 1, (yyvsp[-2].node));}
-#line 1697 "y.tab.c" /* yacc.c:1646  */
+#line 1699 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 98 "jac.y" /* yacc.c:1646  */
+#line 100 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Print", 1, 1, (yyvsp[-2].node));}
-#line 1703 "y.tab.c" /* yacc.c:1646  */
+#line 1705 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 99 "jac.y" /* yacc.c:1646  */
+#line 101 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Assignment", 0, 1, (yyvsp[-1].node));}
-#line 1709 "y.tab.c" /* yacc.c:1646  */
+#line 1711 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 100 "jac.y" /* yacc.c:1646  */
+#line 102 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodInvocationList", 0, 1, (yyvsp[-1].node));}
-#line 1715 "y.tab.c" /* yacc.c:1646  */
+#line 1717 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 101 "jac.y" /* yacc.c:1646  */
+#line 103 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("ParseArgsAux", 0, 1, (yyvsp[-1].node));}
-#line 1721 "y.tab.c" /* yacc.c:1646  */
+#line 1723 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 102 "jac.y" /* yacc.c:1646  */
+#line 104 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Empty", 0, NULL);}
-#line 1727 "y.tab.c" /* yacc.c:1646  */
+#line 1729 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 103 "jac.y" /* yacc.c:1646  */
+#line 105 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Return", 1, 1, (yyvsp[-1].node));}
-#line 1733 "y.tab.c" /* yacc.c:1646  */
+#line 1735 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 104 "jac.y" /* yacc.c:1646  */
+#line 106 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Return", 1, 0);}
-#line 1739 "y.tab.c" /* yacc.c:1646  */
+#line 1741 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 105 "jac.y" /* yacc.c:1646  */
+#line 107 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = NULL;}
-#line 1745 "y.tab.c" /* yacc.c:1646  */
+#line 1747 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 107 "jac.y" /* yacc.c:1646  */
+#line 109 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("StatementEmpty", 0, 2, (yyvsp[-1].node), (yyvsp[0].node));}
-#line 1751 "y.tab.c" /* yacc.c:1646  */
+#line 1753 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 108 "jac.y" /* yacc.c:1646  */
+#line 110 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Empty", 0, NULL);}
-#line 1757 "y.tab.c" /* yacc.c:1646  */
+#line 1759 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 110 "jac.y" /* yacc.c:1646  */
+#line 112 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Assign", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1763 "y.tab.c" /* yacc.c:1646  */
+#line 1765 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 112 "jac.y" /* yacc.c:1646  */
+#line 114 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Call", 1, 2, (yyvsp[-3].node), (yyvsp[-1].node));}
-#line 1769 "y.tab.c" /* yacc.c:1646  */
+#line 1771 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 113 "jac.y" /* yacc.c:1646  */
+#line 115 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = NULL;}
-#line 1775 "y.tab.c" /* yacc.c:1646  */
+#line 1777 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 115 "jac.y" /* yacc.c:1646  */
+#line 117 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Call", 0, 2, (yyvsp[-1].node), (yyvsp[0].node));}
-#line 1781 "y.tab.c" /* yacc.c:1646  */
+#line 1783 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 116 "jac.y" /* yacc.c:1646  */
+#line 118 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Empty", 0, NULL);}
-#line 1787 "y.tab.c" /* yacc.c:1646  */
+#line 1789 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 118 "jac.y" /* yacc.c:1646  */
+#line 120 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("CommaExpr", 0, 2, (yyvsp[-1].node), (yyvsp[0].node));}
-#line 1793 "y.tab.c" /* yacc.c:1646  */
+#line 1795 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 119 "jac.y" /* yacc.c:1646  */
+#line 121 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Empty", 0, NULL);}
-#line 1799 "y.tab.c" /* yacc.c:1646  */
+#line 1801 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 121 "jac.y" /* yacc.c:1646  */
+#line 123 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("ParseArgs", 1, 2, (yyvsp[-4].node), (yyvsp[-2].node));}
-#line 1805 "y.tab.c" /* yacc.c:1646  */
+#line 1807 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 122 "jac.y" /* yacc.c:1646  */
+#line 124 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = NULL;}
-#line 1811 "y.tab.c" /* yacc.c:1646  */
+#line 1813 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 124 "jac.y" /* yacc.c:1646  */
+#line 126 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Assignment", 0, 1, (yyvsp[0].node));}
-#line 1817 "y.tab.c" /* yacc.c:1646  */
+#line 1819 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 125 "jac.y" /* yacc.c:1646  */
+#line 127 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("ExprL", 0, 1, (yyvsp[0].node));}
-#line 1823 "y.tab.c" /* yacc.c:1646  */
+#line 1825 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 127 "jac.y" /* yacc.c:1646  */
+#line 129 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("MethodInvocationList", 0, 1, (yyvsp[0].node));}
-#line 1829 "y.tab.c" /* yacc.c:1646  */
+#line 1831 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 128 "jac.y" /* yacc.c:1646  */
+#line 130 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("ParseArgsAux", 0, 1, (yyvsp[0].node));}
-#line 1835 "y.tab.c" /* yacc.c:1646  */
+#line 1837 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 129 "jac.y" /* yacc.c:1646  */
+#line 131 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("And", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1841 "y.tab.c" /* yacc.c:1646  */
+#line 1843 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 130 "jac.y" /* yacc.c:1646  */
+#line 132 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Or", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1847 "y.tab.c" /* yacc.c:1646  */
+#line 1849 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 131 "jac.y" /* yacc.c:1646  */
+#line 133 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Eq", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1853 "y.tab.c" /* yacc.c:1646  */
+#line 1855 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 132 "jac.y" /* yacc.c:1646  */
+#line 134 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Geq", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1859 "y.tab.c" /* yacc.c:1646  */
+#line 1861 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 133 "jac.y" /* yacc.c:1646  */
+#line 135 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Gt", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1865 "y.tab.c" /* yacc.c:1646  */
+#line 1867 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 134 "jac.y" /* yacc.c:1646  */
+#line 136 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Leq", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1871 "y.tab.c" /* yacc.c:1646  */
+#line 1873 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 135 "jac.y" /* yacc.c:1646  */
+#line 137 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Lt", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1877 "y.tab.c" /* yacc.c:1646  */
+#line 1879 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 136 "jac.y" /* yacc.c:1646  */
+#line 138 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Neq", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1883 "y.tab.c" /* yacc.c:1646  */
+#line 1885 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 137 "jac.y" /* yacc.c:1646  */
+#line 139 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Add", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1889 "y.tab.c" /* yacc.c:1646  */
+#line 1891 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 138 "jac.y" /* yacc.c:1646  */
+#line 140 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Sub", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1895 "y.tab.c" /* yacc.c:1646  */
+#line 1897 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 139 "jac.y" /* yacc.c:1646  */
+#line 141 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Mul", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1901 "y.tab.c" /* yacc.c:1646  */
+#line 1903 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 140 "jac.y" /* yacc.c:1646  */
+#line 142 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Div", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1907 "y.tab.c" /* yacc.c:1646  */
+#line 1909 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 141 "jac.y" /* yacc.c:1646  */
+#line 143 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Mod", 1, 2, (yyvsp[-2].node), (yyvsp[0].node));}
-#line 1913 "y.tab.c" /* yacc.c:1646  */
+#line 1915 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 142 "jac.y" /* yacc.c:1646  */
+#line 144 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Plus", 1, 1, (yyvsp[0].node));}
-#line 1919 "y.tab.c" /* yacc.c:1646  */
+#line 1921 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 143 "jac.y" /* yacc.c:1646  */
+#line 145 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Minus", 1, 1, (yyvsp[0].node));}
-#line 1925 "y.tab.c" /* yacc.c:1646  */
+#line 1927 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 144 "jac.y" /* yacc.c:1646  */
+#line 146 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Not", 1, 1, (yyvsp[0].node));}
-#line 1931 "y.tab.c" /* yacc.c:1646  */
+#line 1933 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 145 "jac.y" /* yacc.c:1646  */
+#line 147 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("IdAux", 0, 1, (yyvsp[0].node));}
-#line 1937 "y.tab.c" /* yacc.c:1646  */
+#line 1939 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 146 "jac.y" /* yacc.c:1646  */
+#line 148 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("Length", 1, 1, (yyvsp[-1].node));}
-#line 1943 "y.tab.c" /* yacc.c:1646  */
+#line 1945 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 147 "jac.y" /* yacc.c:1646  */
+#line 149 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("ExprCurvs", 0, 1, (yyvsp[-1].node));}
-#line 1949 "y.tab.c" /* yacc.c:1646  */
+#line 1951 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 148 "jac.y" /* yacc.c:1646  */
+#line 150 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("BoolAux", 0, 1, (yyvsp[0].node));}
-#line 1955 "y.tab.c" /* yacc.c:1646  */
+#line 1957 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 149 "jac.y" /* yacc.c:1646  */
+#line 151 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("DecAux", 0, 1, (yyvsp[0].node));}
-#line 1961 "y.tab.c" /* yacc.c:1646  */
+#line 1963 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 150 "jac.y" /* yacc.c:1646  */
+#line 152 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("RealAux", 0, 1, (yyvsp[0].node));}
-#line 1967 "y.tab.c" /* yacc.c:1646  */
+#line 1969 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 151 "jac.y" /* yacc.c:1646  */
+#line 153 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = NULL;}
-#line 1973 "y.tab.c" /* yacc.c:1646  */
+#line 1975 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 153 "jac.y" /* yacc.c:1646  */
+#line 155 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Id", 1, (yyvsp[0].str));}
-#line 1979 "y.tab.c" /* yacc.c:1646  */
+#line 1981 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 155 "jac.y" /* yacc.c:1646  */
+#line 157 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("VarDecl", 1, 1, (yyvsp[0].node));}
-#line 1985 "y.tab.c" /* yacc.c:1646  */
+#line 1987 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 157 "jac.y" /* yacc.c:1646  */
+#line 159 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_node("FieldDecl", 1, 1, (yyvsp[0].node));}
-#line 1991 "y.tab.c" /* yacc.c:1646  */
+#line 1993 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 159 "jac.y" /* yacc.c:1646  */
+#line 161 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("BoolLit", 1, (yyvsp[0].str));}
-#line 1997 "y.tab.c" /* yacc.c:1646  */
+#line 1999 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 161 "jac.y" /* yacc.c:1646  */
+#line 163 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("DecLit", 1, (yyvsp[0].str));}
-#line 2003 "y.tab.c" /* yacc.c:1646  */
+#line 2005 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 163 "jac.y" /* yacc.c:1646  */
+#line 165 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("RealLit", 1, (yyvsp[0].str));}
-#line 2009 "y.tab.c" /* yacc.c:1646  */
+#line 2011 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 165 "jac.y" /* yacc.c:1646  */
+#line 167 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("StrLit", 1, (yyvsp[0].str));}
-#line 2015 "y.tab.c" /* yacc.c:1646  */
+#line 2017 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 167 "jac.y" /* yacc.c:1646  */
+#line 169 "jac.y" /* yacc.c:1646  */
     {(yyval.node) = ast_insert_terminal("Void", 1, NULL);}
-#line 2021 "y.tab.c" /* yacc.c:1646  */
+#line 2023 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2025 "y.tab.c" /* yacc.c:1646  */
+#line 2027 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2249,7 +2251,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 169 "jac.y" /* yacc.c:1906  */
+#line 171 "jac.y" /* yacc.c:1906  */
 
 
 void yyerror(const char* s) {

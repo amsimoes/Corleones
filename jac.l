@@ -4,11 +4,13 @@
 	
 	#include "y.tab.h"
 	#include "ast.h"
+	#include "symbol_t.h"
 
 	node_t* ast_root;
 
 	int print_flag = 0;
 	int syntax_flag = 0;
+	int symbol_flag = 0;
 
 	int line = 1;
 	int col = 1;
@@ -116,18 +118,23 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(syntax_flag) {yylva
 
 int main(int argc, char** argv) 
 {
-	if(argc == 2) {
-		if(!strcmp(argv[1],"-l")) {
+	if (argc == 2) {
+		if (!strcmp(argv[1],"-l")) {
 			print_flag = 1;
 			yylex();
-		} else if(!strcmp(argv[1], "-t") || !strcmp(argv[1], "-2")) {
+		} else if (!strcmp(argv[1], "-t") || !strcmp(argv[1], "-2")) {
 			print_flag = 0;
 			syntax_flag = 1;
 			yyparse();
-			if(!error_flag)
+			if (!error_flag)
 				print_ast_tree(ast_root, 0);
+		} else if (!strcmp(argv[1], "-s")) {
+			print_flag = 0;
+			symbol_flag = 1;
+			yyparse();
+			/* if (!error_flag) print symbol table */
 		}
-	} else if(argc == 1) {
+	} else if (argc == 1) {
 		syntax_flag = 1;
 		yyparse();
 	}

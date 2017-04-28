@@ -52,11 +52,14 @@ void print_sym_table(sym_t* st) {
 	printf("===== %s Symbol Table =====\n", st->name);
 	while (first != NULL) {
 		printf("%s\t", first->sym_name);
-		if (first->params != NULL)
+		if (first->params != NULL) {
 			printf("%s", first->params);
+		}
 		printf("\t%s", first->type);
-		if (first->flag != NULL)
+		if (first->flag != NULL) {
+			//printf("flag param");
 			printf("\t%s", first->flag);
+		}
 		printf("\n");
 		first = first->next;
 	}
@@ -79,7 +82,7 @@ void build_table(node_t* n) {
 	//printf("node type = %s\n", n->type);
 
 	if (!strcmp(n->type, "Program")) {
-		int k, p;
+		int k;
 
 		char class_name[256] = "Class ";
 		strcat(class_name, n->children[0]->value);
@@ -92,26 +95,8 @@ void build_table(node_t* n) {
 				if (!strcmp(n->children[k]->type, "FieldDecl")) {
 					insert_symbol(table[table_index], n->children[k]->children[1]->value, NULL, n->children[k]->children[0]->type, NULL);
 				} else if (!strcmp(n->children[k]->type, "MethodDecl")) {
-					int num_method_params = n->children[k]->children[0]->children[2]->n_children;
 					char method_params[256];
-					if (num_method_params > 0) {
-						method_params[0] = '\0';
-						strcat(method_params, "(");
-						for(p=0; p < num_method_params; p++) {
-							if (p != 0)
-								strcat(method_params, ",");
-							if (!strcmp(n->children[k]->children[0]->children[2]->children[p]->children[0]->type, "StringArray")) {
-								strcat(method_params, "String[]");
-							} else if (!strcmp(n->children[k]->children[0]->children[2]->children[p]->children[0]->type, "Bool")) {
-								strcat(method_params, "boolean");
-							} else {
-								strcat(method_params, str_to_lowercase(n->children[k]->children[0]->children[2]->children[p]->children[0]->type));
-							}
-						}
-						strcat(method_params, ")");
-					} else {
-						strcpy(method_params, "()");
-					}
+					get_method_header_params(n->children[k], method_params);
 					insert_symbol(table[table_index], n->children[k]->children[0]->children[1]->value, method_params, n->children[k]->children[0]->children[0]->type, NULL);
 				}
 			}

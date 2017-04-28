@@ -19,7 +19,7 @@ sym_t* new_sym_table(char* name) {
 
 symbol* new_symbol(char* sym_name, char* params, char* type, char* flag) {
 	symbol* sb = (symbol*) malloc (sizeof(symbol));
-	sb->sym_name = str_to_lowercase(sym_name);
+	sb->sym_name = sym_name;
 	if (!strcmp(type, "StringArray"))
 		sb->type = "String[]";
 	else if (!strcmp(type, "Bool"))

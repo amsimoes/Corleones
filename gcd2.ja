@@ -2,7 +2,7 @@ class gcd2 {
 	//public static int gcd;
 	public static void main(String[] args) {
 		int a, b;
-		double d;
+		double D;
 		if (args.length >= 2) {
 			a = Integer.parseInt(args[0]);
 			b = Integer.parseInt(args[1]);

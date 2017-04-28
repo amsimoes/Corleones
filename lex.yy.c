@@ -2519,9 +2519,15 @@ int main(int argc, char** argv)
 				print_ast_tree(ast_root, 0);
 		} else if (!strcmp(argv[1], "-s")) {
 			print_flag = 0;
-			symbol_flag = 1;
+			syntax_flag = 1;
+			/* symbol_flag = 1; */
 			yyparse();
-			/* if (!error_flag) print symbol table */
+			if (!error_flag) {
+				init_table();
+				build_table(ast_root);
+				print_table();
+				print_ast_tree(ast_root, 0);
+			}
 		}
 	} else if (argc == 1) {
 		syntax_flag = 1;

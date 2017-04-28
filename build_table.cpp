@@ -8,7 +8,7 @@ char build_table(node* n) {
 		table[cur_table_index] = new_symbol_table("Program");
 
 	} else if ((!strcmp(n->type, "FuncDef")) || (!strcmp(n->type, "FuncDecl"))) {
-		
+
 		symbol_type = n->children[2]->value;
 		symbol_line = n->children[2]->line;
 		
@@ -74,6 +74,7 @@ char build_table(node* n) {
 		table[cur_table_index]->func_defined = 1;
 	
 	} else if (!strcmp(n->type, "VarDecl")) { //New error checkings for VarDecl
+		
 		symbol_type = n->children[n->n_children-1]->value;
 		symbol_line = n->children[n->n_children-1]->line;
 		symbol_col = n->children[n->n_children-1]->col;

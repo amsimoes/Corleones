@@ -19,13 +19,8 @@ sym_t* new_sym_table(char* name) {
 
 symbol* new_symbol(char* sym_name, char* params, char* type, char* flag) {
 	symbol* sb = (symbol*) malloc (sizeof(symbol));
-	sb->sym_name = sym_name;
-	if (!strcmp(type, "StringArray"))
-		sb->type = "String[]";
-	else if (!strcmp(type, "Bool"))
-		sb->type = "boolean";
-	else
-		sb->type = str_to_lowercase(type);
+	sb->sym_name = strdup(sym_name);
+	sb->type = !strcmp(type, "String[]") ? strdup(type) : str_to_lowercase(type);
 	sb->params = params != NULL ? strdup(params) : params;
 	sb->flag = flag != NULL ? strdup(flag) : flag;
 	return sb;
@@ -57,7 +52,6 @@ void print_sym_table(sym_t* st) {
 		}
 		printf("\t%s", first->type);
 		if (first->flag != NULL) {
-			//printf("flag param");
 			printf("\t%s", first->flag);
 		}
 		printf("\n");
@@ -96,7 +90,7 @@ void build_table(node_t* n) {
 					insert_symbol(table[table_index], n->children[k]->children[1]->value, NULL, n->children[k]->children[0]->type, NULL);
 				} else if (!strcmp(n->children[k]->type, "MethodDecl")) {
 					char method_params[256];
-					get_method_header_params(n->children[k], method_params);
+					get_global_method_header_params(n->children[k], method_params);
 					insert_symbol(table[table_index], n->children[k]->children[0]->children[1]->value, method_params, n->children[k]->children[0]->children[0]->type, NULL);
 				}
 			}
@@ -109,7 +103,7 @@ void build_table(node_t* n) {
 		char method_params[256];
 
 		strcat(method_name_args, n->children[0]->children[1]->value);
-		get_method_header_params(n, method_params);
+		get_global_method_header_params(n, method_params);
 		strcat(method_name_args, method_params);
 
 		table[table_index] = new_sym_table(method_name_args);
@@ -117,13 +111,14 @@ void build_table(node_t* n) {
 		insert_symbol(table[table_index], "return", NULL, n->children[0]->children[0]->type, NULL);
 
 		node_t* node_method_params = n->children[0]->children[2];
-		int num_method_params = node_method_params->n_children;
+		set_method_decl_params(node_method_params);
+		/*int num_method_params = node_method_params->n_children;
 		if (num_method_params > 0) {
 			int p;
 			for(p=0; p < num_method_params; p++) {
 				insert_symbol(table[table_index], node_method_params->children[p]->children[1]->value, NULL, node_method_params->children[p]->children[0]->type, "param");
 			}
-		}
+		}*/
 
 		/* MethodBody -> VarDecl */
 		node_t* method_body = n->children[1];
@@ -157,8 +152,9 @@ char* str_to_lowercase(char* str) {
 	return s;
 }
 
-void get_method_header_params(node_t* n, char* method_params) {
+void get_global_method_header_params(node_t* n, char* method_params) {
 	int num_method_params = n->children[0]->children[2]->n_children;
+	printf("get_method_header_params\n");
 	if (num_method_params > 0) {
 		method_params[0] = '\0';
 		int p;
@@ -180,6 +176,20 @@ void get_method_header_params(node_t* n, char* method_params) {
 	}
 }
 
+void set_method_decl_params(node_t* node_method_params) {
+	int num_method_params = node_method_params->n_children;
+	if (num_method_params > 0) {
+		int p;
+		for(p=0; p < num_method_params; p++) {
+			if (!strcmp(node_method_params->children[p]->children[0]->type, "StringArray"))
+				insert_symbol(table[table_index], node_method_params->children[p]->children[1]->value, NULL, "String[]", "param");	
+			else if (!strcmp(node_method_params->children[p]->children[0]->type, "Bool"))
+				insert_symbol(table[table_index], node_method_params->children[p]->children[1]->value, NULL, "boolean", "param");	
+			else
+				insert_symbol(table[table_index], node_method_params->children[p]->children[1]->value, NULL, node_method_params->children[p]->children[0]->type, "param");
+		}
+	}
+}
 
 
 

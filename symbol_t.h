@@ -30,6 +30,7 @@ void print_sym_table(sym_t* st);
 void build_table(node_t* n);
 void print_table();
 char* str_to_lowercase(char* str);
-void get_method_header_params(node_t* n, char* method_params);
+void get_global_method_header_params(node_t* n, char* method_params);
+void set_method_decl_params(node_t* node_method_params);
 
 #endif

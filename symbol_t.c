@@ -143,7 +143,7 @@ char* str_to_lowercase(char* str) {
 
 void get_global_method_header_params(node_t* n, char* method_params) {
 	int num_method_params = n->children[0]->children[2]->n_children;
-	printf("get_method_header_params\n");
+	//printf("get_method_header_params\n");
 	if (num_method_params > 0) {
 		method_params[0] = '\0';
 		int p;

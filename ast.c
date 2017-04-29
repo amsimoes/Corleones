@@ -6,20 +6,21 @@
 int error_flag = 0;
 node_t* merge_nodes[2048];
 
-node_t* new_node(char* type, void* value, int used) {
+node_t* new_node(char* type, char* data_type, void* value, int used) {
 	node_t* n = (node_t*) malloc(sizeof(node_t));
 	n->type = (char*) strdup(type);
+	n->data_type = data_type != NULL ? (char*) strdup(data_type) : data_type;
 	n->value = value;
 	n->used = used;
 	n->children = 0;
 	return n;
 }
 
-node_t* ast_insert_node(char* type, int used, int n_children, ...) {
+node_t* ast_insert_node(char* type, char* data_type, int used, int n_children, ...) {
 	va_list args;
 	int i, nodes_to_use = 0;
 
-	node_t* parent = new_node(type, NULL, used);
+	node_t* parent = new_node(type, data_type, NULL, used);
 	node_t** tmp = merge_nodes;
 
 	va_start(args, n_children);
@@ -48,8 +49,8 @@ node_t* ast_insert_node(char* type, int used, int n_children, ...) {
 	return parent;
 }
 
-node_t* ast_insert_terminal(char* type, int used, void* value) {
-	node_t* n = new_node(type, value, used);
+node_t* ast_insert_terminal(char* type, char* data_type, int used, void* value) {
+	node_t* n = new_node(type, data_type, value, used);
 	return n;
 }
 
@@ -105,11 +106,16 @@ void print_node_children(node_t* n) {
 
 void print_ast_node(node_t* n) {
 	//printf("Printing node with type: %s\n", n->type);
-	//print_node_children(n);
 	if (!strcmp(n->type, "Id") || !strcmp(n->type, "BoolLit") || !strcmp(n->type, "DecLit") || !strcmp(n->type, "RealLit") || !strcmp(n->type, "StrLit")) {
-		printf("%s(%s)\n", n->type, (char*) n->value);
+		if (n->data_type != NULL)
+			printf("%s(%s) - %s\n", n->type, (char*) n->value, n->data_type);
+		else
+			printf("%s(%s)\n", n->type, (char*) n->value);
 	} else {
-		printf("%s\n", n->type);
+		if (n->data_type != NULL)
+			printf("%s - %s\n", n->type, n->data_type);
+		else
+			printf("%s\n", n->type);
 	}
 }
 

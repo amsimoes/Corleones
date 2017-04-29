@@ -3,6 +3,7 @@ class gcd2 {
 	public static void main(String[] args) {
 		int a, b;
 		double D;
+		int lul;
 		if (args.length >= 2) {
 			a = Integer.parseInt(args[0]);
 			b = Integer.parseInt(args[1]);

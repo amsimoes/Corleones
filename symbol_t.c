@@ -112,29 +112,18 @@ void build_table(node_t* n) {
 
 		node_t* node_method_params = n->children[0]->children[2];
 		set_method_decl_params(node_method_params);
-		/*int num_method_params = node_method_params->n_children;
-		if (num_method_params > 0) {
-			int p;
-			for(p=0; p < num_method_params; p++) {
-				insert_symbol(table[table_index], node_method_params->children[p]->children[1]->value, NULL, node_method_params->children[p]->children[0]->type, "param");
-			}
-		}*/
 
 		/* MethodBody -> VarDecl */
 		node_t* method_body = n->children[1];
 		int c = 0;
 		if(method_body->n_children > 0) {
-			//printf("method_body->n_children = %d\n", method_body->n_children);
 			for(c=0; c < method_body->n_children; c++) {
-				//printf("lil\n");
 				if (!strcmp(method_body->children[c]->type, "VarDecl")) {
-					//printf("segf?\n");
 					insert_symbol(table[table_index], method_body->children[c]->children[1]->value, NULL, method_body->children[c]->children[0]->type, NULL);
 				}
 			}
 		}
 
-		//printf("segf\n");
 		table_index++;
 	}
 

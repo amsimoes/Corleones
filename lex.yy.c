@@ -1482,7 +1482,7 @@ YY_RULE_SETUP
 case 57:
 YY_RULE_SETUP
 #line 110 "jac.l"
-{col++;}
+{col += yyleng;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
@@ -1490,17 +1490,17 @@ YY_RULE_SETUP
 {col += yyleng;}
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 114 "jac.l"
+#line 113 "jac.l"
 {col+=1; return 0;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 115 "jac.l"
+#line 114 "jac.l"
 {printf("Line %d, col %d: illegal character (%c)\n", line, col, yytext[0]); col+=yyleng;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 117 "jac.l"
+#line 116 "jac.l"
 ECHO;
 	YY_BREAK
 #line 1506 "lex.yy.c"
@@ -2502,7 +2502,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 117 "jac.l"
+#line 116 "jac.l"
 
 
 int main(int argc, char** argv) 
@@ -2510,6 +2510,9 @@ int main(int argc, char** argv)
 	if (argc == 2) {
 		if (!strcmp(argv[1],"-l")) {
 			print_flag = 1;
+			yylex();
+		} else if (!strcmp(argv[1], "-1")) {
+			print_flag = 0;
 			yylex();
 		} else if (!strcmp(argv[1], "-t") || !strcmp(argv[1], "-2")) {
 			print_flag = 0;

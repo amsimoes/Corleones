@@ -1,5 +1,5 @@
 class gcd2 {
-	public static int gcd;
+    public static int gcd;
 	public static void main(String[] args) {
 		int a, b;
 		int c;

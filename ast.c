@@ -3,6 +3,8 @@
 
 #include "ast.h"
 
+extern int line, col, yyleng;
+
 int error_flag = 0;
 node_t* merge_nodes[2048];
 
@@ -13,6 +15,8 @@ node_t* new_node(char* type, char* data_type, void* value, int used) {
 	n->value = value;
 	n->used = used;
 	n->children = 0;
+	n->line = line;
+	n->col = col - (int) yyleng;
 	return n;
 }
 

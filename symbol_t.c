@@ -3,6 +3,8 @@
 
 #include "symbol_t.h"
 
+extern int line, col, yyleng;
+
 sym_t** table;
 int table_index = 0;
 
@@ -128,6 +130,7 @@ void build_table(node_t* n) {
 		table_index++;
 
 	} else if (is_expression(n->type)) {
+		//printf("Token = %s | line: %d col: %d\n", n->type, n->line, n->col);
 		//printf("method = %s | n->type = %s\n", table[table_index-1]->name, n->type);
 		if (n->n_children > 0) {
 			int c;
@@ -144,6 +147,7 @@ void build_table(node_t* n) {
 			}
 		}
 	} else if (!strcmp(n->type, "Assign")) {
+		//printf("Assign | line (%d) col (%d)\n", n->line, n->col);
 		if (n->n_children > 0) {
 			int c;
 			for(c=0; c < n->n_children; c++) {
@@ -158,6 +162,7 @@ void build_table(node_t* n) {
 			}
 		}
 	} else if (!strcmp(n->type, "Call")) {
+		//printf("Call | line (%d) col (%d)\n", n->line, n->col);
 		if (n->n_children > 0) {
 			if (check_id_method_global(n->children[0]->value)) {
 				char params[128];

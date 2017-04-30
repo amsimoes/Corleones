@@ -107,9 +107,8 @@ while					{col+=yyleng; if(print_flag) printf("WHILE\n"); if(syntax_flag) {yylva
 <comment>(\n|\r|\r\n) 	{col=1; line++;}
 <comment><<EOF>>		{printf("Line %d, col %d: unterminated comment\n", line_begin, comment_begin); col+=1; return 0; yyterminate();}
 <comment>"*"+"/"		{col += yyleng; BEGIN(0);}
-<comment>(\f|\t)		{col++;}
+<comment>(\f|\t)		{col += yyleng;}
 <comment>.				{col += yyleng;}
-
 
 <<EOF>>					{col+=1; return 0;}
 .						{printf("Line %d, col %d: illegal character (%c)\n", line, col, yytext[0]); col+=yyleng;}
@@ -121,6 +120,9 @@ int main(int argc, char** argv)
 	if (argc == 2) {
 		if (!strcmp(argv[1],"-l")) {
 			print_flag = 1;
+			yylex();
+		} else if (!strcmp(argv[1], "-1")) {
+			print_flag = 0;
 			yylex();
 		} else if (!strcmp(argv[1], "-t") || !strcmp(argv[1], "-2")) {
 			print_flag = 0;

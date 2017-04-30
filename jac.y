@@ -2,6 +2,7 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 
+	#include "y.tab.h"
 	#include "ast.h"
 	#include "symbol_t.h"
 
@@ -10,8 +11,10 @@
 
 	extern node_t* ast_root;
 	extern char* yytext;
-	extern int line, col, yyleng;
+	extern int line, col, yyleng, yylineno;
 %}
+
+%locations
 
 %token <str> BOOL BOOLLIT CLASS DO DOTLENGTH DOUBLE ELSE IF INT PARSEINT PRINT PUBLIC RETURN STATIC 
 %token <str> STRING VOID WHILE OCURV CCURV OBRACE CBRACE OSQUARE CSQUARE AND OR LT GT EQ NEQ LEQ GEQ 
@@ -19,7 +22,6 @@
 
 %union {
 	char *str;
-	int line, col;
 	struct node *node;
 }
 

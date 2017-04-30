@@ -76,7 +76,7 @@
 
 	extern node_t* ast_root;
 	extern char* yytext;
-	extern int line, col, yyleng, yylineno;
+	extern int line, col, first_col, yyleng, yylineno;
 
 #line 82 "y.tab.c" /* yacc.c:339  */
 
@@ -1761,7 +1761,7 @@ yyreduce:
 
   case 32:
 #line 93 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_terminal("Int", NULL, 1, NULL);}
+    {printf("INT | line = %d col = %d first_col = %d\n", line, col, first_col); (yyval.node) = ast_insert_terminal("Int", NULL, 1, NULL);}
 #line 1766 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1875,7 +1875,7 @@ yyreduce:
 
   case 51:
 #line 116 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("Call", NULL, 1, 2, (yyvsp[-3].node), (yyvsp[-1].node));}
+    {printf("CALL yacc | line = %d col = %d\n", line, col); (yyval.node) = ast_insert_node("Call", NULL, 1, 2, (yyvsp[-3].node), (yyvsp[-1].node));}
 #line 1880 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2049,7 +2049,7 @@ yyreduce:
 
   case 80:
 #line 150 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("Length", "int", 1, 1, (yyvsp[-1].node));}
+    {printf("LENGTH yacc | line = %d col = %d\n", line, col); (yyval.node) = ast_insert_node("Length", "int", 1, 1, (yyvsp[-1].node));}
 #line 2054 "y.tab.c" /* yacc.c:1646  */
     break;
 

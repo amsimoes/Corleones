@@ -186,6 +186,7 @@ void build_table(node_t* n) {
 			n->children[0]->data_type = "String[]";
 		}
 	} else if (!strcmp(n->type, "Length")) {
+		printf("Length | line (%d) col (%d)\n", n->line, n->col);
 		n->data_type = "int";
 		if (n->n_children > 0 ) {
 			char* c_type = get_id_type(n->children[0]->value);	/* MUST BE STRING */

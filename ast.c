@@ -3,12 +3,13 @@
 
 #include "ast.h"
 
-extern int line, col, yyleng;
+extern int line, first_col, yyleng;
 
 int error_flag = 0;
 node_t* merge_nodes[2048];
 
 node_t* new_node(char* type, char* data_type, void* value, int used) {
+	//printf("node type = %s | yyleng = %d\n", type, (int) yyleng);
 	node_t* n = (node_t*) malloc(sizeof(node_t));
 	n->type = (char*) strdup(type);
 	n->data_type = data_type != NULL ? (char*) strdup(data_type) : data_type;
@@ -16,7 +17,7 @@ node_t* new_node(char* type, char* data_type, void* value, int used) {
 	n->used = used;
 	n->children = 0;
 	n->line = line;
-	n->col = col - (int) yyleng;
+	n->col = first_col;
 	return n;
 }
 

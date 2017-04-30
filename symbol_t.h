@@ -32,5 +32,8 @@ void print_table();
 char* str_to_lowercase(char* str);
 void get_global_method_header_params(node_t* n, char* method_params);
 void set_method_decl_params(node_t* node_method_params);
+int is_expression(char* node_name);
+char* get_id_type(char* n_name);
+int is_operation(char* node_name);
 
 #endif

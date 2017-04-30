@@ -35,5 +35,6 @@ void set_method_decl_params(node_t* node_method_params);
 int is_expression(char* node_name);
 char* get_id_type(char* n_name);
 int is_operation(char* node_name);
-
+int check_id_method_global(char* method_name);
+void get_method_params_type(char* method_name, char* params, char* return_type);
 #endif

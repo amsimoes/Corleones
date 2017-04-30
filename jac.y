@@ -127,7 +127,7 @@ Expr: Assignment 								{$$ = ast_insert_node("Assignment", NULL, 0, 1, $1);}
 	| ExprL										{$$ = ast_insert_node("ExprL", NULL, 0, 1, $1);}
 
 ExprL: MethodInvocation 						{$$ = ast_insert_node("MethodInvocationList", NULL, 0, 1, $1);}
-	| ParseArgs 								{$$ = ast_insert_node("ParseArgsAux", NULL, 0, 1, $1);}
+	| ParseArgs 								{$$ = ast_insert_node("ParseArgsExpr", NULL, 0, 1, $1);}
 	| ExprL AND ExprL 							{$$ = ast_insert_node("And", "boolean", 1, 2, $1, $3);}
 	| ExprL OR ExprL 							{$$ = ast_insert_node("Or", "boolean", 1, 2, $1, $3);}
 	| ExprL EQ ExprL 							{$$ = ast_insert_node("Eq", "boolean", 1, 2, $1, $3);}

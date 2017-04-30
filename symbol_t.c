@@ -157,6 +157,36 @@ void build_table(node_t* n) {
 				}
 			}
 		}
+	} else if (!strcmp(n->type, "Call")) {
+		if (n->n_children > 0) {
+			if (check_id_method_global(n->children[0]->value)) {
+				char params[128];
+				char return_type[8];
+				get_method_params_type(n->children[0]->value, params, return_type);
+				n->data_type = (char*) strdup(return_type);
+				n->children[0]->data_type = (char*) strdup(params);
+				if (n->n_children > 1) { /* method params ids */
+					int c;
+					for(c=1; c < n->n_children; c++) {
+						char* c_type = get_id_type(n->children[c]->value);
+						if (c_type != NULL)
+							n->children[c]->data_type = (char*) strdup(c_type);
+					}
+				}
+			}
+		}
+	} else if (!strcmp(n->type, "ParseArgs")) {
+		n->data_type = "int";
+		if (n->n_children > 0) {
+			n->children[0]->data_type = "String[]";
+		}
+	} else if (!strcmp(n->type, "Length")) {
+		n->data_type = "int";
+		if (n->n_children > 0 ) {
+			char* c_type = get_id_type(n->children[0]->value);	/* MUST BE STRING */
+			if (c_type != NULL)
+				n->children[0]->data_type = (char*) strdup(c_type);
+		}
 	}
 
 	for(i=0; i < n->n_children; i++)
@@ -257,4 +287,27 @@ char* get_id_type(char* n_name) {
 	}
 	//printf("end method table\n");
 	return NULL;
+}
+
+int check_id_method_global(char* method_name) {
+	symbol* first = table[0]->first;
+	while (first != NULL) {
+		if (!strcmp(first->sym_name, method_name) && first->params != NULL) {
+			return 1;
+		}
+		first = first->next;
+	}
+	return 0;
+}
+
+void get_method_params_type(char* method_name, char* params, char* return_type) {
+	symbol* first = table[0]->first;
+	while (first != NULL) {
+		if (!strcmp(first->sym_name, method_name) && first->params != NULL) {
+			//printf("first->sym_name = %s | first->params = %s\n", first->sym_name, first->params);
+			strcpy(params, first->params);
+			strcpy(return_type, first->type);
+		}
+		first = first->next;
+	}
 }

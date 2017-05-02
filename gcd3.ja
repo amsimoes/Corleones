@@ -1,20 +1,23 @@
 class gcd3 {
 	public static int lul;
 	public static int b;
+	public static boolean kaka;
 
 	public static double main() {
+		boolean kkk;
 		b = true;
 		b = main(a,b,c);
+		asd(b, c, d);
 	}
 
-	public static int main(double b) {
+	public static int asd(double b, boolean c, int d) {
+		double lul;
 		b = 3;
-		lul(a);
+		aiai();
+		if(b) {
+
+		}
 	}
 
-	public static double lul(int b) {
-		main(b);
-		main();
-		asd();
-	}
+	public static void aiai() {}
 }

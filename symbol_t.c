@@ -90,7 +90,10 @@ void build_table(node_t* n) {
 		if (n->n_children >= 1) {
 			for(k=1; k < n->n_children; k++) {
 				if (!strcmp(n->children[k]->type, "FieldDecl")) {
-					insert_symbol(table[table_index], n->children[k]->children[1]->value, NULL, n->children[k]->children[0]->type, NULL);
+					if (!strcmp(n->children[k]->children[0]->type, "Bool"))
+						insert_symbol(table[table_index], n->children[k]->children[1]->value, NULL, "boolean", NULL);
+					else	
+						insert_symbol(table[table_index], n->children[k]->children[1]->value, NULL, n->children[k]->children[0]->type, NULL);
 				} else if (!strcmp(n->children[k]->type, "MethodDecl")) {
 					char method_params[256];
 					get_global_method_header_params(n->children[k], method_params);
@@ -122,7 +125,10 @@ void build_table(node_t* n) {
 		if(method_body->n_children > 0) {
 			for(c=0; c < method_body->n_children; c++) {
 				if (!strcmp(method_body->children[c]->type, "VarDecl")) {
-					insert_symbol(table[table_index], method_body->children[c]->children[1]->value, NULL, method_body->children[c]->children[0]->type, NULL);
+					if (!strcmp(method_body->children[c]->children[0]->type, "Bool"))
+						insert_symbol(table[table_index], method_body->children[c]->children[1]->value, NULL, "boolean", NULL);
+					else	
+						insert_symbol(table[table_index], method_body->children[c]->children[1]->value, NULL, method_body->children[c]->children[0]->type, NULL);
 				}
 			}
 		}
@@ -276,7 +282,7 @@ int is_expression(char* node_name) {
 		return 1;
 	if(!strcmp(node_name, "Minus") || !strcmp(node_name, "Not") || !strcmp(node_name, "And") || !strcmp(node_name, "Or"))
 		return 1;
-	if(!strcmp(node_name, "Return") || !strcmp(node_name, "Print"))
+	if(!strcmp(node_name, "Return") || !strcmp(node_name, "Print") || !strcmp(node_name, "If") || !strcmp(node_name, "While") || !strcmp(node_name, "DoWhile"))
 		return 1;
 	return 0;
 }
@@ -288,7 +294,19 @@ int is_operation(char* node_name) {
 }
 
 char* get_id_type(char* n_name) {
-	symbol* first = table[0]->first;
+	symbol* first;
+	if (table[table_index-1] != NULL) {
+		first = table[table_index-1]->first;
+		while (first != NULL) {
+			//printf("method = %s | first->sym_name = %s | n_name = %s\n", table[table_index-1]->name, first->sym_name, n_name);
+			if (!strcmp(first->sym_name, n_name)) {
+				//printf("method | first->sym_name = %s\n", first->sym_name);
+				return first->type;
+			}
+			first = first->next;
+		}
+	}
+	first = table[0]->first;
 	//printf("table[0]->first->sym_name = %s\n", table[0]->first->sym_name);
 	while (first != NULL) {
 		//printf("global | first->sym_name = %s | n_name = %s\n", first->sym_name, n_name);
@@ -301,17 +319,7 @@ char* get_id_type(char* n_name) {
 	}
 	//printf("end global table\n");
 	//printf("table index = %d\n", table_index);
-	if (table[table_index-1] != NULL) {
-		first = table[table_index-1]->first;
-		while (first != NULL) {
-			//printf("method = %s | first->sym_name = %s | n_name = %s\n", table[table_index-1]->name, first->sym_name, n_name);
-			if (!strcmp(first->sym_name, n_name)) {
-				//printf("method | first->sym_name = %s\n", first->sym_name);
-				return first->type;
-			}
-			first = first->next;
-		}
-	}
+
 	//printf("end method table\n");
 	return NULL;
 }

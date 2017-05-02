@@ -390,23 +390,36 @@ int get_params_matches(node_t* call, char* found_method_params) {
 	char* aux_params = (char*) strdup(found_method_params);
 	aux_params++;
 	aux_params[strlen(aux_params) - 1] = '\0';
-	char* p = strtok(aux_params, ",");
 
+	char* p = strtok(aux_params, ",");
 	for(c=1; c < call->n_children; c++) {
-		char* c_value = (char*) call->children[c]->value;
-		if (c_value != NULL) {
-			char* id_type = get_id_type(c_value);
-			if (id_type != NULL) {
-				if (!strcmp(id_type, p)) {
-					n_matches++;
+		if (!strcmp(call->children[c]->type, "DecLit") || !strcmp(call->children[c]->type, "RealLit") \
+			|| !strcmp(call->children[c]->type, "BoolLit") || !strcmp(call->children[c]->type, "StrLit")) {
+			if (!strcmp(call->children[c]->type, "DecLit") && !strcmp(p, "int")) {
+				n_matches++;
+			} else if (!strcmp(call->children[c]->type, "DecLit") && !strcmp(p, "double")) {
+				n_matches++;
+			} else if (!strcmp(call->children[c]->type, "BoolLit") && !strcmp(p, "boolean")) {
+				n_matches++;
+			} else if (!strcmp(call->children[c]->type, "StrLit") && !strcmp(p, "String[]")) {
+				n_matches++;
+			}
+		} else {
+			char* c_value = (char*) call->children[c]->value;
+			if (c_value != NULL) {
+				char* id_type = get_id_type(c_value);
+				if (id_type != NULL) {
+					if (!strcmp(id_type, p)) {
+						n_matches++;
+					} else {
+						break;
+					}
 				} else {
 					break;
 				}
-			} else {
-				break;
 			}
-			p = strtok(NULL, ",");
 		}
+		p = strtok(NULL, ",");
 	}
 	return n_matches;
 }

@@ -90,7 +90,7 @@ VarDeclAux: VarDeclAux COMMA IdVarDecl 		 	{$$ = ast_insert_node("VarDecl", NULL
 		| IdVarDecl								{$$ = $1;}
 
 Type: BOOL 										{$$ = ast_insert_terminal("Bool", NULL, 1, NULL);}
-	| INT 										{printf("INT | line = %d col = %d first_col = %d\n", line, col, first_col); $$ = ast_insert_terminal("Int", NULL, 1, NULL);}
+	| INT 										{$$ = ast_insert_terminal("Int", NULL, 1, NULL);}
 	| DOUBLE									{$$ = ast_insert_terminal("Double", NULL, 1, NULL);}
 
 Statement: OBRACE StatementEmpty CBRACE						{if($2->n_children <= 1) {$$ = ast_insert_node("Block", NULL, 0, 1, $2);} else {$$ = ast_insert_node("Block", NULL, 1, 1, $2);}}
@@ -113,7 +113,7 @@ StatementEmpty: Statement StatementEmpty 		{$$ = ast_insert_node("StatementEmpty
 
 Assignment: IDAux ASSIGN Expr 					{$$ = ast_insert_node("Assign", NULL, 1, 2, $1, $3);}
 
-MethodInvocation: IDAux OCURV MethodInvAux CCURV	{printf("CALL yacc | line = %d col = %d\n", line, col); $$ = ast_insert_node("Call", NULL, 1, 2, $1, $3);}
+MethodInvocation: IDAux OCURV MethodInvAux CCURV	{$$ = ast_insert_node("Call", NULL, 1, 2, $1, $3);}
 			| IDAux OCURV error CCURV 				{$$ = NULL;}
 
 MethodInvAux: Expr CommaExpr 					{$$ = ast_insert_node("Call", NULL, 0, 2, $1, $2);}
@@ -147,7 +147,7 @@ ExprL: MethodInvocation 						{$$ = ast_insert_node("MethodInvocationList", NULL
 	| MINUS ExprL 			%prec NOT 			{$$ = ast_insert_node("Minus", NULL, 1, 1, $2);}
 	| NOT ExprL 			%prec NOT 			{$$ = ast_insert_node("Not", NULL, 1, 1, $2);}
 	| IDAux 									{$$ = ast_insert_node("IdAux", NULL, 0, 1, $1);}
-	| IDAux DOTLENGTH 							{printf("LENGTH yacc | line = %d col = %d\n", line, col); $$ = ast_insert_node("Length", "int", 1, 1, $1);}
+	| IDAux DOTLENGTH 							{$$ = ast_insert_node("Length", "int", 1, 1, $1);}
 	| OCURV Expr CCURV 							{$$ = ast_insert_node("ExprCurvs", NULL, 0, 1, $2);}
 	| BoolAux 									{$$ = ast_insert_node("BoolAux", "boolean", 0, 1, $1);}
 	| DecAux									{$$ = ast_insert_node("DecAux", "int", 0, 1, $1);}

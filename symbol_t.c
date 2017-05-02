@@ -139,6 +139,8 @@ void build_table(node_t* n) {
 				if (n->children[c]->value != NULL) {
 					char* c_type = get_id_type(n->children[c]->value);
 					if (c_type != NULL) {
+						if (!strcmp(c_type, "bool"))
+							strcpy(c_type, "boolean");
 						n->children[c]->data_type = (char*) strdup(c_type);
 						if (c == 0 && is_operation(n->type))
 							n->data_type = (char*) strdup(c_type);
@@ -154,6 +156,8 @@ void build_table(node_t* n) {
 				if (n->children[c]->value != NULL) {
 					char* c_type = get_id_type(n->children[c]->value);
 					if (c_type != NULL) {
+						if (!strcmp(c_type, "bool"))
+							strcpy(c_type, "boolean");
 						n->children[c]->data_type = (char*) strdup(c_type);
 						if (c == 0)
 							n->data_type = (char*) strdup(c_type);
@@ -168,14 +172,21 @@ void build_table(node_t* n) {
 				char params[128];
 				char return_type[8];
 				get_method_params_type(n->children[0]->value, params, return_type);
-				n->data_type = (char*) strdup(return_type);
-				n->children[0]->data_type = (char*) strdup(params);
+				if (params[0] != '\0' && return_type[0] != '\0') {
+					if (!strcmp(return_type, "bool"))
+						strcpy(return_type, "boolean");
+					n->data_type = (char*) strdup(return_type);
+					n->children[0]->data_type = (char*) strdup(params);	
+				}
 				if (n->n_children > 1) { /* method params ids */
 					int c;
 					for(c=1; c < n->n_children; c++) {
 						char* c_type = get_id_type(n->children[c]->value);
-						if (c_type != NULL)
+						if (c_type != NULL) {
+							if (!strcmp(c_type, "bool"))
+								strcpy(c_type, "boolean");
 							n->children[c]->data_type = (char*) strdup(c_type);
+						}
 					}
 				}
 			}
@@ -186,12 +197,14 @@ void build_table(node_t* n) {
 			n->children[0]->data_type = "String[]";
 		}
 	} else if (!strcmp(n->type, "Length")) {
-		printf("Length | line (%d) col (%d)\n", n->line, n->col);
 		n->data_type = "int";
 		if (n->n_children > 0 ) {
 			char* c_type = get_id_type(n->children[0]->value);	/* MUST BE STRING */
-			if (c_type != NULL)
+			if (c_type != NULL) {
+				if (!strcmp(c_type, "bool"))
+					strcpy(c_type, "boolean");
 				n->children[0]->data_type = (char*) strdup(c_type);
+			}
 		}
 	}
 
@@ -210,26 +223,30 @@ char* str_to_lowercase(char* str) {
 }
 
 void get_global_method_header_params(node_t* n, char* method_params) {
-	int num_method_params = n->children[0]->children[2]->n_children;
-	//printf("get_method_header_params\n");
-	if (num_method_params > 0) {
-		method_params[0] = '\0';
-		int p;
-		strcat(method_params, "(");
-		for(p=0; p < num_method_params; p++) {
-			if (p != 0)
-				strcat(method_params, ",");
-			if(!strcmp(n->children[0]->children[2]->children[p]->children[0]->type, "StringArray")) {
-				strcat(method_params, "String[]");
-			} else if (!strcmp(n->children[0]->children[2]->children[p]->children[0]->type, "Bool")) {
-				strcat(method_params, "boolean");
+	if (n->n_children > 0) {
+		if (n->children[0]->n_children > 2) {
+			int num_method_params = n->children[0]->children[2]->n_children;
+			//printf("get_method_header_params\n");
+			if (num_method_params > 0) {
+				method_params[0] = '\0';
+				int p;
+				strcat(method_params, "(");
+				for(p=0; p < num_method_params; p++) {
+					if (p != 0)
+						strcat(method_params, ",");
+					if(!strcmp(n->children[0]->children[2]->children[p]->children[0]->type, "StringArray")) {
+						strcat(method_params, "String[]");
+					} else if (!strcmp(n->children[0]->children[2]->children[p]->children[0]->type, "Bool")) {
+						strcat(method_params, "boolean");
+					} else {
+						strcat(method_params, str_to_lowercase(n->children[0]->children[2]->children[p]->children[0]->type));
+					}
+				}
+				strcat(method_params, ")");	
 			} else {
-				strcat(method_params, str_to_lowercase(n->children[0]->children[2]->children[p]->children[0]->type));
+				strcpy(method_params, "()");
 			}
 		}
-		strcat(method_params, ")");	
-	} else {
-		strcpy(method_params, "()");
 	}
 }
 
@@ -282,14 +299,16 @@ char* get_id_type(char* n_name) {
 	}
 	//printf("end global table\n");
 	//printf("table index = %d\n", table_index);
-	first = table[table_index-1]->first;
-	while (first != NULL) {
-		//printf("method = %s | first->sym_name = %s | n_name = %s\n", table[table_index-1]->name, first->sym_name, n_name);
-		if (!strcmp(first->sym_name, n_name)) {
-			//printf("method | first->sym_name = %s\n", first->sym_name);
-			return first->type;
+	if (table[table_index-1] != NULL) {
+		first = table[table_index-1]->first;
+		while (first != NULL) {
+			//printf("method = %s | first->sym_name = %s | n_name = %s\n", table[table_index-1]->name, first->sym_name, n_name);
+			if (!strcmp(first->sym_name, n_name)) {
+				//printf("method | first->sym_name = %s\n", first->sym_name);
+				return first->type;
+			}
+			first = first->next;
 		}
-		first = first->next;
 	}
 	//printf("end method table\n");
 	return NULL;
@@ -309,7 +328,7 @@ int check_id_method_global(char* method_name) {
 void get_method_params_type(char* method_name, char* params, char* return_type) {
 	symbol* first = table[0]->first;
 	while (first != NULL) {
-		if (!strcmp(first->sym_name, method_name) && first->params != NULL) {
+		if (!strcmp(first->sym_name, method_name) && first->params != NULL && first->type != NULL) {
 			//printf("first->sym_name = %s | first->params = %s\n", first->sym_name, first->params);
 			strcpy(params, first->params);
 			strcpy(return_type, first->type);

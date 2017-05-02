@@ -1,4 +1,20 @@
 class gcd3 {
 	public static int lul;
-	public static int main(){}
+	public static int b;
+
+	public static double main() {
+		b = true;
+		b = main(a,b,c);
+	}
+
+	public static int main(double b) {
+		b = 3;
+		lul(a);
+	}
+
+	public static double lul(int b) {
+		main(b);
+		main();
+		asd();
+	}
 }

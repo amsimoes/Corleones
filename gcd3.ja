@@ -6,6 +6,7 @@ class gcd3 {
 		boolean b;
 		double a, b;
 		asd(a, b, c);
+		return z;
 	}
 
 	public static int asd(double a, double b, double c) {

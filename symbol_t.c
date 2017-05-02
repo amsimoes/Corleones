@@ -7,6 +7,8 @@ extern int line, col, yyleng;
 
 sym_t** table;
 int table_index = 0;
+char method_scope[2048][512];
+int num_method_vars = 0;
 
 sym_t** new_table(int size) {
 	return (sym_t**) malloc (sizeof(sym_t) * size);
@@ -15,7 +17,7 @@ sym_t** new_table(int size) {
 sym_t* new_sym_table(char* name) {
 	sym_t* sym_table = (sym_t*) malloc (sizeof(sym_t));
 	sym_table->name = strdup(name);
-	sym_table->method_defined = 0;
+	//sym_table->method_defined = 0;
 	return sym_table;
 }
 
@@ -30,7 +32,6 @@ symbol* new_symbol(char* sym_name, char* params, char* type, char* flag) {
 
 void init_table() {
 	table = new_table(SYM_TABLE_SIZE);
-
 }
 
 void insert_symbol(sym_t* st, char* name, char* params, char* type, char* flag) {
@@ -103,6 +104,10 @@ void build_table(node_t* n) {
 		table_index++;
 
 	} else if (!strcmp(n->type, "MethodDecl")) {
+		//print_method_vars();
+		memset(method_scope, '\0', sizeof(method_scope[0][0]) * 2048 * 512);
+		//print_method_vars();
+		num_method_vars = 0;
 		char method_name_args[512] = "Method ";
 		char method_params[256];
 
@@ -135,10 +140,16 @@ void build_table(node_t* n) {
 		}
 
 		table_index++;
+	} else if (!strcmp(n->type, "VarDecl")) {
+		strcpy(method_scope[num_method_vars], n->children[1]->value);
+		num_method_vars++;
+	} else if (!strcmp(n->type, "ParamDecl")) {
+		
+		strcpy(method_scope[num_method_vars], n->children[1]->value);
+		num_method_vars++;
 
 	} else if (is_expression(n->type)) {
-		//printf("Token = %s | line: %d col: %d\n", n->type, n->line, n->col);
-		//printf("method = %s | n->type = %s\n", table[table_index-1]->name, n->type);
+
 		if (n->n_children > 0) {
 			int c;
 			for(c=0; c < n->n_children; c++) {
@@ -151,10 +162,19 @@ void build_table(node_t* n) {
 						n->children[c]->data_type = (char*) strdup(c_type);
 						if (c == 0 && is_operation(n->type))
 							n->data_type = (char*) strdup(c_type);
-					}
+					} else {
+						//printf("n->children[c]->type = %s\n", n->children[c]->type);
+						if (strcmp(n->children[c]->type, "DecLit") && strcmp(n->children[c]->type, "RealLit") \
+							&& strcmp(n->children[c]->type, "BoolLit") && strcmp(n->children[c]->type, "StrLit")) {
+							n->children[c]->data_type = (char*) strdup("undef");
+							if (c == 0 && is_operation(n->type))
+								n->data_type = (char*) strdup("undef");	
+						}
+					} 
 				}
 			}
 		}
+
 	} else if (!strcmp(n->type, "Assign")) {
 
 		if (n->n_children > 0) {
@@ -168,7 +188,14 @@ void build_table(node_t* n) {
 						n->children[c]->data_type = (char*) strdup(c_type);
 						if (c == 0)
 							n->data_type = (char*) strdup(c_type);
-					}
+					} else {
+						if (strcmp(n->children[c]->type, "DecLit") && strcmp(n->children[c]->type, "RealLit") \
+							&& strcmp(n->children[c]->type, "BoolLit") && strcmp(n->children[c]->type, "StrLit")) {
+							n->children[c]->data_type = (char*) strdup("undef");
+							if (c == 0)
+								n->data_type = (char*) strdup("undef");
+						}	
+					} 
 				}
 			}
 		}
@@ -178,7 +205,7 @@ void build_table(node_t* n) {
 		if (n->n_children > 0) {
 			if (check_id_method_global(n->children[0]->value)) {	/* Check if method exists */
 				char params[128];
-				char return_type[8];
+				char return_type[128];
 				check_method_id(n, params, return_type);
 				if (params[0] != '\0' && return_type[0] != '\0') {
 					if (!strcmp(return_type, "bool"))
@@ -194,6 +221,11 @@ void build_table(node_t* n) {
 							if (!strcmp(c_type, "bool"))
 								strcpy(c_type, "boolean");
 							n->children[c]->data_type = (char*) strdup(c_type);
+						} else {
+							if (strcmp(n->children[c]->type, "DecLit") && strcmp(n->children[c]->type, "RealLit") \
+								&& strcmp(n->children[c]->type, "BoolLit") && strcmp(n->children[c]->type, "StrLit")) {
+								n->children[c]->data_type = (char*) strdup("undef");
+							}
 						}
 					}
 				}
@@ -213,6 +245,25 @@ void build_table(node_t* n) {
 				if (!strcmp(c_type, "bool"))
 					strcpy(c_type, "boolean");
 				n->children[0]->data_type = (char*) strdup(c_type);
+			} else if (c_type == NULL) {
+				n->children[0]->data_type = (char*) strdup("undef");
+			}
+		}
+	} else if (!strcmp(n->type, "Return")) {
+		if (n->n_children > 0) {
+			if (!strcmp(n->children[0]->type, "Id")) {
+				//printf("Id\n");
+				char* c_type = get_id_type(n->children[0]->value);
+				if (c_type != NULL) {
+					if (!strcmp(c_type, "bool"))
+						strcpy(c_type, "boolean");
+					n->children[0]->data_type = (char*) strdup(c_type);
+				} else if (c_type == NULL) {
+					if (strcmp(n->children[0]->type, "DecLit") && strcmp(n->children[0]->type, "RealLit") \
+						&& strcmp(n->children[0]->type, "BoolLit") && strcmp(n->children[0]->type, "StrLit")) {
+						n->children[0]->data_type = (char*) strdup("undef");
+					}
+				}
 			}
 		}
 	}
@@ -282,7 +333,7 @@ int is_expression(char* node_name) {
 		return 1;
 	if(!strcmp(node_name, "Minus") || !strcmp(node_name, "Not") || !strcmp(node_name, "And") || !strcmp(node_name, "Or"))
 		return 1;
-	if(!strcmp(node_name, "Return") || !strcmp(node_name, "Print") || !strcmp(node_name, "If") || !strcmp(node_name, "While") || !strcmp(node_name, "DoWhile"))
+	if(!strcmp(node_name, "Print") || !strcmp(node_name, "If") || !strcmp(node_name, "While") || !strcmp(node_name, "DoWhile"))
 		return 1;
 	return 0;
 }
@@ -294,22 +345,26 @@ int is_operation(char* node_name) {
 }
 
 char* get_id_type(char* n_name) {
-	symbol* first;
-	if (table[table_index-1] != NULL) {
-		first = table[table_index-1]->first;
+	if (n_name != NULL) {
+		symbol* first;
+		if (check_var_method_defined(n_name)) {
+			if (table[table_index-1] != NULL) {
+				first = table[table_index-1]->first;
+				while (first != NULL) {
+					if (!strcmp(first->sym_name, n_name)) {
+						return first->type;
+					}
+					first = first->next;
+				}
+			}
+		}
+		first = table[0]->first;
 		while (first != NULL) {
 			if (!strcmp(first->sym_name, n_name)) {
-				return first->type;
+				return first->type; 
 			}
 			first = first->next;
 		}
-	}
-	first = table[0]->first;
-	while (first != NULL) {
-		if (!strcmp(first->sym_name, n_name)) {
-			return first->type; 
-		}
-		first = first->next;
 	}
 	return NULL;
 }
@@ -329,7 +384,7 @@ int count_num_params(char* params) {
 	return count;
 }
 
-int get_params_matches(node_t* call, char* found_method_params) {
+int get_params_matches(node_t* call, char* found_method_params) { 
 	int c;
 	int n_matches = 0;
 	char* aux_params = (char*) strdup(found_method_params);
@@ -338,18 +393,20 @@ int get_params_matches(node_t* call, char* found_method_params) {
 	char* p = strtok(aux_params, ",");
 
 	for(c=1; c < call->n_children; c++) {
-		//printf("for - param tok = %s | id_type = %s\n", p, get_id_type(call->children[c]->value));
-		char* id_type = get_id_type(call->children[c]->value);
-		if (id_type != NULL) {
-			if (!strcmp(id_type, p)) {
-				n_matches++;
+		char* c_value = (char*) call->children[c]->value;
+		if (c_value != NULL) {
+			char* id_type = get_id_type(c_value);
+			if (id_type != NULL) {
+				if (!strcmp(id_type, p)) {
+					n_matches++;
+				} else {
+					break;
+				}
 			} else {
 				break;
 			}
-		} else {
-			break;
+			p = strtok(NULL, ",");
 		}
-		p = strtok(NULL, ",");
 	}
 	return n_matches;
 }
@@ -361,20 +418,16 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 	int method_found = 0;
 	symbol* first = table[0]->first;
 
-	while (first != NULL) {
+		while (first != NULL) {
 		if (!strcmp(first->sym_name, method_name) && first->params != NULL && first->type != NULL) {
 			char* found_method_params = (char*) strdup(first->params);
-			//printf("before - found_method_params = %s\n", found_method_params);
 			if (num_method_params == count_num_params(found_method_params)) {
-				//printf("after count_num_params - found_method_params = %s\n", found_method_params);
 				n_matches = get_params_matches(call, found_method_params);
-				//printf("after get_params_matches - found_method_params = %s\n", found_method_params);
 				if (n_matches == num_method_params && !method_found) {
 					strcpy(method_params, first->params);
 					strcpy(return_type, first->type);
 					method_found = 1;
 				} else if (n_matches == num_method_params && method_found) {
-					//printf("AMBIGUOUS!!!\n");
 					strcpy(method_params, "undef");
 					strcpy(return_type, "undef");
 				}
@@ -409,5 +462,22 @@ void get_method_params_type(char* method_name, char* params, char* return_type) 
 			return;
 		}
 		first = first->next;
+	}
+}
+
+int check_var_method_defined(char* var_name) {
+	int i;
+	for(i=0; i < num_method_vars; i++) {
+		if (!strcmp(var_name, method_scope[i])) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+void print_method_vars() {
+	int i;
+	for(i=0; i < num_method_vars; i++) {
+		printf("var = %s\n", method_scope[i]);
 	}
 }

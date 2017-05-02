@@ -1,0 +1,14 @@
+class gcd4 {
+	public static void main(int b) {
+		System.out.println(a);
+
+		main(3);
+		if (a == 3.5) {
+			// lul
+		}
+		a = 3;
+		return 3;
+	}
+
+	public static double x;
+}

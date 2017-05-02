@@ -1,16 +1,21 @@
 class gcd4 {
-	public static void main(int i) {
+	public static double a;
+
+	public static void main(int a, int b) {
 		System.out.println(a);
 
-		main(3);
-		if (a == 3.5) {
-			// lul
-		}
-
-		main(3);
-		a = false;
-		return true;
+		main(3, 3);
 	}
 
-	public static double a;
+	public static int main (int x1, double x2) {
+		int x;
+		int y;
+		x = 3;
+		y = 4;
+		main(3, 3.5);
+		if (x == 3.5) {
+
+		}
+		k = 3.4;
+	}
 }

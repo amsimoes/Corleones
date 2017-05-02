@@ -393,11 +393,12 @@ int get_params_matches(node_t* call, char* found_method_params) {
 
 	char* p = strtok(aux_params, ",");
 	for(c=1; c < call->n_children; c++) {
+		//printf("call->children[c]->type = %s | p = %s\n", call->children[c]->type, p);
 		if (!strcmp(call->children[c]->type, "DecLit") || !strcmp(call->children[c]->type, "RealLit") \
 			|| !strcmp(call->children[c]->type, "BoolLit") || !strcmp(call->children[c]->type, "StrLit")) {
 			if (!strcmp(call->children[c]->type, "DecLit") && !strcmp(p, "int")) {
 				n_matches++;
-			} else if (!strcmp(call->children[c]->type, "DecLit") && !strcmp(p, "double")) {
+			} else if (!strcmp(call->children[c]->type, "RealLit") && !strcmp(p, "double")) {
 				n_matches++;
 			} else if (!strcmp(call->children[c]->type, "BoolLit") && !strcmp(p, "boolean")) {
 				n_matches++;
@@ -431,15 +432,18 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 	int method_found = 0;
 	symbol* first = table[0]->first;
 
-		while (first != NULL) {
+	while (first != NULL) {
 		if (!strcmp(first->sym_name, method_name) && first->params != NULL && first->type != NULL) {
 			char* found_method_params = (char*) strdup(first->params);
 			if (num_method_params == count_num_params(found_method_params)) {
 				n_matches = get_params_matches(call, found_method_params);
+				//printf("n_matches = %d | num_method_params = %d\n", n_matches, num_method_params);
 				if (n_matches == num_method_params && !method_found) {
+					//printf("matches\n");
 					strcpy(method_params, first->params);
 					strcpy(return_type, first->type);
 					method_found = 1;
+					//break;
 				} else if (n_matches == num_method_params && method_found) {
 					strcpy(method_params, "undef");
 					strcpy(return_type, "undef");

@@ -180,13 +180,15 @@ void build_table(node_t* n) {
 				}
 				if (n->n_children > 1) { /* method params ids */
 					int c;
-					for(c=1; c < n->n_children; c++) {
-						char* c_type = get_id_type(n->children[c]->value);
-						if (c_type != NULL) {
-							if (!strcmp(c_type, "bool"))
-								strcpy(c_type, "boolean");
-							n->children[c]->data_type = (char*) strdup(c_type);
-						}
+					char* tok = params;
+					tok++;
+					tok[strlen(tok)-1] = '\0';
+					c = 1;
+					char* p = strtok(tok, ",");
+					while (c < n->n_children && p != NULL) {
+						n->children[c]->data_type = (char*) strdup(p);
+						c++;
+						p = strtok(NULL, ",");
 					}
 				}
 			}

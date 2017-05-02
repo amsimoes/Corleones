@@ -37,4 +37,9 @@ char* get_id_type(char* n_name);
 int is_operation(char* node_name);
 int check_id_method_global(char* method_name);
 void get_method_params_type(char* method_name, char* params, char* return_type);
+int count_num_params(char* params);
+int get_params_matches(node_t* call, char* found_method_params);
+void check_method_id(node_t* call, char* method_params, char* return_type);
+
+
 #endif

@@ -39,10 +39,12 @@ int is_operation(char* node_name);
 int check_id_method_global(char* method_name);
 void get_method_params_type(char* method_name, char* params, char* return_type);
 int count_num_params(char* params);
-int get_params_matches(node_t* call, char* found_method_params, int compatible);
+int get_params_matches(node_t* call, char* found_method_params, int num_method_params, int compatible);
 void check_method_id(node_t* call, char* method_params, char* return_type);
 int check_var_method_defined(char* var_name);
 void print_method_vars();
 char* get_operation_type(node_t* n_left, node_t* n_right);
+void handle_call(node_t* n_call);
+void parse_params(char* method_params, char aux_params[][128]);
 
 #endif

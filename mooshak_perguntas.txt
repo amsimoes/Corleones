@@ -1,0 +1,31 @@
+mooshak - perguntas E:
+Além disso, não estão a conseguir encontrar métodos declarados
+antes do método que os chama. Os que são declarados depois parecem funcionar.
+
+Também estão a idenitifcar mal o tipo de variáveis quando exitem métodos com o mesmo nome.
+
+Agora não há lixo, mas não estão a encontrar os métodos corretamente.
+
+Erros
+- nos nós Call (método escolhido está errado quando há vários com o mesmo nome).
+- nos nós Not (anotação em branco?)
+- nos nós Id, quando se referem a variáveis ou parâmetros locais e há globais
+  com o mesmo nome.
+
+  Em java, é permitido invocar métodos declarados mais à frente. Além disso, estão a dar erros nos nós Call que
+simplesmente não existem. Revejam as regras do java!!!
+
+Além disso, não estão a conseguir encontrar métodos declarados
+antes do método que os chama. Os que são declarados depois parecem funcionar.
+
+Notar que é possível invocar um método f(double) com um int - f(0), por exemplo, mas isso só acontece se f(int)
+não estiver defindo. Era a isso que eu me referia. Quando nenhum método serve, Call e Id devem ser 
+anotados undef.
+
+	
+Num nó call, os tipos associados ao Id são os do método invocado, e não os dos parâmetros passados.
+Além disso, há variáveis com o tipo errado quando existe um método com o mesmo nome.
+
+Os tipos dos Id não estão corretos, nomeadamente quando se referem a parâmetros da função, mas provavelmente não só.
+
+A invocação de métodos sem parâmetros está a mostrar (null) no output. Testem com o valgrind.

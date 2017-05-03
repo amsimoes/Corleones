@@ -145,13 +145,13 @@ ExprL: MethodInvocation 						{$$ = ast_insert_node("MethodInvocationList", NULL
 	| ExprL MOD ExprL							{$$ = ast_insert_node("Mod", NULL, 1, 2, $1, $3);}
 	| PLUS ExprL 			%prec NOT 			{$$ = ast_insert_node("Plus", NULL, 1, 1, $2);}
 	| MINUS ExprL 			%prec NOT 			{$$ = ast_insert_node("Minus", NULL, 1, 1, $2);}
-	| NOT ExprL 			%prec NOT 			{$$ = ast_insert_node("Not", NULL, 1, 1, $2);}
+	| NOT ExprL 			%prec NOT 			{$$ = ast_insert_node("Not", "boolean", 1, 1, $2);}
 	| IDAux 									{$$ = ast_insert_node("IdAux", NULL, 0, 1, $1);}
 	| IDAux DOTLENGTH 							{$$ = ast_insert_node("Length", "int", 1, 1, $1);}
 	| OCURV Expr CCURV 							{$$ = ast_insert_node("ExprCurvs", NULL, 0, 1, $2);}
-	| BoolAux 									{$$ = ast_insert_node("BoolAux", "boolean", 0, 1, $1);}
-	| DecAux									{$$ = ast_insert_node("DecAux", "int", 0, 1, $1);}
-	| RealAux 									{$$ = ast_insert_node("RealAux", "double", 0, 1, $1);}
+	| BoolAux 									{$$ = ast_insert_node("BoolAux", NULL, 0, 1, $1);}
+	| DecAux									{$$ = ast_insert_node("DecAux", NULL, 0, 1, $1);}
+	| RealAux 									{$$ = ast_insert_node("RealAux", NULL, 0, 1, $1);}
 	| OCURV error CCURV		 					{$$ = NULL;}
 
 IDAux: ID				{$$ = ast_insert_terminal("Id", NULL, 1, $1);}

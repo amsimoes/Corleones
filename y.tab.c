@@ -2037,7 +2037,7 @@ yyreduce:
 
   case 78:
 #line 148 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("Not", NULL, 1, 1, (yyvsp[0].node));}
+    {(yyval.node) = ast_insert_node("Not", "boolean", 1, 1, (yyvsp[0].node));}
 #line 2042 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2061,19 +2061,19 @@ yyreduce:
 
   case 82:
 #line 152 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("BoolAux", "boolean", 0, 1, (yyvsp[0].node));}
+    {(yyval.node) = ast_insert_node("BoolAux", NULL, 0, 1, (yyvsp[0].node));}
 #line 2066 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
 #line 153 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("DecAux", "int", 0, 1, (yyvsp[0].node));}
+    {(yyval.node) = ast_insert_node("DecAux", NULL, 0, 1, (yyvsp[0].node));}
 #line 2072 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
 #line 154 "jac.y" /* yacc.c:1646  */
-    {(yyval.node) = ast_insert_node("RealAux", "double", 0, 1, (yyvsp[0].node));}
+    {(yyval.node) = ast_insert_node("RealAux", NULL, 0, 1, (yyvsp[0].node));}
 #line 2078 "y.tab.c" /* yacc.c:1646  */
     break;
 

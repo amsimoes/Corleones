@@ -9,6 +9,7 @@ sym_t** table;
 int table_index = 0;
 char method_scope[2048][512];
 int num_method_vars = 0;
+int match_method_flag = 0;
 
 sym_t** new_table(int size) {
 	return (sym_t**) malloc (sizeof(sym_t) * size);
@@ -151,9 +152,28 @@ void build_table(node_t* n) {
 	} else if (is_expression(n->type)) {
 		if (n->n_children > 0) {
 			if (is_operation(n->type)) {
+				//printf("n->type = %s | n->children[0]->type = %s | n->children[1]->type = %s\n", n->type, n->children[0]->type, n->children[1]->type);
 				char* op_type = get_operation_type(n->children[0], n->children[1]);
+				//printf("op_type = %s\n", op_type);
 				if (op_type != NULL)
 					n->data_type = (char*) strdup(op_type);
+				else
+					n->data_type = (char*) strdup("undef");
+			} else if (!strcmp(n->type, "Minus") || !strcmp(n->type, "Plus")) {
+				if (strcmp(n->children[0]->type, "DecLit") && strcmp(n->children[0]->type, "RealLit") \
+					&& strcmp(n->children[0]->type, "BoolLit") && strcmp(n->children[0]->type, "StrLit")) {
+					char* c_type = get_id_type(n->children[0]->value);
+					if (c_type != NULL) {
+						n->data_type = (char*) strdup(c_type);
+					} else {
+						n->data_type = (char*) strdup("undef");
+					}
+				} else {
+					if (!strcmp(n->children[0]->type, "DecLit"))
+						n->data_type = (char*) strdup("int");
+					else if (!strcmp(n->children[0]->type, "RealLit"))
+						n->data_type = (char*) strdup("double");
+				}
 			}
 			int c;
 			for(c=0; c < n->n_children; c++) {
@@ -265,14 +285,10 @@ void build_table(node_t* n) {
 						strcpy(c_type, "boolean");
 					n->children[0]->data_type = (char*) strdup(c_type);
 				} else if (c_type == NULL) {
-					/*if (strcmp(n->children[0]->type, "DecLit") && strcmp(n->children[0]->type, "RealLit") \
+					if (strcmp(n->children[0]->type, "DecLit") && strcmp(n->children[0]->type, "RealLit") \
 						&& strcmp(n->children[0]->type, "BoolLit") && strcmp(n->children[0]->type, "StrLit")) {
-						if (is_operation(n->children[0]->type)) {
-
-						} else {
-							n->children[0]->data_type = (char*) strdup("undef");
-						}
-					}*/
+						n->children[0]->data_type = (char*) strdup("undef");
+					}
 				}
 			}
 		}
@@ -394,7 +410,7 @@ int count_num_params(char* params) {
 	return count;
 }
 
-int get_params_matches(node_t* call, char* found_method_params) { 
+int get_params_matches(node_t* call, char* found_method_params, int compatible) { 
 	int c;
 	int n_matches = 0;
 	char* aux_params = (char*) strdup(found_method_params);
@@ -403,37 +419,59 @@ int get_params_matches(node_t* call, char* found_method_params) {
 
 	char* p = strtok(aux_params, ",");
 	for(c=1; c < call->n_children; c++) {
+		char* c_type = (char*) strdup(call->children[c]->type);
+		if (!strcmp(call->children[c]->type, "Minus") || !strcmp(call->children[c]->type, "Plus")) {
+			c_type = (char*) strdup(call->children[c]->children[0]->type);
+		}
 		//printf("call->children[c]->type = %s | p = %s\n", call->children[c]->type, p);
-		if (!strcmp(call->children[c]->type, "DecLit") || !strcmp(call->children[c]->type, "RealLit") \
-			|| !strcmp(call->children[c]->type, "BoolLit") || !strcmp(call->children[c]->type, "StrLit")) {
-			if (!strcmp(call->children[c]->type, "DecLit") && !strcmp(p, "int")) {
+		if (!strcmp(c_type, "DecLit") || !strcmp(c_type, "RealLit") \
+			|| !strcmp(c_type, "BoolLit") || !strcmp(c_type, "StrLit")) {
+			if (!strcmp(c_type, "DecLit") && !strcmp(p, "int")) {
 				n_matches++;
-			} else if (!strcmp(call->children[c]->type, "RealLit") && !strcmp(p, "double")) {
+			} else if (!strcmp(c_type, "RealLit") && !strcmp(p, "double")) {
 				n_matches++;
-			} else if (!strcmp(call->children[c]->type, "DecLit") && !strcmp(p, "double")) {
-				//printf("piu?\n");
+			} else if (!strcmp(c_type, "DecLit") && !strcmp(p, "double") && compatible) {
 				n_matches++;
-			} else if (!strcmp(call->children[c]->type, "BoolLit") && !strcmp(p, "boolean")) {
+			} else if (!strcmp(c_type, "BoolLit") && !strcmp(p, "boolean")) {
 				n_matches++;
-			} else if (!strcmp(call->children[c]->type, "StrLit") && !strcmp(p, "String[]")) {
+			} else if (!strcmp(c_type, "StrLit") && !strcmp(p, "String[]")) {
 				n_matches++;
 			}
 		} else {
-			char* c_value = (char*) call->children[c]->value;
-			if (c_value != NULL) {
-				char* id_type = get_id_type(c_value);
-				if (id_type != NULL) {
-					if (!strcmp(id_type, "int") && !strcmp(p, "double"))
+			if (is_operation(call->children[c]->type)) {
+				//printf("get_params_matches | call->children[c]->type = %s\n", call->children[c]->type);
+				char* op_type = get_operation_type(call->children[c]->children[0], call->children[c]->children[1]);
+				if (op_type != NULL) {
+					if (!strcmp(op_type, "int") && !strcmp(p, "double") && compatible) {
 						n_matches++;
-					else {
-						if (!strcmp(id_type, p)) {
+					} else {
+						if (!strcmp(op_type, p)) {
 							n_matches++;
 						} else {
 							break;
 						}
 					}
-				} else {
-					break;
+				}
+			} else {
+				char* c_value = (char*) call->children[c]->value;
+				if (!strcmp(call->children[c]->type, "Minus") || !strcmp(call->children[c]->type, "Plus")) {
+					c_value = (char*) strdup(call->children[c]->children[0]->value);
+				}
+				if (c_value != NULL) {
+					char* id_type = get_id_type(c_value);
+					if (id_type != NULL) {
+						if (!strcmp(id_type, "int") && !strcmp(p, "double") && compatible) {
+							n_matches++;
+						} else {
+							if (!strcmp(id_type, p)) {
+								n_matches++;
+							} else {
+								break;
+							}
+						}
+					} else {
+						break;
+					}
 				}
 			}
 		}
@@ -444,35 +482,64 @@ int get_params_matches(node_t* call, char* found_method_params) {
 
 void check_method_id(node_t* call, char* method_params, char* return_type) {
 	char* method_name = call->children[0]->value;
+	//printf("method_name = %s\n", method_name);
 	int num_method_params = call->n_children - 1;
 	int n_matches = 0;
 	int method_found = 0;
+	int method_ambiguous = 0;
 	symbol* first = table[0]->first;
 
 	while (first != NULL) {
 		if (!strcmp(first->sym_name, method_name) && first->params != NULL && first->type != NULL) {
 			char* found_method_params = (char*) strdup(first->params);
 			if (num_method_params == count_num_params(found_method_params)) {
-				n_matches = get_params_matches(call, found_method_params);
-				//printf("n_matches = %d | num_method_params = %d\n", n_matches, num_method_params);
+				n_matches = get_params_matches(call, found_method_params, 0);
+
 				if (n_matches == num_method_params && !method_found) {
-					//printf("matches\n");
 					strcpy(method_params, first->params);
 					strcpy(return_type, first->type);
 					method_found = 1;
-					//break;
 				} else if (n_matches == num_method_params && method_found) {
+					method_ambiguous = 1;
 					strcpy(method_params, "undef");
 					strcpy(return_type, "undef");
+					return;
 				}
+
 			}
 		}
 		first = first->next;
 	}
+	
+	if (!method_found) {
+		first = table[0]->first;
 
-	if (!method_found) { 	/* No method compativel */
-		strcpy(method_params, "undef");
-		strcpy(return_type, "undef");
+		while (first != NULL) {
+			if (!strcmp(first->sym_name, method_name) && first->params != NULL && first->type != NULL) {
+				char* found_method_params = (char*) strdup(first->params);
+				if (num_method_params == count_num_params(found_method_params)) {
+					n_matches = get_params_matches(call, found_method_params, 1);
+
+					if (n_matches == num_method_params && !method_found) {
+						strcpy(method_params, first->params);
+						strcpy(return_type, first->type);
+						method_found = 1;
+					} else if (n_matches == num_method_params && method_found) {
+						method_ambiguous = 1;
+						strcpy(method_params, "undef");
+						strcpy(return_type, "undef");
+						return;
+					}
+
+				}
+			}
+			first = first->next;
+		}
+
+		if (!method_found) { 	/* No method compativel */
+			strcpy(method_params, "undef");
+			strcpy(return_type, "undef");
+		}
 	}
 }
 
@@ -517,23 +584,101 @@ void print_method_vars() {
 }
 
 char* get_operation_type(node_t* n_left, node_t* n_right) {
+	//printf("\nn_left = %s | n_right = %s\n", n_left->type, n_right->type);
+
 	char* left_type = get_id_type(n_left->value);
 	char* right_type = get_id_type(n_right->value);
 
+	//printf("left_type = %s | right_type = %s\n", left_type, right_type);
+
 	if (left_type != NULL && right_type != NULL) {
+
+		if (!strcmp(left_type, "undef") || !strcmp(right_type, "undef"))
+			return "undef";
 		if (!strcmp(left_type, "double") || !strcmp(right_type, "double")) 
 			return "double";
 		else if (!strcmp(left_type, "int") && !strcmp(right_type, "int"))
 			return "int";
+
 	} else if (left_type != NULL && right_type == NULL) {
-		if (!strcmp(left_type, "double") || !strcmp(n_right->type, "RealLit"))
+		right_type = n_right->type;
+
+		if (is_operation(n_right->type)) {
+			right_type = get_operation_type(n_right->children[0], n_right->children[1]);
+		} else if (!strcmp(n_right->type, "Minus") || !strcmp(n_right->type, "Plus")) {
+			right_type = (char*) strdup(n_right->children[0]->type);
+		}
+
+		if (right_type == NULL)
+			return NULL;
+		if (!strcmp(left_type, "undef") || !strcmp(right_type, "undef"))
+			return "undef";
+		if (!strcmp(left_type, "double") || !strcmp(right_type, "RealLit"))
 			return "double";
-		else if (!strcmp(left_type, "int") && !strcmp(n_right->type, "DecLit"))
+		else if (!strcmp(left_type, "double") || !strcmp(right_type, "double"))
+			return "double";
+		else if (!strcmp(left_type, "int") && !strcmp(right_type, "DecLit"))
 			return "int";
-	} else if (left_type == NULL && right_type == NULL) {
-		if (!strcmp(n_left->type, "RealLit") || !strcmp(n_right->type, "RealLit"))
+		else if (!strcmp(left_type, "int") && !strcmp(right_type, "int"))
+			return "int";
+
+	} else if (left_type == NULL && right_type != NULL) {
+		left_type = n_left->type;
+
+		//printf("left_type = %s\n", left_type);
+
+		if (is_operation(n_left->type)) {
+			left_type = get_operation_type(n_left->children[0], n_left->children[1]);
+		} else if (!strcmp(n_left->type, "Minus") || !strcmp(n_left->type, "Plus")) {
+			left_type = (char*) strdup(n_left->children[0]->type);
+		}
+
+		if (left_type == NULL)
+			return NULL;
+		if (!strcmp(left_type, "undef") || !strcmp(right_type, "undef"))
+			return "undef";
+		if ((!strcmp(left_type, "double") || !strcmp(left_type, "RealLit")) || !strcmp(right_type, "double"))
 			return "double";
-		else if (!strcmp(n_left->type, "DecLit") && !strcmp(n_right->type, "DecLit"))
+		else if ((!strcmp(left_type, "int") || !strcmp(left_type, "DecLit")) && !strcmp(right_type, "int"))
+			return "int";
+
+	} else if (left_type == NULL && right_type == NULL) {
+		left_type = (char*) strdup(n_left->type);
+		right_type = (char*) strdup(n_right->type);
+
+		//printf("piu | left_type = %s /// right_type = %s\n", left_type, right_type);
+
+		if (is_operation(n_left->type)) {
+			left_type = get_operation_type(n_left->children[0], n_left->children[1]);
+		} else if (!strcmp(n_left->type, "Minus") || !strcmp(n_left->type, "Plus")) {
+			left_type = (char*) strdup(n_left->children[0]->type);
+		} else if (!strcmp(n_left->type, "Id")) {
+			return "undef";
+		}
+
+		if (is_operation(n_right->type)) {
+			right_type = get_operation_type(n_right->children[0], n_right->children[1]);
+		} else if (!strcmp(n_right->type, "Minus") || !strcmp(n_right->type, "Plus")) {
+			right_type = (char*) strdup(n_right->children[0]->type);
+		} else if (!strcmp(n_right->type, "Id")) {
+			return "undef";
+		}
+		
+		if (right_type == NULL || left_type == NULL) 
+			return NULL;
+		if (!strcmp(left_type, "undef") || !strcmp(right_type, "undef"))
+			return "undef";
+		if (!strcmp(left_type, "RealLit") || !strcmp(right_type, "RealLit"))
+			return "double";
+		else if (!strcmp(left_type, "double") || !strcmp(right_type, "double"))
+			return "double";
+		else if (!strcmp(left_type, "DecLit") && !strcmp(right_type, "DecLit"))
+			return "int";
+		else if (!strcmp(left_type, "DecLit") && !strcmp(right_type, "int"))
+			return "int";
+		else if (!strcmp(left_type, "int") && !strcmp(right_type, "int"))
+			return "int";
+		else if (!strcmp(left_type, "int") && !strcmp(right_type, "DecLit"))
 			return "int";
 	}
 

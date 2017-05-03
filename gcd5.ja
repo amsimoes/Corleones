@@ -9,5 +9,13 @@ class gcd5 {
 
 	public static void caller() {
 		main(1,1);
+		System.out.println(a);
+		if(!a) {
+
+		}
+		double a;
+		System.out.println(a);
 	}
+
+	public static int a;
 }

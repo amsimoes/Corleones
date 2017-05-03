@@ -1,0 +1,12 @@
+class gcd6 {
+	public static void main(int a, double d) {
+
+	}
+
+	public static void test() {
+		int z;
+		z = 3;
+		//main(3);
+		main(z, z);
+	}
+}

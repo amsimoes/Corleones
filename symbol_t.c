@@ -145,7 +145,6 @@ void build_table(node_t* n) {
 		strcpy(method_scope[num_method_vars], n->children[1]->value);
 		num_method_vars++;
 	} else if (!strcmp(n->type, "ParamDecl")) {
-		
 		strcpy(method_scope[num_method_vars], n->children[1]->value);
 		num_method_vars++;
 
@@ -226,9 +225,11 @@ void build_table(node_t* n) {
 
 		if (n->n_children > 0) {
 			if (check_id_method_global(n->children[0]->value)) {	/* Check if method exists */
+				printf("call->children[0]->value = %s\n", n->children[0]->value);
 				char params[128];
 				char return_type[128];
 				check_method_id(n, params, return_type);
+				printf("params = %s / return_type = %s\n", params, return_type);
 				if (params[0] != '\0' && return_type[0] != '\0') {
 					if (!strcmp(return_type, "bool"))
 						strcpy(return_type, "boolean");
@@ -377,7 +378,7 @@ char* get_id_type(char* n_name) {
 			if (table[table_index-1] != NULL) {
 				first = table[table_index-1]->first;
 				while (first != NULL) {
-					if (!strcmp(first->sym_name, n_name)) {
+					if (!strcmp(first->sym_name, n_name) && first->params == NULL) {
 						return first->type;
 					}
 					first = first->next;
@@ -386,7 +387,7 @@ char* get_id_type(char* n_name) {
 		}
 		first = table[0]->first;
 		while (first != NULL) {
-			if (!strcmp(first->sym_name, n_name)) {
+			if (!strcmp(first->sym_name, n_name) && first->params == NULL) {
 				return first->type; 
 			}
 			first = first->next;
@@ -452,8 +453,11 @@ int get_params_matches(node_t* call, char* found_method_params, int compatible) 
 						}
 					}
 				}
+			} else if (!strcmp(call->children[c]->type, "Call")) {
+				printf("PO CRL!!!!\n");
 			} else {
 				char* c_value = (char*) call->children[c]->value;
+				printf("c_type = %s | c_value = %s\n", call->children[c]->type, c_value);
 				if (!strcmp(call->children[c]->type, "Minus") || !strcmp(call->children[c]->type, "Plus")) {
 					c_value = (char*) strdup(call->children[c]->children[0]->value);
 				}
@@ -492,8 +496,11 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 	while (first != NULL) {
 		if (!strcmp(first->sym_name, method_name) && first->params != NULL && first->type != NULL) {
 			char* found_method_params = (char*) strdup(first->params);
+			printf("found_method_params = %s\n", found_method_params);
 			if (num_method_params == count_num_params(found_method_params)) {
+				printf("num_method_params = %d\n", num_method_params);
 				n_matches = get_params_matches(call, found_method_params, 0);
+				printf("n_matches = %d\n", n_matches);
 
 				if (n_matches == num_method_params && !method_found) {
 					strcpy(method_params, first->params);
@@ -684,3 +691,50 @@ char* get_operation_type(node_t* n_left, node_t* n_right) {
 
 	return NULL;
 }
+
+/*char* handle_call(node_t* n_call) {
+	if (n_call->n_children > 0) {
+		if (!strcmp(n_call->children[1]->type, "Call")) {
+			char* call_type = handle_call(n_call->children[1]);
+			if (call_type != NULL) {
+				n_call->data_type = (char*) strdup(call_type);
+
+			}
+		} else {
+			Check if method exists 
+			if (check_id_method_global(n_call->children[0]->value)) {
+				char params[2048];
+				char return_type[2048];
+				check_method_id(n_call, params, return_type);
+				if (params[0] != '\0' && return_type[0] != '\0') {
+					if (!strcmp(return_type, "bool"))
+						strcpy(return_type, "boolean");
+					n->data_type = (char*) strdup(return_type);
+					n->children[0]->data_type = (char*) strdup(params);	
+				}
+			} else {
+				Method doesn't exist 
+				n_call->data_type = (char*) strdup("undef");
+				n->children[0]->data_type = (char*) strdup("undef");
+			}
+
+			if (strcmp(n_call->children[1]->type, "Call")) {
+				int c;
+				for (c=1; c < n_children; c++) {
+					char* c_type = get_id_type(n->children[c]->value);
+					if (c_type != NULL) {
+						if (!strcmp(c_type, "bool"))
+							strcpy(c_type, "boolean");
+						n->children[c]->data_type = (char*) strdup(c_type);
+					} else {
+						if (!strcmp(c_type, "bool"))
+							strcpy(c_type, "boolean");
+						n->children[c]->data_type = (char*) strdup(c_type);
+					}
+				}
+			}
+
+			return return_type;
+		}
+	}
+}*/

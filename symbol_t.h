@@ -45,6 +45,6 @@ int check_var_method_defined(char* var_name);
 void print_method_vars();
 char* get_operation_type(node_t* n_left, node_t* n_right);
 void handle_call(node_t* n_call);
-void parse_params(char* method_params, char aux_params[][128]);
+void parse_params(char* method_params, char** aux_params);
 
 #endif

@@ -408,7 +408,7 @@ int count_num_params(char* params) {
 	return count;
 }
 
-void parse_params(char* method_params, char aux_params[][128]) {
+void parse_params(char* method_params, char** aux_params) {
 	char* p_aux = (char*) strdup(method_params);
 	p_aux++;
 	p_aux[strlen(p_aux) - 1] = '\0';
@@ -426,7 +426,10 @@ int get_params_matches(node_t* call, char* found_method_params, int num_method_p
 	int n_matches = 0;
 	//char* aux_params = (char*) strdup(found_method_params);
 
-	char aux_params[num_method_params][128];
+	//char aux_params[num_method_params][128];
+	char** aux_params = (char**) malloc (sizeof(char*) * num_method_params);
+	for(c=0; c < num_method_params; c++)
+		aux_params[c] = (char*) malloc (sizeof(char) * 128);
 	parse_params(found_method_params, aux_params);
 
 	//printf("\nfound_method_params = %s | call->n_children = %d\n", found_method_params, call->n_children);
@@ -642,7 +645,10 @@ char* get_operation_type(node_t* n_left, node_t* n_right) {
 			right_type = get_operation_type(n_right->children[0], n_right->children[1]);
 		} else if (!strcmp(n_right->type, "Minus") || !strcmp(n_right->type, "Plus")) {
 			right_type = (char*) strdup(n_right->children[0]->type);
-		}
+		} else if (!strcmp(n_right->type, "Call")) {
+			handle_call(n_right);
+			right_type = (char*) strdup(n_right->data_type);
+		} 
 
 		if (right_type == NULL)
 			return NULL;
@@ -666,6 +672,9 @@ char* get_operation_type(node_t* n_left, node_t* n_right) {
 			left_type = get_operation_type(n_left->children[0], n_left->children[1]);
 		} else if (!strcmp(n_left->type, "Minus") || !strcmp(n_left->type, "Plus")) {
 			left_type = (char*) strdup(n_left->children[0]->type);
+		} else if (!strcmp(n_left->type, "Call")) {
+			handle_call(n_left);
+			left_type = (char*) strdup(n_left->data_type);
 		}
 
 		if (left_type == NULL)
@@ -687,6 +696,9 @@ char* get_operation_type(node_t* n_left, node_t* n_right) {
 			left_type = get_operation_type(n_left->children[0], n_left->children[1]);
 		} else if (!strcmp(n_left->type, "Minus") || !strcmp(n_left->type, "Plus")) {
 			left_type = (char*) strdup(n_left->children[0]->type);
+		} else if (!strcmp(n_left->type, "Call")) {
+			handle_call(n_left);
+			left_type = (char*) strdup(n_left->data_type);
 		} else if (!strcmp(n_left->type, "Id")) {
 			return "undef";
 		}
@@ -695,6 +707,9 @@ char* get_operation_type(node_t* n_left, node_t* n_right) {
 			right_type = get_operation_type(n_right->children[0], n_right->children[1]);
 		} else if (!strcmp(n_right->type, "Minus") || !strcmp(n_right->type, "Plus")) {
 			right_type = (char*) strdup(n_right->children[0]->type);
+		} else if (!strcmp(n_right->type, "Call")) {
+			handle_call(n_right);
+			right_type = (char*) strdup(n_right->data_type);
 		} else if (!strcmp(n_right->type, "Id")) {
 			return "undef";
 		}

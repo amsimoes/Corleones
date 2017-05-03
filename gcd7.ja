@@ -1,0 +1,29 @@
+class gcd7 {
+	public static void f(String[] args) {
+		int x;
+		x = 5+534123+65.5334534+43223*12312%23423*123132/423423;
+
+		if (x == true) {
+			x = false;
+		} else if (x == false) {
+			x = 3.5 * 12345123123123 - d;
+		}
+
+		x = f(3.5*123%1233);
+
+		x = Integer.parseInt(args[0.0]);
+
+		f(true);
+
+		return d;
+		return;
+	}
+
+	public static double f(int x) {
+
+	}
+
+	public static int f(boolean k) {
+		f(3);
+	}
+}

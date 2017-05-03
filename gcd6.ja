@@ -1,9 +1,35 @@
 class gcd6 {
+	public static int f;
+
 	public static int f(int b1, double b2) {
-		f( f(3, 3) , 3);
+		//f( f(3, 3) , 3);
+		
+		System.out.println(f);
+		
+		double f;
+
+		f(1, 2.5);
+
+		System.out.println(f);
+		f = asd;
+		if ((f(1,2.5) * 423*234.1) * 123) {
+
+		}
+
+		f(12, 13);
 	}
 
-	public static double f(int asd, int zxczx) {
+	public static void f(int asd, int zxc) {
 
 	}
+
+	/*public static double f(int asd, double d) {
+
+	}
+
+	public static boolean f(int a, double b) {
+
+	}*/
+
+	public static boolean f;
 }

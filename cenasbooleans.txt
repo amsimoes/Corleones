@@ -1,0 +1,42 @@
+class ola {
+	public static int method(boolean lul, double lol, boolean epa){
+		int hello_guyse;
+		System.out.println("waddup big boys");
+	}
+
+	public static int method(boolean lul, int lol, double epa){
+		int hello_guyse;
+		System.out.println("waddup big boys");
+	}
+	public static int method(int lul, boolean lol, double epa){
+		int hello_guyse;
+		System.out.println("waddup big boys");
+	}
+	public static int method(boolean lul, boolean lol, boolean epa){
+		int hello_guyse;
+		System.out.println("waddup big boys");
+	}
+	public static int method(int lul, int lol, int epa){
+		int hello_guyse;
+		System.out.println("waddup big boys");
+	}
+	public static int method(double lul, int lol, int epa){
+		int hello_guyse;
+		System.out.println("waddup big boys");
+	}
+
+	public static void test () {
+		method(1,0,0);
+		method(true,false,9.0);
+		method(2e32,true,false);
+		method(0,0,0);
+		method(-124153,false,true);
+		method(0.0,13,1);
+		method(2,false,0.0);
+		method(1,true,0);
+		method(false,false,false);
+		method(false,0.0,true);
+		method(false,0.1,0);
+	}
+	
+}

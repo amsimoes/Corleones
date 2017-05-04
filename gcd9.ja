@@ -1,0 +1,19 @@
+class gcd9 {
+	public static int f(String[] args) {
+		int x;
+		//x = -3+(-1+args.length); 
+
+		x = -x+args.length;
+		test(-x+args.length-(-123+(test(test(x)))));
+
+		//x = -Integer.parseInt(args[0]);
+		//test(+Integer.parseInt(args[0])+args.length);
+		//test(-test(+1)+(-x-args.length));
+		//test(-Integer.parseInt(args[0]));
+		//test(+args.length);
+	}
+
+	public static int test(int z) {
+
+	}
+}

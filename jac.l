@@ -146,6 +146,8 @@ int main(int argc, char** argv)
 	} else if (argc == 1) {
 		syntax_flag = 1;
 		yyparse();
+		init_table();
+		build_table(ast_root);
 	}
 	return 0;
 }

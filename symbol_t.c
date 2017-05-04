@@ -257,6 +257,7 @@ void build_table(node_t* n) {
 					n->children[0]->data_type = (char*) strdup(params);	
 				}	
 			} else {
+				printf("method doesnt exist\n");
 				n->data_type = (char*) strdup("undef");
 				n->children[0]->data_type = (char*) strdup("undef");
 			}
@@ -588,7 +589,8 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 					method_ambiguous = 1;
 					strcpy(method_params, "undef");
 					strcpy(return_type, "undef");
-					char* method_name_params = strcat(call->children[0]->value, found_method_params);
+					char* m_aux = (char*) strdup(call->children[0]->value);
+					char* method_name_params = strcat(m_aux, found_method_params);
 					printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
 					return;
 				}
@@ -596,7 +598,7 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 		}
 		first = first->next;
 	}
-	
+
 	if (!method_found) {
 		first = table[0]->first;
 
@@ -614,6 +616,9 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 						method_ambiguous = 1;
 						strcpy(method_params, "undef");
 						strcpy(return_type, "undef");
+						char* m_aux = (char*) strdup(call->children[0]->value);
+						char* method_name_params = strcat(m_aux, found_method_params);
+						printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
 						return;
 					}
 
@@ -625,6 +630,8 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 		if (!method_found) { 	/* No method compativel */
 			strcpy(method_params, "undef");
 			strcpy(return_type, "undef");
+			//char* method_name_params = strcat(call->children[0]->value, found_method_params);
+			//printf("Line %d, col %d: Cannot find symbol %s")
 		}
 	}
 }

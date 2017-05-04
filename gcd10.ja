@@ -1,12 +1,12 @@
 class gcd10 {
-	public static int main (int a, double b) {
-		int x;
+    public static int main (int a, double b) {
+        int x;
 
-		main(1,1);
-	}
+        main(1,1);
+    }
 
-	public static void main (int a, double b) {
+    public static void main (int a, double b) {
 
-	}
+    }
 
 }

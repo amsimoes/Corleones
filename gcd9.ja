@@ -3,17 +3,18 @@ class gcd9 {
 		int x;
 		//x = -3+(-1+args.length); 
 
+		if (z==12)
 		x = -x+args.length;
 		test(-x+args.length-(-123+(test(test(x)))));
 
-		//x = -Integer.parseInt(args[0]);
-		//test(+Integer.parseInt(args[0])+args.length);
-		//test(-test(+1)+(-x-args.length));
-		//test(-Integer.parseInt(args[0]));
-		//test(+args.length);
+		x = -Integer.parseInt(args[0]);
+		test(+Integer.parseInt(args[0])+args.length);
+		test(-test(+1)+(-x-args.length));
+		test(-Integer.parseInt(args[0]));
+		test(+args.length-(-2+(-2+(-Integer.parseInt(args[0])))));
 	}
-
-	public static int test(int z) {
+	
+	public static int test(int z,int a,int b,int c,int d,int e,int f, int g,int h,int j,int k,int l) {
 
 	}
 }

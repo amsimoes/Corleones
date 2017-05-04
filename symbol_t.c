@@ -109,8 +109,8 @@ void build_table(node_t* n) {
 		memset(method_scope, '\0', sizeof(method_scope[0][0]) * 2048 * 512);
 		//print_method_vars();
 		num_method_vars = 0;
-		char method_name_args[512] = "Method ";
-		char method_params[256];
+		char method_name_args[4096] = "Method ";
+		char method_params[4096];
 
 		strcat(method_name_args, n->children[0]->children[1]->value);
 		get_global_method_header_params(n, method_params);
@@ -164,8 +164,9 @@ void build_table(node_t* n) {
 				} else if (!strcmp(n->children[0]->type, "Call")) {
 					handle_call(n->children[0]);
 					n->data_type = (char*) strdup(n->children[0]->data_type);
-				} else if (strcmp(n->children[0]->type, "DecLit") && strcmp(n->children[0]->type, "RealLit") \
-					&& strcmp(n->children[0]->type, "BoolLit") && strcmp(n->children[0]->type, "StrLit")) {
+				} else if (!strcmp(n->children[0]->type, "Minus") || !strcmp(n->children[0]->type, "Plus")) {
+					n->data_type = (char*) strdup(get_unary_type(n->children[0]));
+				} else if (!strcmp(n->children[0]->type, "Id")) {
 					char* c_type = get_id_type(n->children[0]->value);
 					if (c_type != NULL) {
 						n->data_type = (char*) strdup(c_type);
@@ -178,6 +179,20 @@ void build_table(node_t* n) {
 					else if (!strcmp(n->children[0]->type, "RealLit"))
 						n->data_type = (char*) strdup("double");
 				}
+				/*else if (strcmp(n->children[0]->type, "DecLit") && strcmp(n->children[0]->type, "RealLit") \
+					&& strcmp(n->children[0]->type, "BoolLit") && strcmp(n->children[0]->type, "StrLit")) {
+					char* c_type = get_id_type(n->children[0]->value);
+					if (c_type != NULL) {
+						n->data_type = (char*) strdup(c_type);
+					} else {
+						n->data_type = (char*) strdup("undef");
+					}
+				}else {
+					if (!strcmp(n->children[0]->type, "DecLit"))
+						n->data_type = (char*) strdup("int");
+					else if (!strcmp(n->children[0]->type, "RealLit"))
+						n->data_type = (char*) strdup("double");
+				}*/
 			}
 			int c;
 			for(c=0; c < n->n_children; c++) {
@@ -573,6 +588,8 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 					method_ambiguous = 1;
 					strcpy(method_params, "undef");
 					strcpy(return_type, "undef");
+					char* method_name_params = strcat(call->children[0]->value, found_method_params);
+					printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
 					return;
 				}
 			}
@@ -682,6 +699,8 @@ char* get_operation_type(node_t* n_left, node_t* n_right) {
 				right_type = (char*) strdup(n_right->children[0]->data_type);
 			} else if (!strcmp(n_right->children[0]->type, "Id")) {
 				right_type = get_id_type(n_right->children[0]->value);
+			} else if (!strcmp(n_right->children[0]->type, "Minus") || !strcmp(n_right->children[0]->type, "Plus")) {
+				right_type = get_unary_type(n_right->children[0]);
 			} else
 				right_type = (char*) strdup(n_right->children[0]->type);
 		} else if (!strcmp(n_right->type, "Call")) {
@@ -721,6 +740,8 @@ char* get_operation_type(node_t* n_left, node_t* n_right) {
 				left_type = (char*) strdup(n_left->children[0]->data_type);
 			} else if (!strcmp(n_left->children[0]->type, "Id")) {
 				left_type = get_id_type(n_left->children[0]->value);
+			} else if (!strcmp(n_left->children[0]->type, "Minus") || !strcmp(n_left->children[0]->type, "Plus")) {
+				left_type = get_unary_type(n_left->children[0]);
 			} else
 				left_type = (char*) strdup(n_left->children[0]->type);
 		} else if (!strcmp(n_left->type, "ParseArgs") || !strcmp(n_left->type, "Length")) {
@@ -758,6 +779,8 @@ char* get_operation_type(node_t* n_left, node_t* n_right) {
 				left_type = (char*) strdup(n_left->children[0]->data_type);
 			} else if (!strcmp(n_left->children[0]->type, "Id")) {
 				left_type = get_id_type(n_left->children[0]->value);
+			} else if (!strcmp(n_left->children[0]->type, "Minus") || !strcmp(n_left->children[0]->type, "Plus")) {
+				left_type = get_unary_type(n_left->children[0]);
 			} else
 				left_type = (char*) strdup(n_left->children[0]->type);
 		} else if (!strcmp(n_left->type, "Call")) {
@@ -781,6 +804,8 @@ char* get_operation_type(node_t* n_left, node_t* n_right) {
 				right_type = (char*) strdup(n_right->children[0]->data_type);
 			} else if (!strcmp(n_right->children[0]->type, "Id")) {
 				right_type = get_id_type(n_right->children[0]->value);
+			} else if (!strcmp(n_right->children[0]->type, "Minus") || !strcmp(n_right->children[0]->type, "Plus")) {
+				right_type = get_unary_type(n_right->children[0]);
 			} else
 				right_type = (char*) strdup(n_right->children[0]->type);
 		} else if (!strcmp(n_right->type, "Call")) {
@@ -855,4 +880,31 @@ void handle_call(node_t* n_call) {
 		
 		//return return_type;
 	}
+}
+
+char* get_unary_type(node_t* unary) {
+	char* u_type;
+	if (unary->n_children > 0) {
+		if (!strcmp(unary->children[0]->type, "Plus") || !strcmp(unary->children[0]->type, "Minus")) {
+			return get_unary_type(unary->children[0]);
+		} else {
+			if (!strcmp(unary->children[0]->type, "ParseArgs") || !strcmp(unary->children[0]->type, "Length")) {
+				u_type = (char*) strdup("int");
+			} else if (!strcmp(unary->children[0]->type, "Call")) {
+				handle_call(unary->children[0]);
+				u_type = unary->children[0]->data_type;
+			} else if (!strcmp(unary->children[0]->type, "Id")) {
+				u_type = (char*) strdup(get_id_type(unary->children[0]->value));
+				if (u_type != NULL) {
+					return u_type;	
+				} else {
+					return "undef";
+				}
+			} else {
+				u_type = (char*) unary->children[0]->type;
+			}
+		}
+		return u_type;
+	}
+	return NULL;
 }

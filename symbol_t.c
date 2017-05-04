@@ -517,10 +517,8 @@ int get_params_matches(node_t* call, char* found_method_params, int num_method_p
 							break;
 						}
 					}
-					//printf("END CALL HANDLE | c = %d\n", c);
 				}
 			} else if (!strcmp(c_type, "ParseArgs") || !strcmp(c_type, "Length")) { 
-				//printf("PARSEARGS OU LENGTH\n");
 				if (!strcmp(aux_params[c-1], "double") && compatible) {
 					n_matches++;
 				} else {
@@ -537,7 +535,6 @@ int get_params_matches(node_t* call, char* found_method_params, int num_method_p
 					break;
 			} else {
 				char* c_value = (char*) call->children[c]->value;
-				//printf("c_type = %s | c_value = %s\n", call->children[c]->type, c_value);
 				if (!strcmp(c_type, "Minus") || !strcmp(c_type, "Plus")) {
 					c_value = (char*) strdup(call->children[c]->children[0]->value);
 				}
@@ -565,7 +562,6 @@ int get_params_matches(node_t* call, char* found_method_params, int num_method_p
 
 void check_method_id(node_t* call, char* method_params, char* return_type) {
 	char* method_name = call->children[0]->value;
-	//printf("method_name = %s\n", method_name);
 	int num_method_params = call->n_children - 1;
 	int n_matches = 0;
 	int method_found = 0;
@@ -860,9 +856,10 @@ void handle_call(node_t* n_call) {
 				n_call->data_type = (char*) strdup(return_type);
 				n_call->children[0]->data_type = (char*) strdup(params);	
 			}
-		} else {
+		} else {	/* SE METODO NAO EXISTE */
 			n_call->data_type = (char*) strdup("undef");
 			n_call->children[0]->data_type = (char*) strdup("undef");
+			//printf("Line %d, col %d: Cannot find symbol %s\n")
 		}
 
 		if (n_call->n_children > 1) {
@@ -878,8 +875,10 @@ void handle_call(node_t* n_call) {
 				} else {
 					if (strcmp(n_call->children[c]->type, "DecLit") && strcmp(n_call->children[c]->type, "RealLit") \
 						&& strcmp(n_call->children[c]->type, "BoolLit") && strcmp(n_call->children[c]->type, "StrLit")) {
-						if (n_call->children[c]->data_type == NULL)
+						if (n_call->children[c]->data_type == NULL) {
 							n_call->children[c]->data_type = (char*) strdup("undef");
+							//printf("Line %d, col %d: Cannot find symbol %s\n", n_call->children[c]->value);
+						}
 					}
 				}
 			}	

@@ -20,6 +20,8 @@
 	int str_begin = 0;
 	
 	int line_begin = 0;
+
+	#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = col; yylloc.last_column = col+yyleng-1;
 %}
 
 %x	str_state

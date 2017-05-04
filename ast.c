@@ -8,8 +8,7 @@ extern int line, first_col, yyleng;
 int error_flag = 0;
 node_t* merge_nodes[2048];
 
-node_t* new_node(char* type, char* data_type, void* value, int used) {
-	//printf("node type = %s | yyleng = %d\n", type, (int) yyleng);
+node_t* new_node(char* type, int first_col, char* data_type, void* value, int used) {
 	node_t* n = (node_t*) malloc(sizeof(node_t));
 	n->type = (char*) strdup(type);
 	n->data_type = data_type != NULL ? (char*) strdup(data_type) : data_type;
@@ -21,11 +20,11 @@ node_t* new_node(char* type, char* data_type, void* value, int used) {
 	return n;
 }
 
-node_t* ast_insert_node(char* type, char* data_type, int used, int n_children, ...) {
+node_t* ast_insert_node(char* type, int first_col, char* data_type, int used, int n_children, ...) {
 	va_list args;
 	int i, nodes_to_use = 0;
 
-	node_t* parent = new_node(type, data_type, NULL, used);
+	node_t* parent = new_node(type, first_col, data_type, NULL, used);
 	node_t** tmp = merge_nodes;
 
 	va_start(args, n_children);
@@ -54,8 +53,8 @@ node_t* ast_insert_node(char* type, char* data_type, int used, int n_children, .
 	return parent;
 }
 
-node_t* ast_insert_terminal(char* type, char* data_type, int used, void* value) {
-	node_t* n = new_node(type, data_type, value, used);
+node_t* ast_insert_terminal(char* type, int first_col, char* data_type, int used, void* value) {
+	node_t* n = new_node(type, first_col, data_type, value, used);
 	return n;
 }
 

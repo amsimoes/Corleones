@@ -1,4 +1,7 @@
 class gcd10 {
+    public static int p;
+    public static double p;
+
     public static int main (int x) {
         int x;
         double x;

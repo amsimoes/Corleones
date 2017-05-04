@@ -87,10 +87,14 @@ void build_table(node_t* n) {
 		if (n->n_children >= 1) {
 			for(k=1; k < n->n_children; k++) {
 				if (!strcmp(n->children[k]->type, "FieldDecl")) {
-					if (!strcmp(n->children[k]->children[0]->type, "Bool"))
-						insert_symbol(table[table_index], n->children[k]->children[1]->value, NULL, "boolean", NULL);
-					else	
-						insert_symbol(table[table_index], n->children[k]->children[1]->value, NULL, n->children[k]->children[0]->type, NULL);
+					if (check_var_field_decl(n->children[k]->children[1]->value)) {
+						printf("Line %d, col %d: Symbol %s already defined\n", n->children[k]->children[1]->line, n->children[k]->children[1]->col, n->children[k]->children[1]->value);
+					} else {
+						if (!strcmp(n->children[k]->children[0]->type, "Bool"))
+							insert_symbol(table[table_index], n->children[k]->children[1]->value, NULL, "boolean", NULL);
+						else	
+							insert_symbol(table[table_index], n->children[k]->children[1]->value, NULL, n->children[k]->children[0]->type, NULL);
+					}
 				} else if (!strcmp(n->children[k]->type, "MethodDecl")) {
 					char method_params[256];
 					get_global_method_header_params(n->children[k], method_params);
@@ -132,7 +136,7 @@ void build_table(node_t* n) {
 		if(method_body->n_children > 0) {
 			for(c=0; c < method_body->n_children; c++) {
 				if (!strcmp(method_body->children[c]->type, "VarDecl")) {
-					if (check_vardecl(method_body->children[c]->children[1]->value)) {
+					if (check_var_field_decl(method_body->children[c]->children[1]->value)) {
 						printf("Line %d, col %d: Symbol %s already defined\n", method_body->children[c]->children[1]->line, method_body->children[c]->children[1]->col, method_body->children[c]->children[1]->value);
 					} else {
 						if (!strcmp(method_body->children[c]->children[0]->type, "Bool"))
@@ -585,9 +589,9 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 					method_ambiguous = 1;
 					strcpy(method_params, "undef");
 					strcpy(return_type, "undef");
-					char* m_aux = (char*) strdup(call->children[0]->value);
-					char* method_name_params = strcat(m_aux, found_method_params);
-					printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
+					//char* m_aux = (char*) strdup(call->children[0]->value);
+					//char* method_name_params = strcat(m_aux, found_method_params);
+					//printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
 					return;
 				}
 			}
@@ -915,7 +919,7 @@ char* get_unary_type(node_t* unary) {
 	return NULL;
 }
 
-int check_vardecl(char* var_name) {
+int check_var_field_decl(char* var_name) {
 	symbol* first = table[table_index]->first;
 	while (first != NULL) {
 		if (!strcmp(var_name, first->sym_name) && first->params == NULL) {

@@ -47,5 +47,6 @@ char* get_operation_type(node_t* n_left, node_t* n_right);
 void handle_call(node_t* n_call);
 void parse_params(char* method_params, char** aux_params);
 char* get_unary_type(node_t* unary);
+int check_vardecl(char* var_name);
 
 #endif

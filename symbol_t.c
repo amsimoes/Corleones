@@ -132,10 +132,14 @@ void build_table(node_t* n) {
 		if(method_body->n_children > 0) {
 			for(c=0; c < method_body->n_children; c++) {
 				if (!strcmp(method_body->children[c]->type, "VarDecl")) {
-					if (!strcmp(method_body->children[c]->children[0]->type, "Bool"))
-						insert_symbol(table[table_index], method_body->children[c]->children[1]->value, NULL, "boolean", NULL);
-					else	
-						insert_symbol(table[table_index], method_body->children[c]->children[1]->value, NULL, method_body->children[c]->children[0]->type, NULL);
+					if (check_vardecl(method_body->children[c]->children[1]->value)) {
+						printf("Line %d, col %d: Symbol %s already defined\n", method_body->children[c]->children[1]->line, method_body->children[c]->children[1]->col, method_body->children[c]->children[1]->value);
+					} else {
+						if (!strcmp(method_body->children[c]->children[0]->type, "Bool"))
+							insert_symbol(table[table_index], method_body->children[c]->children[1]->value, NULL, "boolean", NULL);
+						else	
+							insert_symbol(table[table_index], method_body->children[c]->children[1]->value, NULL, method_body->children[c]->children[0]->type, NULL);
+					}
 				}
 			}
 		}
@@ -179,20 +183,6 @@ void build_table(node_t* n) {
 					else if (!strcmp(n->children[0]->type, "RealLit"))
 						n->data_type = (char*) strdup("double");
 				}
-				/*else if (strcmp(n->children[0]->type, "DecLit") && strcmp(n->children[0]->type, "RealLit") \
-					&& strcmp(n->children[0]->type, "BoolLit") && strcmp(n->children[0]->type, "StrLit")) {
-					char* c_type = get_id_type(n->children[0]->value);
-					if (c_type != NULL) {
-						n->data_type = (char*) strdup(c_type);
-					} else {
-						n->data_type = (char*) strdup("undef");
-					}
-				}else {
-					if (!strcmp(n->children[0]->type, "DecLit"))
-						n->data_type = (char*) strdup("int");
-					else if (!strcmp(n->children[0]->type, "RealLit"))
-						n->data_type = (char*) strdup("double");
-				}*/
 			}
 			int c;
 			for(c=0; c < n->n_children; c++) {
@@ -285,6 +275,14 @@ void build_table(node_t* n) {
 		n->data_type = "int";
 		if (n->n_children > 0) {
 			n->children[0]->data_type = "String[]";
+			if (!strcmp(n->children[1]->type, "Id")) {
+				char* c_type = get_id_type(n->children[1]->value);
+				if (c_type != NULL) {
+					n->children[1]->data_type = (char*) strdup(c_type);
+				} else if (c_type == NULL) {
+					n->children[1]->data_type = (char*) strdup("undef");
+				}	
+			}
 		}
 	} else if (!strcmp(n->type, "Length")) {
 		n->data_type = "int";
@@ -407,12 +405,14 @@ char* get_id_type(char* n_name) {
 				}
 			}
 		}
-		first = table[0]->first;
-		while (first != NULL) {
-			if (!strcmp(first->sym_name, n_name) && first->params == NULL) {
-				return first->type; 
+		if (table[0] != NULL) {
+			first = table[0]->first;
+			while (first != NULL) {
+				if (!strcmp(first->sym_name, n_name) && first->params == NULL) {
+					return first->type; 
+				}
+				first = first->next;
 			}
-			first = first->next;
 		}
 	}
 	return NULL;
@@ -612,9 +612,9 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 						method_ambiguous = 1;
 						strcpy(method_params, "undef");
 						strcpy(return_type, "undef");
-						char* m_aux = (char*) strdup(call->children[0]->value);
-						char* method_name_params = strcat(m_aux, found_method_params);
-						printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
+						//char* m_aux = (char*) strdup(call->children[0]->value);
+						//char* method_name_params = strcat(m_aux, found_method_params);
+						//printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
 						return;
 					}
 
@@ -859,7 +859,7 @@ void handle_call(node_t* n_call) {
 		} else {	/* SE METODO NAO EXISTE */
 			n_call->data_type = (char*) strdup("undef");
 			n_call->children[0]->data_type = (char*) strdup("undef");
-			//printf("Line %d, col %d: Cannot find symbol %s\n")
+			//printf("Line %d, col %d: Cannot find symbol %s\n");
 		}
 
 		if (n_call->n_children > 1) {
@@ -913,4 +913,15 @@ char* get_unary_type(node_t* unary) {
 		return u_type;
 	}
 	return NULL;
+}
+
+int check_vardecl(char* var_name) {
+	symbol* first = table[table_index]->first;
+	while (first != NULL) {
+		if (!strcmp(var_name, first->sym_name) && first->params == NULL) {
+			return 1;
+		}
+		first = first->next;
+	}
+	return 0;
 }

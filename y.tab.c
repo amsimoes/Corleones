@@ -1875,7 +1875,7 @@ yyreduce:
 
   case 51:
 #line 116 "jac.y" /* yacc.c:1646  */
-    {printf("call line = %d first col = %d\n", line, (yylsp[-3]).first_column); (yyval.node) = ast_insert_node("Call", (yylsp[-3]).first_column, NULL, 1, 2, (yyvsp[-3].node), (yyvsp[-1].node));}
+    {(yyval.node) = ast_insert_node("Call", (yylsp[-3]).first_column, NULL, 1, 2, (yyvsp[-3].node), (yyvsp[-1].node));}
 #line 1880 "y.tab.c" /* yacc.c:1646  */
     break;
 

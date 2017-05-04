@@ -113,7 +113,7 @@ StatementEmpty: Statement StatementEmpty 		{$$ = ast_insert_node("StatementEmpty
 
 Assignment: IDAux ASSIGN Expr 					{$$ = ast_insert_node("Assign", @2.first_column, NULL, 1, 2, $1, $3);}
 
-MethodInvocation: IDAux OCURV MethodInvAux CCURV	{printf("call line = %d first col = %d\n", line, @1.first_column); $$ = ast_insert_node("Call", @1.first_column, NULL, 1, 2, $1, $3);}
+MethodInvocation: IDAux OCURV MethodInvAux CCURV	{$$ = ast_insert_node("Call", @1.first_column, NULL, 1, 2, $1, $3);}
 			| IDAux OCURV error CCURV 				{$$ = NULL;}
 
 MethodInvAux: Expr CommaExpr 					{$$ = ast_insert_node("Call", -1, NULL, 0, 2, $1, $2);}

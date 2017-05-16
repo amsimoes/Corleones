@@ -1,5 +1,0 @@
-array reset a cada novo metodo
-array vars declaradas (nome_metodo), v1, v2, v3
-
-se nome da var tiver no array: get_id_type itera primeiro na table[table_index]
-se n tiver no array (n definida ainda): itera na global

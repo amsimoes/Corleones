@@ -1,0 +1,14 @@
+class gcd10 {
+    public static int main;
+    //public static double main;
+
+    public static int main (int x, double z) {
+        int x;
+        //double x;
+        main (5, 123);
+    }
+
+    public static void main (double x, int z) {
+
+    }
+}

@@ -3,7 +3,7 @@
 
 #include "ast.h"
 
-extern int line, first_col, yyleng;
+extern int line, first_col, yyleng, symbol_flag;
 
 int error_flag = 0;
 node_t* merge_nodes[2048];
@@ -108,6 +108,14 @@ void print_node_children(node_t* n) {
 	}
 }
 
+void print_not_annotated(node_t* n) {
+	if (!strcmp(n->type, "Id") || !strcmp(n->type, "BoolLit") || !strcmp(n->type, "DecLit") || !strcmp(n->type, "RealLit") || !strcmp(n->type, "StrLit")) {
+		printf("%s(%s)\n", n->type, (char*) n->value);
+	} else {
+		printf("%s\n", n->type);
+	}
+}
+
 void print_ast_node(node_t* n) {
 	//printf("Printing node with type: %s\n", n->type);
 	if (!strcmp(n->type, "Id") || !strcmp(n->type, "BoolLit") || !strcmp(n->type, "DecLit") || !strcmp(n->type, "RealLit") || !strcmp(n->type, "StrLit")) {
@@ -128,7 +136,12 @@ void print_ast_tree(node_t* n, int depth) {
 	for (i = 0; i < depth; i++)
 		printf("..");
 
-	print_ast_node(n);
+	//printf("symbol flag = %d\n", symbol_flag);
+
+	if (symbol_flag)
+		print_ast_node(n);
+	else
+		print_not_annotated(n);
 
 	for (j = 0; j < n->n_children; j++)
 		print_ast_tree(n->children[j], depth + 1);

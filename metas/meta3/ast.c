@@ -6,23 +6,25 @@
 extern int line, first_col, yyleng;
 
 int error_flag = 0;
-node_t* merge_nodes[2048];
+node_t** merge_nodes = (node_t**) malloc (sizeof(node_t*) * 2048);
+//node_t* merge_nodes[2048] = NULL;
 
 node_t* new_node(char* type, int first_col, char* data_type, void* value, int used) {
-	node_t* n = (node_t*) malloc(sizeof(node_t));
+	node_t* n = (node_t*) malloc (sizeof(node_t));
 	n->type = (char*) strdup(type);
-	n->data_type = data_type != NULL ? (char*) strdup(data_type) : data_type;
-	n->value = value;
+	n->data_type = data_type != NULL ? (char*) strdup(data_type) : NULL;
+	n->value = (char*) strdup(value);
 	n->used = used;
-	n->children = 0;
+	n->n_children = 0;
 	n->line = line;
 	n->col = first_col;
+	n->children = NULL;
 	return n;
 }
 
 node_t* ast_insert_node(char* type, int first_col, char* data_type, int used, int n_children, ...) {
 	va_list args;
-	int i, nodes_to_use = 0;
+	int i = 0, nodes_to_use = 0;
 
 	node_t* parent = new_node(type, first_col, data_type, NULL, used);
 	node_t** tmp = merge_nodes;
@@ -50,11 +52,13 @@ node_t* ast_insert_node(char* type, int first_col, char* data_type, int used, in
 		parent->n_children = nodes_to_use;
 	}
 
+	va_end(args);
 	return parent;
 }
 
 node_t* ast_insert_terminal(char* type, int first_col, char* data_type, int used, void* value) {
 	node_t* n = new_node(type, first_col, data_type, value, used);
+	n->children = (node_t**) malloc (sizeof(node_t*) * MAX_CHILDREN);
 	return n;
 }
 
@@ -68,7 +72,7 @@ void _ast_insert_decl(node_t* type, node_t* decl) {
 		*tmp++ = decl->children[i];
 	}
 
-	decl->n_children++;
+	decl->n_children += 1;
 	decl->children = (node_t**) malloc (decl->n_children * sizeof(node_t*));
 	decl->children[0] = type;
 
@@ -130,6 +134,9 @@ void print_ast_tree(node_t* n, int depth) {
 
 	print_ast_node(n);
 
-	for (j = 0; j < n->n_children; j++)
-		print_ast_tree(n->children[j], depth + 1);
+	for (j = 0; j < n->n_children; j++) {
+		if (n->children[j] != NULL) {
+			print_ast_tree(n->children[j], depth + 1);
+		}
+	}
 }

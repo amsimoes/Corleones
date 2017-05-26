@@ -1,0 +1,8 @@
+class gcd {
+	public static int d;
+
+	public static int f() {
+	  if(f() > d) {
+	  }
+	}	
+}

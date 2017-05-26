@@ -140,10 +140,11 @@ int main(int argc, char** argv)
 			syntax_flag = 1;
 			symbol_flag = 1;
 			
+			ast_root = NULL;
 			yyparse();
 			if (!error_flag) {
 				init_table();
-				build_table(ast_root);
+				build_sym_table(ast_root);
 				print_table();
 				print_ast_tree(ast_root, 0);
 			}
@@ -154,15 +155,16 @@ int main(int argc, char** argv)
 			yyparse();
 			if (!error_flag) {
 				init_table();
-				build_table(ast_root);
+				build_sym_table(ast_root);
 			}
 		}
 	} else if (argc == 1) {
 		syntax_flag = 1;
+		symbol_flag = 1;
 
 		yyparse();
 		init_table();
-		build_table(ast_root);
+		build_sym_table(ast_root);
 	}
 	return 0;
 }

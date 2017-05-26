@@ -2447,34 +2447,46 @@ int main(int argc, char** argv)
 			print_flag = 1;
 			yylex();
 		} else if (!strcmp(argv[1], "-1")) {
-			print_flag = 0;
 			yylex();
-		} else if (!strcmp(argv[1], "-t") || !strcmp(argv[1], "-2")) {
-			print_flag = 0;
+		} else if (!strcmp(argv[1], "-t")) {
 			syntax_flag = 1;
-			symbol_flag = 0;
 
 			yyparse();
 			if (!error_flag)
 				print_ast_tree(ast_root, 0);
+		} else if (!strcmp(argv[1], "-2")) {
+			syntax_flag = 1;
+
+			yyparse();
 		} else if (!strcmp(argv[1], "-s")) {
-			print_flag = 0;
+			syntax_flag = 1;
+			symbol_flag = 1;
+			
+			ast_root = NULL;
+			yyparse();
+			if (!error_flag) {
+				init_table();
+				build_sym_table(ast_root);
+				print_table();
+				print_ast_tree(ast_root, 0);
+			}
+		} else if (!strcmp(argv[1], "-3")) {
 			syntax_flag = 1;
 			symbol_flag = 1;
 			
 			yyparse();
 			if (!error_flag) {
 				init_table();
-				build_table(ast_root);
-				print_table();
-				print_ast_tree(ast_root, 0);
+				build_sym_table(ast_root);
 			}
 		}
 	} else if (argc == 1) {
 		syntax_flag = 1;
+		symbol_flag = 1;
+
 		yyparse();
 		init_table();
-		build_table(ast_root);
+		build_sym_table(ast_root);
 	}
 	return 0;
 }

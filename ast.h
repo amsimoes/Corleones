@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAX_CHILDREN 1000
+
 typedef struct node {
 	char* type;
 	char* data_type;

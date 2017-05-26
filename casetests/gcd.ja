@@ -1,12 +1,16 @@
 class gcd {
-  public static void main(int a, int b) {
-    int a, b;
-    a = Integer.parseInt(args[0]);
+  public static int x;
+  public static int main(int a, int b, int c) {
+    a = Integer.parseInt(asd[-0*123+1432+main(3,2,3)]);
     b = Integer.parseInt(args[1]);
 
-    method();
 
-    if (a == 0)
+    x = -3+(-4+(-2*(-4-2+3/4*x-(324+main(-3*(-4),3,3)))));
+
+    a = -main(lul(-3*123132%lul(23)),3,3) + 12;
+    //System.out.println(main(3,3,3) + 23);
+
+    if (args.length + 0+2 && 1+2*4423 || 12.32/456 + lul(-23*(lul(123/123))))
       System.out.println(b);
     else {
       while (b > 0)
@@ -17,6 +21,11 @@ class gcd {
       System.out.println(a);
     }
 
-    return a=b;
+    //return 123*lul(322)+Integer.parseInt(args[123*lul(lul(-lul(lul(-lul(123123*(-lul(12)))))))]);
+    return lul(-lul(2));
+  }
+
+  public static int lul(int k) {
+
   }
 }

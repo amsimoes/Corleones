@@ -11,10 +11,11 @@ node_t* merge_nodes[2048];
 node_t* new_node(char* type, int first_col, char* data_type, void* value, int used) {
 	node_t* n = (node_t*) malloc(sizeof(node_t));
 	n->type = (char*) strdup(type);
-	n->data_type = data_type != NULL ? (char*) strdup(data_type) : data_type;
+	n->data_type = data_type != NULL ? (char*) strdup(data_type) : NULL;
 	n->value = value;
 	n->used = used;
-	n->children = 0;
+	n->n_children = 0;
+	n->children = NULL;
 	n->line = line;
 	n->col = first_col;
 	return n;
@@ -79,9 +80,6 @@ void _ast_insert_decl(node_t* type, node_t* decl) {
 }
 
 void ast_insert_decl(node_t* type, node_t* decl) {
-	/*printf("Type: %s\n", type->type);
-	printf("Node: %s\n", vardecl->type); 
-	print_node_children(vardecl);*/
 	if(!strcmp(decl->children[0]->type, "VarDecl") || !strcmp(decl->children[0]->type, "FieldDecl")) {
 		int i;
 		for (i = 0; i < decl->n_children; i++) {
@@ -136,7 +134,6 @@ void print_ast_tree(node_t* n, int depth) {
 	for (i = 0; i < depth; i++)
 		printf("..");
 
-	//printf("symbol flag = %d\n", symbol_flag);
 
 	if (symbol_flag)
 		print_ast_node(n);

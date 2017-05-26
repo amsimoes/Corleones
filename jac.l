@@ -140,7 +140,6 @@ int main(int argc, char** argv)
 			syntax_flag = 1;
 			symbol_flag = 1;
 			
-			ast_root = NULL;
 			yyparse();
 			if (!error_flag) {
 				init_table();

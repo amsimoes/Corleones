@@ -1,9 +1,9 @@
 class seg {
 	public static int main(int a) {
-		//a = Integer.parseInt(args[main(-(-main(-main(3*(-main(3*4))))))*Integer.parseInt(args[lul(3-1*55%12&&12*122)])]);
-		//if (a == -main(-main(-main(-12*lul(true)*123)))) {
-		//	
-		//}
+		a = Integer.parseInt(args[main(-(-main(-main(3*(-main(3*4))))))*Integer.parseInt(args[lul(3-1*55%12&&12*122)])]);
+		if (a == -main(-main(-main(-12*lul(true)*123)))) {
+			
+		}
 	}
 
 	public static int lul(boolean a1) {

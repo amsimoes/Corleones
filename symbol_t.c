@@ -20,6 +20,7 @@ sym_t** new_table(int size) {
 sym_t* new_sym_table(char* name) {
 	sym_t* sym_table = (sym_t*) malloc (sizeof(sym_t));
 	sym_table->name = (char*) strdup(name);
+	sym_table->first = NULL;
 	return sym_table;
 }
 
@@ -105,6 +106,8 @@ void build_table(node_t* n) {
 		char class_name[256] = "Class ";
 		strcat(class_name, n->children[0]->value);
 
+		//table[table_index] = (sym_t*) malloc (sizeof(sym_t));
+		//table[table_index]->name = (char*) strdup(class_name);
 		table[table_index] = new_sym_table(class_name);
 
 		table_index++;
@@ -144,6 +147,9 @@ void build_table(node_t* n) {
 			get_global_method_header_params(n, method_params);
 			strcat(method_name_args, method_params);
 
+
+			//table[table_index] = (sym_t*) malloc (sizeof(sym_t));
+			//table[table_index]->name = (char*) strdup(method_name_args);
 			table[table_index] = new_sym_table(method_name_args);
 			
 			insert_symbol(table[table_index], "return", NULL, n->children[0]->children[0]->type, NULL);

@@ -146,9 +146,6 @@ void build_table(node_t* n) {
 			get_global_method_header_params(n, method_params);
 			strcat(method_name_args, method_params);
 
-
-			//table[table_index] = (sym_t*) malloc (sizeof(sym_t));
-			//table[table_index]->name = (char*) strdup(method_name_args);
 			table[table_index] = new_sym_table(method_name_args);
 			
 			insert_symbol(table[table_index], "return", NULL, n->children[0]->children[0]->type, NULL);
@@ -159,8 +156,6 @@ void build_table(node_t* n) {
 			table_index++;
 
 		}
-
-		
 
 	} else if (!strcmp(n->type, "VarDecl") && table_index != 1) {
 
@@ -178,7 +173,6 @@ void build_table(node_t* n) {
 		num_method_vars++;
 
 	} else if (is_expression(n->type)) {
-		
 
 		if (n->n_children > 0) {
 			if (is_operation(n->type)) {
@@ -369,9 +363,6 @@ void get_global_method_header_params(node_t* n, char* method_params) {
 					} else if (!strcmp(n->children[0]->children[2]->children[p]->children[0]->type, "Bool")) {
 						strcat(method_params, "boolean");
 					} else {
-						//char* aux = (char*) calloc (512, sizeof(char));
-						//strcpy(aux, str_to_lowercase(n->children[0]->children[2]->children[p]->children[0]->type));
-						//strcat(method_params, aux);
 						char* aux = (char*) strdup(n->children[0]->children[2]->children[p]->children[0]->type);
 						str_to_lowercase(aux);
 						strcat(method_params, aux);
@@ -432,17 +423,19 @@ int is_literal(char* node_type) {
 char* get_id_type(char* n_name) {
 	if (n_name != NULL) {
 		symbol* first;
-		if (check_var_method_defined(n_name)) {
-			if (table_index != 0 && table[table_index-1] != NULL) {
-				first = table[table_index-1]->first;
-				while (first != NULL) {
-					if (!strcmp(first->sym_name, n_name) && first->params == NULL) {
-						return first->type;
-					}
-					first = first->next;
+
+		/* VERIFICA SE A VAR ESTÁ DEFINIDA NO MÉTODO */
+		if (table_index > 1 && table[table_index-1] != NULL) {
+			first = table[table_index-1]->first;
+			while (first != NULL) {
+				if (!strcmp(first->sym_name, n_name) && first->params == NULL) {
+					return first->type;
 				}
+				first = first->next;
 			}
 		}
+
+		/* VAI À TABELA GLOBAL */
 		if (table[0] != NULL) {
 			first = table[0]->first;
 			while (first != NULL) {
@@ -709,16 +702,6 @@ void get_method_params_type(char* method_name, char* params, char* return_type) 
 	}
 }
 
-int check_var_method_defined(char* var_name) {
-	int i;
-	for(i=0; i < num_method_vars; i++) {
-		if (!strcmp(var_name, method_scope[i])) {
-			return 1;
-		}
-	}
-	return 0;
-}
-
 void print_method_vars() {
 	int i;
 	for(i=0; i < num_method_vars; i++) {
@@ -913,9 +896,6 @@ void handle_call(node_t* n_call) {
 
 				char* params = (char*) malloc (2048 * sizeof(char));
 				char* return_type = (char*) malloc (2048 * sizeof(char));
-
-				//char params[2048];
-				//char return_type[2048];
 
 				check_method_id(n_call, params, return_type);
 

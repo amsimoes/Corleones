@@ -9,7 +9,6 @@ sym_t** table;
 int table_index = 0;
 int global_flag = 1;
 
-char method_scope[2048][512];
 int num_method_vars = 0;
 int match_method_flag = 0;
 
@@ -136,7 +135,6 @@ void build_table(node_t* n) {
 			}
 
 		} else {	// METHOD TABLE
-			memset(method_scope, '\0', sizeof(method_scope[0][0]) * 2048 * 512);
 
 			num_method_vars = 0;
 			char method_name_args[4096] = "Method ";
@@ -163,14 +161,10 @@ void build_table(node_t* n) {
 			//printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
 		} else {
 			insert_symbol(table[table_index-1], n->children[1]->value, NULL, n->children[0]->type, NULL);
-			strcpy(method_scope[num_method_vars], n->children[1]->value);
-			num_method_vars++;
 		}
 
 	} else if (!strcmp(n->type, "ParamDecl")) {
 
-		strcpy(method_scope[num_method_vars], n->children[1]->value);
-		num_method_vars++;
 
 	} else if (is_expression(n->type)) {
 
@@ -699,13 +693,6 @@ void get_method_params_type(char* method_name, char* params, char* return_type) 
 			return;
 		}
 		first = first->next;
-	}
-}
-
-void print_method_vars() {
-	int i;
-	for(i=0; i < num_method_vars; i++) {
-		printf("var = %s\n", method_scope[i]);
 	}
 }
 

@@ -35,8 +35,9 @@ symbol* new_symbol(char* sym_name, char* params, char* type, char* flag) {
 	} else if (!strcmp(type, "Bool")) {
 		sb->type = (char*) strdup("boolean");
 	} else {
-		str_to_lowercase(type);
-		sb->type = (char*) strdup(type);
+		char* aux = (char*) strdup(type);
+		str_to_lowercase(aux);
+		sb->type = (char*) strdup(aux);
 	}
 
 	sb->params = params != NULL ? (char*) strdup(params) : NULL;
@@ -106,8 +107,6 @@ void build_table(node_t* n) {
 		char class_name[256] = "Class ";
 		strcat(class_name, n->children[0]->value);
 
-		//table[table_index] = (sym_t*) malloc (sizeof(sym_t));
-		//table[table_index]->name = (char*) strdup(class_name);
 		table[table_index] = new_sym_table(class_name);
 
 		table_index++;
@@ -116,7 +115,7 @@ void build_table(node_t* n) {
 
 		if (table_index == 1) {		// Building global table
 			if (check_variable_exists(n->children[1]->value)) {
-				printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
+				//printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
 			} else {
 				insert_symbol(table[0], n->children[1]->value, NULL, n->children[0]->type, NULL);
 			}
@@ -131,7 +130,7 @@ void build_table(node_t* n) {
 			char* method_name = (char*) strdup(n->children[0]->children[1]->value);
 
 			if (check_global_method_exists(method_name, method_params)) {
-				printf("Line %d, col %d: Symbol %s already defined\n", n->children[0]->children[1]->line, n->children[0]->children[1]->col, n->children[0]->children[1]->value);
+				//printf("Line %d, col %d: Symbol %s already defined\n", n->children[0]->children[1]->line, n->children[0]->children[1]->col, n->children[0]->children[1]->value);
 			} else {
 				insert_symbol(table[0], n->children[0]->children[1]->value, method_params, n->children[0]->children[0]->type, NULL);
 			}
@@ -166,7 +165,7 @@ void build_table(node_t* n) {
 	} else if (!strcmp(n->type, "VarDecl") && table_index != 1) {
 
 		if (check_variable_exists(n->children[1]->value)) {
-			printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
+			//printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
 		} else {
 			insert_symbol(table[table_index-1], n->children[1]->value, NULL, n->children[0]->type, NULL);
 			strcpy(method_scope[num_method_vars], n->children[1]->value);
@@ -663,9 +662,9 @@ void check_method_id(node_t* call, char* method_params, char* return_type) {
 							method_ambiguous = 1;
 							strcpy(method_params, "undef");
 							strcpy(return_type, "undef");
-							char* m_aux = (char*) strdup(call->children[0]->value);
-							char* method_name_params = strcat(m_aux, found_method_params);
-							printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
+							//char* m_aux = (char*) strdup(call->children[0]->value);
+							//char* method_name_params = strcat(m_aux, found_method_params);
+							//printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
 							return;
 						}
 					}
@@ -1026,7 +1025,7 @@ int check_repeated_params(node_t* method_header) {
 					char* param = (char*) strdup(strcat(p_type, p_name));
 
 					if (_check_repeated_param(param, aux_method_params)) {
-						printf("Line %d, col %d: Symbol %s already defined\n", method_params->children[c]->children[1]->line, method_params->children[c]->children[1]->col, method_params->children[c]->children[1]->value);
+						//printf("Line %d, col %d: Symbol %s already defined\n", method_params->children[c]->children[1]->line, method_params->children[c]->children[1]->col, method_params->children[c]->children[1]->value);
 					} else {
 						strcpy(aux_method_params[ind], param);
 						ind++;

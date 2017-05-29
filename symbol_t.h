@@ -14,6 +14,7 @@ typedef struct symbol {
 	char* params;
 	char* type;
 	char* flag;
+	char* llvm_type;
 	struct symbol* next;
 } symbol;
 

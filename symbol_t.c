@@ -134,11 +134,17 @@ void build_table(node_t* n) {
 				insert_symbol(table[0], n->children[0]->children[1]->value, method_params, n->children[0]->children[0]->type, NULL);
 			}
 
+			free(method_params);
+			free(method_name);
 		} else {	// METHOD TABLE
 
 			num_method_vars = 0;
-			char method_name_args[4096] = "Method ";
-			char method_params[4096];
+			char* method_name_args = (char*) malloc (4096);
+			char* method_params = (char*) malloc (4096);
+
+			strcpy(method_name_args, "Method ");
+			//char method_name_args[4096] = "Method ";
+			//char method_params[4096];
 
 			strcat(method_name_args, n->children[0]->children[1]->value);
 			get_global_method_header_params(n, method_params);
@@ -148,11 +154,9 @@ void build_table(node_t* n) {
 			
 			insert_symbol(table[table_index], "return", NULL, n->children[0]->children[0]->type, NULL);
 
-			node_t* node_method_params = n->children[0]->children[2];
-			set_method_decl_params(node_method_params);
-
 			table_index++;
-
+			free(method_name_args);
+			free(method_params);
 		}
 
 	} else if (!strcmp(n->type, "VarDecl") && table_index != 1) {
@@ -163,8 +167,9 @@ void build_table(node_t* n) {
 			insert_symbol(table[table_index-1], n->children[1]->value, NULL, n->children[0]->type, NULL);
 		}
 
-	} else if (!strcmp(n->type, "ParamDecl")) {
+	} else if (!strcmp(n->type, "ParamDecl") && table_index != 1) {
 
+		insert_symbol(table[table_index-1], n->children[1]->value, NULL, n->children[0]->type, "param");
 
 	} else if (is_expression(n->type)) {
 
@@ -246,6 +251,9 @@ void build_table(node_t* n) {
 					insert_node_data_type(n, return_type);
 					insert_node_data_type(n->children[0], params);	
 				}	
+
+				free(params);
+				free(return_type);
 			} else {	// METHOD DOESN'T EXIST
 				insert_node_data_type(n, "undef");
 				insert_node_data_type(n->children[0], "undef");
@@ -471,23 +479,23 @@ void parse_params(char* method_params, char** aux_params) {
 		i++;
 		p = strtok(NULL, ",");
 	}
+	//free(p_aux);
 }
-
 
 int get_params_matches(node_t* call, char* found_method_params, int num_method_params, int compatible) { 
 	int c = 0;
 	int n_matches = 0;
-
 
 	char** aux_params = (char**) malloc (sizeof(char*) * num_method_params);
 	for(c=0; c < num_method_params; c++)
 		aux_params[c] = (char*) malloc (sizeof(char) * 128);
 	parse_params(found_method_params, aux_params);
 
+	char* c_type = NULL;
+	char* op_type = NULL; 
 
 	for(c=1; c < call->n_children; c++) {
-		
-		char* c_type = (char*) strdup(call->children[c]->type);
+		c_type = (char*) strdup(call->children[c]->type);
 
 		//printf("call->children[%d]->type = %s\n", c, call->children[c]->type);
 
@@ -527,7 +535,7 @@ int get_params_matches(node_t* call, char* found_method_params, int num_method_p
 
 		} else if (is_operation(c_type)) {
 
-			char* op_type = get_operation_type(call->children[c]->children[0], call->children[c]->children[1]);
+			op_type = (char*) strdup(get_operation_type(call->children[c]->children[0], call->children[c]->children[1]));
 			if (op_type != NULL) {
 				if (!strcmp(op_type, "int") && !strcmp(aux_params[c-1], "double") && compatible) {
 					n_matches++;
@@ -541,9 +549,8 @@ int get_params_matches(node_t* call, char* found_method_params, int num_method_p
 			}
 		
 		} else if (!strcmp(c_type, "Call")) {
-			
-			handle_call(call->children[c]);
 
+			handle_call(call->children[c]);
 
 			if (call->children[c]->data_type != NULL) {
 				if (!strcmp(call->children[c]->data_type, "int") && !strcmp(aux_params[c-1], "double") && compatible) {
@@ -588,15 +595,21 @@ int get_params_matches(node_t* call, char* found_method_params, int num_method_p
 						c_value = (char*) strdup(call->children[c]->children[0]->value);
 					}
 
-					char* id_type = get_id_type(c_value);
+					char* aux = get_id_type(c_value);
+					char* id_type = NULL;
+					if (aux)
+						id_type = (char*) strdup(aux);
 
 					if (id_type != NULL) {
 						if (!strcmp(id_type, "int") && !strcmp(aux_params[c-1], "double") && compatible) {
 							n_matches++;
+							free(id_type);
 						} else {
 							if (!strcmp(id_type, aux_params[c-1])) {
 								n_matches++;
+								free(id_type);
 							} else {
+								free(id_type);
 								break;
 							}
 						}
@@ -608,67 +621,69 @@ int get_params_matches(node_t* call, char* found_method_params, int num_method_p
 		}
 	}
 	
+	free(c_type);
+	free(op_type);
+	for (c=0; c < num_method_params; c++)
+		free(aux_params[c]);
+	free(aux_params);
+
 	return n_matches;
 }
 
 void check_method_id(node_t* call, char* method_params, char* return_type) {
+	if (call->children[0]->value == NULL) {
+		strcpy(method_params, "undef");
+		strcpy(return_type, "undef");
+		return;
+	}
 
+	char* method_name = (char*) strdup(call->children[0]->value);
+	int num_method_params = call->n_children - 1;
+	int n_matches = 0, method_found = 0, method_ambiguous = 0;
 
-		if (call->children[0]->value == NULL) {
-			strcpy(method_params, "undef");
-			strcpy(return_type, "undef");
-			return;
-		}
-	
-		char* method_name = (char*) strdup(call->children[0]->value);
-		int num_method_params = call->n_children - 1;
-		int n_matches = 0;
-		int method_found = 0;
-		int method_ambiguous = 0;
-		symbol* first = table[0]->first;
+	symbol* first = table[0]->first;
 
-		int i;
-		for (i=0; i <= 1; i++) {
-			first = table[0]->first;
-			while (first != NULL) {
-				if (!strcmp(first->sym_name, method_name) && first->params != NULL && first->type != NULL) {
-					char* found_method_params = (char*) strdup(first->params);
-					//printf("found_method_params = %s\n", found_method_params);
+	int i;
+	for (i=0; i <= 1; i++) {
+		first = table[0]->first;
+		while (first != NULL) {
+			if (!strcmp(first->sym_name, method_name) && first->params != NULL && first->type != NULL) {
+				char* found_method_params = (char*) strdup(first->params);
+				//printf("found_method_params = %s\n", found_method_params);
 
-					if (num_method_params == count_num_params(found_method_params)) {
-						//printf("num_method_params = %d\n", num_method_params);
-						n_matches = get_params_matches(call, found_method_params, num_method_params, i);
-						
-						//printf("n_matches = %d / found_method_params = %s\n", n_matches, found_method_params);
+				if (num_method_params == count_num_params(found_method_params)) {
+					//printf("num_method_params = %d\n", num_method_params);
+					n_matches = get_params_matches(call, found_method_params, num_method_params, i);
+					
+					//printf("n_matches = %d / found_method_params = %s\n", n_matches, found_method_params);
 
-						if (n_matches == num_method_params && !method_found) {
-							strcpy(method_params, first->params);
-							strcpy(return_type, first->type);
-							method_found = 1;
-						} else if (n_matches == num_method_params && method_found) {
-							method_ambiguous = 1;
-							strcpy(method_params, "undef");
-							strcpy(return_type, "undef");
-							//char* m_aux = (char*) strdup(call->children[0]->value);
-							//char* method_name_params = strcat(m_aux, found_method_params);
-							//printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
-							return;
-						}
+					if (n_matches == num_method_params && !method_found) {
+						strcpy(method_params, first->params);
+						strcpy(return_type, first->type);
+						method_found = 1;
+					} else if (n_matches == num_method_params && method_found) {
+						method_ambiguous = 1;
+						strcpy(method_params, "undef");
+						strcpy(return_type, "undef");
+						//char* m_aux = (char*) strdup(call->children[0]->value);
+						//char* method_name_params = strcat(m_aux, found_method_params);
+						//printf("Line %d, col %d: Reference to method %s is ambiguous\n", call->line, call->col, method_name_params);
+						return;
 					}
 				}
-				first = first->next;
 			}
-			if (method_found)
-				break;		
+			first = first->next;
 		}
+		if (method_found)
+			break;		
+	}
 
-		if (!method_found) { 	/* No method compativel */
-			strcpy(method_params, "undef");
-			strcpy(return_type, "undef");
-			//char* method_name_params = strcat(call->children[0]->value, found_method_params);
-			//printf("Line %d, col %d: Cannot find symbol %s")
-		}
-	
+	if (!method_found) { 	/* No method compativel */
+		strcpy(method_params, "undef");
+		strcpy(return_type, "undef");
+		//char* method_name_params = strcat(call->children[0]->value, found_method_params);
+		//printf("Line %d, col %d: Cannot find symbol %s")
+	}
 }
 
 int check_id_method_global(char* method_name) {
@@ -891,6 +906,8 @@ void handle_call(node_t* n_call) {
 					insert_node_data_type(n_call->children[0], params);
 				}
 
+				free(params);
+				free(return_type);
 			} else {	/* SE METODO NAO EXISTE */
 				insert_node_data_type(n_call, "undef");	
 				insert_node_data_type(n_call->children[0], "undef");		
@@ -930,7 +947,7 @@ char* get_unary_type(node_t* unary) {
 				handle_call(unary->children[0]);
 				u_type = unary->children[0]->data_type;
 			} else if (!strcmp(unary->children[0]->type, "Id")) {
-				u_type = (char*) strdup(get_id_type(unary->children[0]->value));
+				u_type = get_id_type(unary->children[0]->value);
 				if (u_type != NULL) {
 					return u_type;	
 				} else {
@@ -974,43 +991,5 @@ int check_global_method_exists(char* method_name, char* method_params) {
 		}
 	}
 
-	return 0;
-}
-
-int check_repeated_params(node_t* method_header) {
-	if (method_header->n_children > 0) {
-		char aux_method_params[2048][512];
-		int ind = 0;
-
-		node_t* method_params = method_header->children[2];
-		if (method_params->n_children > 0) {	/* Se tem parametros */
-			int c;
-			for(c=0; c < method_params->n_children; c++) {
-				if (!strcmp(method_params->children[c]->type, "ParamDecl")) {
-					char* p_type = (char*) strdup(method_params->children[c]->children[0]->type);
-					char* p_name = (char*) strdup(method_params->children[c]->children[1]->value);
-					char* param = (char*) strdup(strcat(p_type, p_name));
-
-					if (_check_repeated_param(param, aux_method_params)) {
-						//printf("Line %d, col %d: Symbol %s already defined\n", method_params->children[c]->children[1]->line, method_params->children[c]->children[1]->col, method_params->children[c]->children[1]->value);
-					} else {
-						strcpy(aux_method_params[ind], param);
-						ind++;
-					}
-				}
-			}
-		}
-	}
-	return 0;
-}
-
-int _check_repeated_param(char* p_name, char method_params[2048][512]) {
-	int i = 0;
-	while(method_params[i] != NULL) {
-		if (!strcmp(method_params[i], p_name)) {
-			return 1;
-		}
-		i++;
-	}
 	return 0;
 }

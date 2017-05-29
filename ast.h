@@ -15,6 +15,7 @@ typedef struct node {
 	int line;
 	int col;
 	struct node** children;
+	int llvm_address;
 	struct symbol* sym_ptr;
 } node_t;
 

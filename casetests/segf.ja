@@ -6,6 +6,12 @@ class seg {
 	}
 
 	public static int lul(boolean a1) {
-
+		main(main);
+		lul(main);
 	}
+
+	public static int main;
+	public static int lul;
+	
+	public static int lul;
 }

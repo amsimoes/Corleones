@@ -114,7 +114,7 @@ void build_table(node_t* n) {
 
 		if (table_index == 1) {		// Building global table
 			if (check_variable_exists(n->children[1]->value)) {
-				//printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
+				printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
 			} else {
 				insert_symbol(table[0], n->children[1]->value, NULL, n->children[0]->type, NULL);
 			}
@@ -129,7 +129,7 @@ void build_table(node_t* n) {
 			char* method_name = (char*) strdup(n->children[0]->children[1]->value);
 
 			if (check_global_method_exists(method_name, method_params)) {
-				//printf("Line %d, col %d: Symbol %s already defined\n", n->children[0]->children[1]->line, n->children[0]->children[1]->col, n->children[0]->children[1]->value);
+				printf("Line %d, col %d: Symbol %s already defined\n", n->children[0]->children[1]->line, n->children[0]->children[1]->col, n->children[0]->children[1]->value);
 			} else {
 				insert_symbol(table[0], n->children[0]->children[1]->value, method_params, n->children[0]->children[0]->type, NULL);
 			}
@@ -143,8 +143,6 @@ void build_table(node_t* n) {
 			char* method_params = (char*) malloc (4096);
 
 			strcpy(method_name_args, "Method ");
-			//char method_name_args[4096] = "Method ";
-			//char method_params[4096];
 
 			strcat(method_name_args, n->children[0]->children[1]->value);
 			get_global_method_header_params(n, method_params);
@@ -162,7 +160,7 @@ void build_table(node_t* n) {
 	} else if (!strcmp(n->type, "VarDecl") && table_index != 1) {
 
 		if (check_variable_exists(n->children[1]->value)) {
-			//printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
+			printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
 		} else {
 			insert_symbol(table[table_index-1], n->children[1]->value, NULL, n->children[0]->type, NULL);
 		}
@@ -966,15 +964,13 @@ char* get_unary_type(node_t* unary) {
 }
 
 int check_variable_exists(char* var_name) {
-	if (table_index > 1) {
-		symbol* first = table[table_index-1]->first;
+	symbol* first = table[table_index-1]->first;
 
-		while (first != NULL) {
-			if (!strcmp(var_name, first->sym_name) && first->params == NULL) {
-				return 1;
-			}
-			first = first->next;
+	while (first != NULL) {
+		if (!strcmp(var_name, first->sym_name) && first->params == NULL) {
+			return 1;
 		}
+		first = first->next;
 	}
 
 	return 0;

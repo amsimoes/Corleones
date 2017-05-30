@@ -3,28 +3,27 @@
 
 #include "ast.h"
 
-extern int line, first_col, yyleng;
+extern int line, first_col, yyleng, symbol_flag;
 
 int error_flag = 0;
-node_t** merge_nodes = (node_t**) malloc (sizeof(node_t*) * 2048);
-//node_t* merge_nodes[2048] = NULL;
+node_t* merge_nodes[2048];
 
 node_t* new_node(char* type, int first_col, char* data_type, void* value, int used) {
-	node_t* n = (node_t*) malloc (sizeof(node_t));
+	node_t* n = (node_t*) malloc(sizeof(node_t));
 	n->type = (char*) strdup(type);
 	n->data_type = data_type != NULL ? (char*) strdup(data_type) : NULL;
-	n->value = (char*) strdup(value);
+	n->value = value;
 	n->used = used;
 	n->n_children = 0;
+	n->children = NULL;
 	n->line = line;
 	n->col = first_col;
-	n->children = NULL;
 	return n;
 }
 
 node_t* ast_insert_node(char* type, int first_col, char* data_type, int used, int n_children, ...) {
 	va_list args;
-	int i = 0, nodes_to_use = 0;
+	int i, nodes_to_use = 0;
 
 	node_t* parent = new_node(type, first_col, data_type, NULL, used);
 	node_t** tmp = merge_nodes;
@@ -52,13 +51,11 @@ node_t* ast_insert_node(char* type, int first_col, char* data_type, int used, in
 		parent->n_children = nodes_to_use;
 	}
 
-	va_end(args);
 	return parent;
 }
 
 node_t* ast_insert_terminal(char* type, int first_col, char* data_type, int used, void* value) {
 	node_t* n = new_node(type, first_col, data_type, value, used);
-	n->children = (node_t**) malloc (sizeof(node_t*) * MAX_CHILDREN);
 	return n;
 }
 
@@ -72,7 +69,7 @@ void _ast_insert_decl(node_t* type, node_t* decl) {
 		*tmp++ = decl->children[i];
 	}
 
-	decl->n_children += 1;
+	decl->n_children++;
 	decl->children = (node_t**) malloc (decl->n_children * sizeof(node_t*));
 	decl->children[0] = type;
 
@@ -83,9 +80,6 @@ void _ast_insert_decl(node_t* type, node_t* decl) {
 }
 
 void ast_insert_decl(node_t* type, node_t* decl) {
-	/*printf("Type: %s\n", type->type);
-	printf("Node: %s\n", vardecl->type); 
-	print_node_children(vardecl);*/
 	if(!strcmp(decl->children[0]->type, "VarDecl") || !strcmp(decl->children[0]->type, "FieldDecl")) {
 		int i;
 		for (i = 0; i < decl->n_children; i++) {
@@ -112,6 +106,14 @@ void print_node_children(node_t* n) {
 	}
 }
 
+void print_not_annotated(node_t* n) {
+	if (!strcmp(n->type, "Id") || !strcmp(n->type, "BoolLit") || !strcmp(n->type, "DecLit") || !strcmp(n->type, "RealLit") || !strcmp(n->type, "StrLit")) {
+		printf("%s(%s)\n", n->type, (char*) n->value);
+	} else {
+		printf("%s\n", n->type);
+	}
+}
+
 void print_ast_node(node_t* n) {
 	//printf("Printing node with type: %s\n", n->type);
 	if (!strcmp(n->type, "Id") || !strcmp(n->type, "BoolLit") || !strcmp(n->type, "DecLit") || !strcmp(n->type, "RealLit") || !strcmp(n->type, "StrLit")) {
@@ -132,11 +134,12 @@ void print_ast_tree(node_t* n, int depth) {
 	for (i = 0; i < depth; i++)
 		printf("..");
 
-	print_ast_node(n);
 
-	for (j = 0; j < n->n_children; j++) {
-		if (n->children[j] != NULL) {
-			print_ast_tree(n->children[j], depth + 1);
-		}
-	}
+	if (symbol_flag)
+		print_ast_node(n);
+	else
+		print_not_annotated(n);
+
+	for (j = 0; j < n->n_children; j++)
+		print_ast_tree(n->children[j], depth + 1);
 }

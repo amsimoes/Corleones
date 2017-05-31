@@ -5,6 +5,7 @@
 	#include "y.tab.h"
 	#include "ast.h"
 	#include "symbol_t.h"
+	#include "code_gen.h"
 
 	node_t* ast_root;
 
@@ -168,7 +169,7 @@ int main(int argc, char** argv)
 		}
 
 		if (!semantic_error) {
-			//code_gen(ast_root);
+			code_gen(ast_root);
 		}
 	}
 	return 0;

@@ -6,4 +6,6 @@
 #include "ast.h"
 #include "symbol_t.h"
 
+void code_gen(node_t* n);
+
 #endif

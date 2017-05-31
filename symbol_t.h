@@ -24,6 +24,7 @@ typedef struct symbol_table {
 } sym_t;
 
 int semantic_error;
+sym_t** table;
 
 sym_t** new_table(int size);
 sym_t* new_sym_table(char* name);

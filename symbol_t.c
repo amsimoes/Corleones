@@ -5,7 +5,6 @@
 
 extern int line, col, yyleng;
 
-sym_t** table;
 int table_index = 0;
 int global_flag = 1;
 

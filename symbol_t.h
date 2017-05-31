@@ -23,6 +23,8 @@ typedef struct symbol_table {
 	char* name;
 } sym_t;
 
+int semantic_error;
+
 sym_t** new_table(int size);
 sym_t* new_sym_table(char* name);
 symbol* new_symbol(char* sym_name, char* params, char* type, char* flag);

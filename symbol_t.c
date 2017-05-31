@@ -115,6 +115,7 @@ void build_table(node_t* n) {
 		if (table_index == 1) {		// Building global table
 			if (check_variable_exists(n->children[1]->value)) {
 				printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
+				semantic_error = 1;
 			} else {
 				insert_symbol(table[0], n->children[1]->value, NULL, n->children[0]->type, NULL);
 			}
@@ -130,6 +131,7 @@ void build_table(node_t* n) {
 
 			if (check_global_method_exists(method_name, method_params)) {
 				printf("Line %d, col %d: Symbol %s already defined\n", n->children[0]->children[1]->line, n->children[0]->children[1]->col, n->children[0]->children[1]->value);
+				semantic_error = 1;
 			} else {
 				insert_symbol(table[0], n->children[0]->children[1]->value, method_params, n->children[0]->children[0]->type, NULL);
 			}
@@ -161,6 +163,7 @@ void build_table(node_t* n) {
 
 		if (check_variable_exists(n->children[1]->value)) {
 			printf("Line %d, col %d: Symbol %s already defined\n", n->children[1]->line, n->children[1]->col, n->children[1]->value);
+			semantic_error = 1;
 		} else {
 			insert_symbol(table[table_index-1], n->children[1]->value, NULL, n->children[0]->type, NULL);
 		}

@@ -5,7 +5,6 @@
 
 extern int line, first_col, yyleng, symbol_flag;
 
-int error_flag = 0;
 node_t* merge_nodes[2048];
 
 node_t* new_node(char* type, int first_col, char* data_type, void* value, int used) {

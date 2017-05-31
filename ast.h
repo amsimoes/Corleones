@@ -19,7 +19,7 @@ typedef struct node {
 	struct symbol* sym_ptr;
 } node_t;
 
-int error_flag;
+int syntax_error;
 
 node_t* new_node(char* type, int first_col, char* data_type, void* value, int used);
 node_t* ast_insert_node(char* type, int first_col, char* data_type, int used, int n_children, ...);

@@ -1,0 +1,14 @@
+class lul {
+	public static int var1;
+	public static double var2;
+	public static boolean var3;
+
+	public static double main (String[] args) {
+		int v1;
+		double v2;
+		boolean v3;
+		v1 = 3_3;
+		v2 = 3.5;
+		System.out.println(v1);
+	}
+}

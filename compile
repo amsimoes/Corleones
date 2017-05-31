@@ -1,5 +1,5 @@
 # FIRST: sudo chmod +x compile
 flex jac.l
 yacc -d jac.y
-clang-3.8 -g -Wall -Wno-unused-function *.c -o jac
+clang-3.8 -g -Wall -Wno-unused-function ast.c symbol_t.c code_gen.c lex.yy.c y.tab.c -o jac
 zip -q jac.zip jac.l jac.y y.tab.h ast.c ast.h symbol_t.c code_gen.c symbol_t.h code_gen.h

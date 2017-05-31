@@ -37,7 +37,6 @@ symbol* new_symbol(char* sym_name, char* params, char* type, char* flag) {
 		str_to_lowercase(aux);
 		sb->type = (char*) strdup(aux);
 	}
-
 	sb->params = params != NULL ? (char*) strdup(params) : NULL;
 	sb->flag = flag != NULL ? (char*) strdup(flag) : NULL;
 	sb->next = NULL;
@@ -117,6 +116,7 @@ void build_table(node_t* n) {
 				semantic_error = 1;
 			} else {
 				insert_symbol(table[0], n->children[1]->value, NULL, n->children[0]->type, NULL);
+				n->table_index = table_index;
 			}
 		}
 
@@ -133,6 +133,7 @@ void build_table(node_t* n) {
 				semantic_error = 1;
 			} else {
 				insert_symbol(table[0], n->children[0]->children[1]->value, method_params, n->children[0]->children[0]->type, NULL);
+				n->table_index = table_index;
 			}
 
 			free(method_params);
@@ -165,11 +166,13 @@ void build_table(node_t* n) {
 			semantic_error = 1;
 		} else {
 			insert_symbol(table[table_index-1], n->children[1]->value, NULL, n->children[0]->type, NULL);
+			n->table_index = table_index;
 		}
 
 	} else if (!strcmp(n->type, "ParamDecl") && table_index != 1) {
 
 		insert_symbol(table[table_index-1], n->children[1]->value, NULL, n->children[0]->type, "param");
+		n->table_index = table_index;
 
 	} else if (is_expression(n->type)) {
 

@@ -16,6 +16,7 @@ typedef struct node {
 	int col;
 	struct node** children;
 	char* llvm_address;
+	int table_index;
 	struct symbol* sym_ptr;
 } node_t;
 

@@ -9,6 +9,6 @@ class lul {
 		boolean v3;
 		v1 = 3_3;
 		v2 = 3.5;
-		System.out.println(v1);
+		System.out.println("haha");
 	}
 }

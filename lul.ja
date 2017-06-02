@@ -1,14 +1,17 @@
 class lul {
-	public static int var1;
-	public static double var2;
-	public static boolean var3;
+	public static double a;
+	public static boolean b;
 
-	public static double main (String[] args) {
-		int v1;
-		double v2;
-		boolean v3;
-		v1 = 3_3;
-		v2 = 3.5;
-		System.out.println("haha");
+	public static void main (int a) {
+		//k = Integer.parseInt(args[0]);
+		System.out.println(k);
+		b = true;
+		System.out.println(-433433);
+		double k;
+		k = 3.5;
+		System.out.println(-k);
+		System.out.println(b);
 	}
+
+	public static int k;
 }

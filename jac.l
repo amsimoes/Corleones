@@ -166,11 +166,12 @@ int main(int argc, char** argv)
 		if (!syntax_error) {
 			init_table();
 			build_sym_table(ast_root);
+
+			if (!semantic_error) {
+				code_gen(ast_root);
+			}
 		}
 
-		if (!semantic_error) {
-			code_gen(ast_root);
-		}
 	}
 	return 0;
 }
